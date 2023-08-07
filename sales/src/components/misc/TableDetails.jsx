@@ -38,54 +38,55 @@ const TableDetail = () => {
 
 
   useEffect(() => {
+
     axios
-      .get("http://localhost:9000/api/group/64be23d75409f88aa7a4889d")
+      .get(`http://localhost:9000/api/group/${id}`)
       .then((response) => {
         setGroup(response.data.group);
       });
 
 
-    axios
-      .post("http://localhost:9000/api/create-group", 
-        {
-          name: "My 23",
-          phoneNumbers: [
-            {
-              number: "1234567890",
-              callLength: 5,
-              callResponse: "Positive",
-              chat: [
-                {
-                  sender: "User",
-                  message: "Hello!",
-                },
-                {
-                  sender: "Admin",
-                  message: "Hi there!",
-                },
-              ],
-            },
-            {
-              number: "9876543210",
-              callLength: 8,
-              callResponse: "Negative",
-              chat: [
-                {
-                  sender: "User",
-                  message: "How are you?",
-                },
-                {
-                  sender: "Admin",
-                  message: "I'm doing well, thanks!",
-                },
-              ],
-            },
-          ],
-        },
-      )
-      .then((response) => {
-        console.log(response);
-      });
+    // axios
+    //   .post("http://localhost:9000/api/create-group", 
+    //     {
+    //       name: "My 23",
+    //       phoneNumbers: [
+    //         {
+    //           number: "1234567890",
+    //           callLength: 5,
+    //           callResponse: "Positive",
+    //           chat: [
+    //             {
+    //               sender: "User",
+    //               message: "Hello!",
+    //             },
+    //             {
+    //               sender: "Admin",
+    //               message: "Hi there!",
+    //             },
+    //           ],
+    //         },
+    //         {
+    //           number: "9876543210",
+    //           callLength: 8,
+    //           callResponse: "Negative",
+    //           chat: [
+    //             {
+    //               sender: "User",
+    //               message: "How are you?",
+    //             },
+    //             {
+    //               sender: "Admin",
+    //               message: "I'm doing well, thanks!",
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //   )
+    //   .then((response) => {
+    //     console.log(response);
+    //   });
   }, []);
   return (
     <div>
