@@ -7,7 +7,7 @@ const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
-const uploadsPath = path.join(__dirname, "uploads"); 
+const uploadsPath = path.join(__dirname, "uploads");
 
 app.use("/uploads", express.static(uploadsPath));
 
@@ -208,25 +208,25 @@ app.post("/api/messages", async (req, res) => {
 });
 
 app.get("/api/messages", async (req, res) => {
-    try {
-      const db = await connectToDatabase();
-      const collection = db.collection("sales_automation_messages");
-  
-      // Find all documents in the "sales_automation_messages" collection
-      const messages = await collection.find({}).toArray();
-  
-      return res.status(200).json({
-        success: true,
-        messages: messages,
-      });
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Failed to fetch messages.",
-      });
-    }
-  });
+  try {
+    const db = await connectToDatabase();
+    const collection = db.collection("sales_automation_messages");
+
+    // Find all documents in the "sales_automation_messages" collection
+    const messages = await collection.find({}).toArray();
+
+    return res.status(200).json({
+      success: true,
+      messages: messages,
+    });
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch messages.",
+    });
+  }
+});
 
 app.put("/api/messages/:id", async (req, res) => {
   try {
@@ -279,7 +279,7 @@ app.put("/api/messages/:id", async (req, res) => {
     });
   }
 });
-  
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
@@ -425,21 +425,26 @@ app.post("/api/upload-audio", upload.single("sales_automation_messages"), async 
   }
 });
 
-app.post('/api/edit-text-message', async(req, res) => {
+app.post('/api/edit-text-message', async (req, res) => {
   try {
     const { currentMessage, currentPara, index } = req.body;
-
-    console.log(currentMessage, currentPara, index)
-
-
-    
-    const group = await collection.findOne({ _id: new ObjectId('64d204eadd432e73511b0f65') });
-
-
-    return res.status(200).json({
-      success: true,
-      message: "Phone number updated successfully!",
-    });
+    const db = await connectToDatabase();
+    const collection = db.collection("sales_automation_messages");
+    const result = await collection.updateOne(
+      { _id: new ObjectId('64d204eadd432e73511b0f65') },
+      { $set: { [`messages.${index}.primary`]: currentMessage, [`messages.${index}.seconday`]: currentPara } }
+    );
+    if (result.modifiedCount === 1) {
+      return res.status(200).json({
+        success: true,
+        message: "Message updated successfully!",
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Message not found or not updated.",
+      });
+    }
   } catch (error) {
     console.error("Error updating phone number:", error);
     return res.status(500).json({
