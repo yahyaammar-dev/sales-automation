@@ -7,7 +7,7 @@ const Sidebar = () => {
   const navigate = useNavigate()
   const icons = [
     '/imgs/logo.svg',
-    '/imgs/addGrouppp.svg',
+    '/imgs/qq.png',
     '/imgs/status.svg',
     '/imgs/document.svg',
     '/imgs/notification.svg',
