@@ -8,15 +8,11 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
 const uploadsPath = path.join(__dirname, "uploads");
-
 app.use("/uploads", express.static(uploadsPath));
-
 app.use(cors());
 app.use(express.json());
-
 const uri =
   "mongodb+srv://fypmanager:salesautomation123A@salesautomatoindb.jii8qx3.mongodb.net/?retryWrites=true&w=majority";
-
 async function connectToDatabase() {
   const client = new MongoClient(uri, {
     serverApi: {
@@ -281,7 +277,7 @@ app.put("/api/messages/:id", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://16.163.178.109:${port}`);
 });
 
 app.post("/api/add-phone-number", async (req, res) => {
@@ -404,7 +400,7 @@ app.post("/api/upload-audio", upload.single("sales_automation_messages"), async 
     console.log("Audio file uploaded successfully!");
 
     // Create the link for the uploaded audio file
-    const audioLink = `http://localhost:9000/uploads/${uploadedFile.filename}`;
+    const audioLink = `http://16.163.178.109:9000/uploads/${uploadedFile.filename}`;
 
     // Make a POST request to the specified URL with the audio link as a query parameter
     const postUrl = `http://103.18.20.195:8080/speech/save-audio-file.php?url=${encodeURIComponent(audioLink)}`;

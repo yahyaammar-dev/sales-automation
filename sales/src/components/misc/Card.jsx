@@ -25,7 +25,7 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index 
 
   const handleChangeText = () => {
     let data =  {currentMessage, currentPara, index}
-    axios.post('http://localhost:9000/api/edit-text-message', data)
+    axios.post('http://16.163.178.109:9000/api/edit-text-message', data)
     .then((res)=>{
       console.log(res.data)
     })
@@ -41,7 +41,7 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index 
     const formData = new FormData();
     formData.append('sales_automation_messages', file);
 
-    fetch('http://localhost:9000/api/upload-audio', {
+    fetch('http://16.163.178.109:9000/api/upload-audio', {
       method: 'POST',
       body: formData,
     })

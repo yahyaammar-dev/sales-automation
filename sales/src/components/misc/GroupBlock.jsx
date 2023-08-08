@@ -11,7 +11,7 @@ const Block = () => {
 
   const handleGroup = () => {
     axios
-      .post("http://localhost:9000/api/create-group", {
+      .post("http://16.163.178.109:9000/api/create-group", {
         name: groupName,
         phoneNumbers: [],
       })
@@ -20,7 +20,7 @@ const Block = () => {
       });
   };
   useEffect(() => {
-    axios.get("http://localhost:9000/api/groups").then((response) => {
+    axios.get("http://16.163.178.109:9000/api/groups").then((response) => {
       setAllGroups(response.data.groups);
     });
 
@@ -82,7 +82,7 @@ let tempPhone  = [
     }
 
     axios
-      .post("http://localhost:9000/api/add-phone-number", {
+      .post("http://16.163.178.109:9000/api/add-phone-number", {
         groupId: selectedGroupId,
         phoneNumber: phoneNumber,
       })
