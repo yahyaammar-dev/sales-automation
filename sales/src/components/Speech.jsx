@@ -6,7 +6,7 @@ const Speech = () => {
   return (
     <div class="flex h-screen">
       <div class="w-2/12 h-screen"><Sidebar /></div>
-      <div class="w-10/12"><Chart /></div>
+      <div class="w-10/12"><Chart  /></div>
     </div>
   )
 }

@@ -50,7 +50,11 @@ const Sidebar = () => {
         </div>
         <Heading text={'Account'} />
         <Button text='Notification' icon={icons[4]} my />
-        <Button text='Setting' icon={icons[5]} my />
+        <div onClick={() => {
+          navigate('/concurrent-calls')
+        }}>
+          <Button text='Setting' icon={icons[5]} my  />
+        </div>
       </div>
       <Button text='Logout' danger icon={icons[6]} my />
     </div>
