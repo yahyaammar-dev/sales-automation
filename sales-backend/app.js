@@ -1,22 +1,16 @@
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
-
 const cors = require("cors"); // Add the cors package
 const app = express();
 const port = 9000;
 const axios = require("axios");
-
 const multer = require("multer");
-
 const upload = multer({ dest: "uploads/" });
-
 const path = require("path");
-const uploadsPath = path.join(__dirname, "uploads"); // Replace "uploads" with the actual path to your uploads folder.
+const uploadsPath = path.join(__dirname, "uploads"); 
 
-// Serve static files from the "uploads" directory
 app.use("/uploads", express.static(uploadsPath));
 
-// Add the cors middleware to enable CORS
 app.use(cors());
 app.use(express.json());
 
@@ -221,8 +215,6 @@ app.get("/api/messages", async (req, res) => {
       // Find all documents in the "sales_automation_messages" collection
       const messages = await collection.find({}).toArray();
   
-      console.log("Fetched all messages:", messages);
-  
       return res.status(200).json({
         success: true,
         messages: messages,
@@ -236,57 +228,57 @@ app.get("/api/messages", async (req, res) => {
     }
   });
 
-  app.put("/api/messages/:id", async (req, res) => {
-    try {
-      const db = await connectToDatabase();
-      const collection = db.collection("sales_automation_messages");
-  
-      const messageId = req.params.id; // Extract the message ID from the request parameters
-  
-      // Validate the provided message ID
-      if (!ObjectId.isValid(messageId)) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid message ID format.",
-        });
-      }
-  
-      const { text, children } = req.body;
-  
-      // Update the message document based on the provided data
-      const updatedMessage = {
-        text: text,
-        children: children,
-      };
-  
-      // Find the message document by its ID and update it
-      const result = await collection.updateOne(
-        { _id: new ObjectId(messageId) }, // Create a new instance of ObjectId
-        { $set: updatedMessage }
-      );
-  
-      if (result.matchedCount === 0) {
-        // No matching message found
-        return res.status(404).json({
-          success: false,
-          message: "Message not found.",
-        });
-      }
-  
-      console.log("Message updated successfully!");
-  
-      return res.status(200).json({
-        success: true,
-        message: "Message updated successfully!",
-      });
-    } catch (error) {
-      console.error("Error updating message:", error);
-      return res.status(500).json({
+app.put("/api/messages/:id", async (req, res) => {
+  try {
+    const db = await connectToDatabase();
+    const collection = db.collection("sales_automation_messages");
+
+    const messageId = req.params.id; // Extract the message ID from the request parameters
+
+    // Validate the provided message ID
+    if (!ObjectId.isValid(messageId)) {
+      return res.status(400).json({
         success: false,
-        message: "Failed to update message.",
+        message: "Invalid message ID format.",
       });
     }
-  });
+
+    const { text, children } = req.body;
+
+    // Update the message document based on the provided data
+    const updatedMessage = {
+      text: text,
+      children: children,
+    };
+
+    // Find the message document by its ID and update it
+    const result = await collection.updateOne(
+      { _id: new ObjectId(messageId) }, // Create a new instance of ObjectId
+      { $set: updatedMessage }
+    );
+
+    if (result.matchedCount === 0) {
+      // No matching message found
+      return res.status(404).json({
+        success: false,
+        message: "Message not found.",
+      });
+    }
+
+    console.log("Message updated successfully!");
+
+    return res.status(200).json({
+      success: true,
+      message: "Message updated successfully!",
+    });
+  } catch (error) {
+    console.error("Error updating message:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update message.",
+    });
+  }
+});
   
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
@@ -432,3 +424,27 @@ app.post("/api/upload-audio", upload.single("sales_automation_messages"), async 
     });
   }
 });
+
+app.post('/api/edit-text-message', async(req, res) => {
+  try {
+    const { currentMessage, currentPara, index } = req.body;
+
+    console.log(currentMessage, currentPara, index)
+
+
+    
+    const group = await collection.findOne({ _id: new ObjectId('64d204eadd432e73511b0f65') });
+
+
+    return res.status(200).json({
+      success: true,
+      message: "Phone number updated successfully!",
+    });
+  } catch (error) {
+    console.error("Error updating phone number:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update phone number.",
+    });
+  }
+})

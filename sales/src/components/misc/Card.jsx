@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import axios from "axios";
 
-const Card = ({ message, para, lineBottom, marginLeft, background, color }) => {
+const Card = ({ message, para, lineBottom, marginLeft, background, color, index }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [file, setFile] = useState(null);
@@ -20,6 +21,16 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color }) => {
   const handleCloseUpload = () => {
     setIsUploadModalOpen(false);
   };
+
+
+  const handleChangeText = () => {
+    let data =  {currentMessage, currentPara, index}
+    axios.post('http://localhost:9000/api/edit-text-message', data)
+    .then((res)=>{
+      console.log(res.data)
+    })
+  }
+
 
   const handleUploadFile = () => {
     if (!file) {
@@ -116,7 +127,11 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color }) => {
             </button>
 
             <button
-            onClick={handleCloseEdit}
+            onClick={()=>{
+              handleCloseEdit() 
+              handleChangeText()
+            }
+            }
               className="ml-3 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               Save
