@@ -7,7 +7,7 @@ const Sidebar = () => {
   const navigate = useNavigate()
   const icons = [
     '/imgs/logo.svg',
-    '/imgs/addGroup.svg',
+    '/imgs/addGrouppp.svg',
     '/imgs/status.svg',
     '/imgs/document.svg',
     '/imgs/notification.svg',
@@ -16,9 +16,30 @@ const Sidebar = () => {
   ]
   const currentPath = window.location.pathname;
 
+  
   // Extract the string after the last slash (/)
   const pathSegments = currentPath.split('/');
   const lastSegment = pathSegments[pathSegments.length - 2];
+
+  var speech = false
+  var group = false
+  var setting  = false
+
+  console.log(window.location.origin)
+
+  if(pathSegments.includes('speech')){
+    speech = true
+  }
+
+  if(pathSegments.includes('group') ||  pathSegments.includes('group-details')  || window.location.pathname == '/' ){
+    group = true
+  }
+
+  if(pathSegments.includes('concurrent-calls')){
+    setting = true
+  }
+
+
   return (
     <div className="p-5 flex flex-col justify-between h-screen">
       <div>
@@ -31,7 +52,7 @@ const Sidebar = () => {
           navigate('/')
         }}>
           {
-            lastSegment == '' ? <Button text='Add Group' icon={icons[1]} active my /> : <Button text='Add Group' icon={icons[1]} my />
+            group  ? <Button text='Add Group' icon={icons[1]} active my /> : <Button text='Add Group' icon={icons[1]} my />
           }
         </div>
         {/* <div onClick={() => {
@@ -45,7 +66,7 @@ const Sidebar = () => {
           navigate('/speech')
         }}>
           {
-            lastSegment == 'speech' ? <Button text='Speech' icon={icons[3]} my active /> : <Button text='Speech' icon={icons[3]} my />
+            speech ? <Button text='Speech' icon={icons[3]} my active /> : <Button text='Speech' icon={icons[3]} my />
           }
         </div>
         <Heading text={'Account'} />
@@ -53,7 +74,12 @@ const Sidebar = () => {
         <div onClick={() => {
           navigate('/concurrent-calls')
         }}>
-          <Button text='Setting' icon={icons[5]} my  />
+
+
+          {
+            setting ? <Button text='Setting' icon={icons[3]} my active /> : <Button text='Setting' icon={icons[3]} my />
+          }
+
         </div>
       </div>
       <Button text='Logout' danger icon={icons[6]} my />
