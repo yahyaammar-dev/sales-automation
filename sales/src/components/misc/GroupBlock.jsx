@@ -7,6 +7,7 @@ const Block = () => {
   const [allGroups, setAllGroups] = useState();
   const [chats, setAllChats] = useState(null);
   const [chatWithPhone ,setChatWithPhone] = useState(null);
+  const [transformedData, setTransfromedData] = useState()
 
   const handleGroup = () => {
     axios
@@ -23,13 +24,8 @@ const Block = () => {
       setAllGroups(response.data.groups);
     });
 
-    // axios
-    //   .get("http://103.18.20.195:8080/speech/fetch-chat.php")
-    //   .then((response) => {
-    //     setAllChats(response.data);
-    //   });
+   
   }, []);
-
 
 
 
@@ -56,24 +52,27 @@ const updatedChats = chats?.map((chat) => {
 
   const handleCalling = () => {
     console.log("hello world", allGroups);
-    let phoneNumbers = {};
+    let phoneNumbers = [];
 
     allGroups.forEach((group, index) => {
       group.phoneNumbers?.forEach((item, subIndex) => {
-        phoneNumbers[`num${index * 10 + subIndex + 1}`] = item.number;
+        phoneNumbers.push(item.number)
       });
     });
 
-    let tempPhone = {
-      num1: 1001,
-      num2: 1002,
-    };
+let tempPhone  = [
+  {
+    "calls": "2",
+    "trunk": "1001"
+  },
+  phoneNumbers
+]
 
     axios
-      .post("http://103.18.20.195:8080/autodial/dial_numbers.php", tempPhone)
+      .post("http://16.163.178.109/aivoip/autodial/dial_numbers.php", tempPhone)
       .then((response) => console.log(response));
 
-    alert("Calling Phone Numbers");
+    alert("Calling Phone Numbers, Status will be updated soon");
   };
 
   const handleAddPhoneNumber = () => {

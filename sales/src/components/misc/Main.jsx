@@ -8,6 +8,8 @@ import GroupDetails from '../GroupDetails'
 import TableDetail from './TableDetails'
 
 const Main = ({group}) => {
+
+
   const currentPath = window.location.pathname;
 
   // Extract the string after the last slash (/)

@@ -1,8 +1,10 @@
     import React, { useRef, useState, useEffect } from "react";
     import { useNavigate } from "react-router-dom";
 
-    const Modal = ({ open, setOpen }) => {
+    const Modal = ({ open, setOpen, currentChat }) => {
     const navigate = useNavigate();
+    const [chat, setChat] = useState()
+    const [userChat, setUserChat] = useState()
     const handleHomeNav = () => {
         navigate("/");
     };
@@ -16,6 +18,94 @@
         source.src = newAudioUrl || null
     }
 
+
+    useEffect(()=>{
+        let data = []
+        currentChat?.map((item)=>{
+            let obj = {
+                text: item?.chat,
+                audio: `http://16.163.178.109/aivoip/speech/${item?.filename}`,
+                matchingKeywords: "yes",
+                date: "29-07-2023",
+            }
+            data.push(obj)
+        })
+
+        const customChat = {
+            number: "",
+            bot: [
+            {
+                text: "Hello, Do you want to buy Insurance?",
+                audio:
+                "http://103.18.20.195:8080/speech/welcome.wav",
+                matchingKeywords: "yes",
+                date: "29-07-2023",
+            },
+            {
+                text: "Okay, I am referring you to my manager",
+                audio:
+                "http://103.18.20.195:8080/speech/yes.wav",
+                matchingKeywords: "Ok",
+                date: "29-07-2023",
+            },
+            {
+                text: "No Problem, have a good day!",
+                audio:
+                "http://103.18.20.195:8080/speech/no.wav",
+                matchingKeywords: "Ok",
+                date: "29-07-2023",
+            }
+            ],
+            user: data
+        };
+        setChat(customChat)
+
+    },[open])
+
+
+    useEffect(()=>{
+        let data = []
+        currentChat?.map((item)=>{
+            let obj = {
+                text: item?.chat,
+                audio: `http://16.163.178.109/aivoip/speech/${item?.filename}`,
+                matchingKeywords: "yes",
+                date: "29-07-2023",
+            }
+            data.push(obj)
+        })
+
+       
+        const customChat = {
+            number: "",
+            bot: [
+            {
+                text: "Hello, Do you want to buy Insurance?",
+                audio:
+                "http://103.18.20.195:8080/speech/welcome.wav",
+                matchingKeywords: "yes",
+                date: "29-07-2023",
+            },
+            {
+                text: "Okay, I am referring you to my manager",
+                audio:
+                "http://103.18.20.195:8080/speech/yes.wav",
+                matchingKeywords: "Ok",
+                date: "29-07-2023",
+            },
+            {
+                text: "No Problem, have a good day!",
+                audio:
+                "http://103.18.20.195:8080/speech/no.wav",
+                matchingKeywords: "Ok",
+                date: "29-07-2023",
+            }
+            ],
+            user: data
+        };
+        setChat(customChat)
+    },[])
+
     const [selectedMessage, setSelectedMessage] = useState(null);
 
     useEffect(() => {
@@ -25,52 +115,10 @@
         }
     }, [selectedMessage]);
 
-    const chat = {
-        number: "",
-        bot: [
-        {
-            text: "Hello, Do you want to buy Insurance?",
-            audio:
-            "http://103.18.20.195:8080/speech/welcome.wav",
-            matchingKeywords: "yes",
-            date: "29-07-2023",
-        },
-        {
-            text: "Okay, I am referring you to my manager",
-            audio:
-            "http://103.18.20.195:8080/speech/yes.wav",
-            matchingKeywords: "Ok",
-            date: "29-07-2023",
-        },
-        {
-            text: "No Problem, have a good day!",
-            audio:
-            "http://103.18.20.195:8080/speech/no.wav",
-            matchingKeywords: "Ok",
-            date: "29-07-2023",
-        }
-        ],
-        user: [
-        {
-            text: "Yes, I want to buy Insurance",
-            audio:
-            "http://103.18.20.195:8080/speech/welcomeaswer.wav",
-        },
-        {
-            text: "Sure thank You",
-            audio:
-            "http://103.18.20.195:8080/speech/yesanswer.wav",
-        },
-        {
-            text: "Sure thank You",
-            audio:
-            "http://103.18.20.195:8080/speech/noanswer.wav",
-        }
-        ],
-    };
+    
 
     const combinedMessages = [];
-    const maxLength = Math.max(chat.bot.length, chat.user.length);
+    const maxLength = Math.max(chat?.bot.length, chat?.user?.length);
     for (let i = 0; i < maxLength; i++) {
         if (chat.bot[i]) combinedMessages.push(chat.bot[i]);
         if (chat.user[i]) combinedMessages.push(chat.user[i]);
