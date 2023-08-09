@@ -15,7 +15,6 @@ const App = () => {
         <Route path="/speech" element={<Speech />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/concurrent-calls" element={<ConcurrentCalls  />} />
-
       </Routes>
     </BrowserRouter>
   );
