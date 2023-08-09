@@ -400,7 +400,7 @@ app.post("/api/upload-audio", upload.single("sales_automation_messages"), async 
     console.log("Audio file uploaded successfully!");
 
     // Create the link for the uploaded audio file
-    const audioLink = `http://localhost:9000/uploads/${uploadedFile.filename}`;
+    const audioLink = `http://16.163.178.109:9000/uploads/${uploadedFile.filename}`;
 
     // Make a POST request to the specified URL with the audio link as a query parameter
     const postUrl = `http://103.18.20.195:8080/speech/save-audio-file.php?url=${encodeURIComponent(audioLink)}`;
