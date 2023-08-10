@@ -15,28 +15,58 @@ const TableDetail = () => {
       .get(`http://16.163.178.109:9000/api/group/${id}`)
       .then((response) => {
         setGroup(response.data.group);
-      });
 
-    axios
-      .get("http://16.163.178.109/aivoip/speech/fetch-chat.php")
-      .then((response) => {
-        const transformedData = response?.data?.reduce((result, item) => {
-          const { clid, duration, chat, filename } = item;
-          if (!result[clid]) {
-            result[clid] = {
-              duration,
-              clid,
-              chat: []
-            };
-          }
-          result[clid].chat.push({ chat, filename });
-          return result;
-        }, {});
+        let groups = response.data.group
+
+        let groupPhones = groups?.phoneNumbers
         
-        const transformedArray = Object.values(transformedData);
-        setTransfromedData(transformedArray);
+        let arr = groupPhones?.map((item)=>{
+          return item?.number
+        })
+        axios
+        .get("http://16.163.178.109/aivoip/speech/fetch-chat.php")
+        .then((response) => {
+          let data = response?.data
+  
+          let filtered = data?.map((item)=>{
+            if(item?.clid){
+              if(arr.includes(item?.clid)){
+                return item
+              }
+            }
+          })
+
+          filtered = filtered.filter(item => item !== undefined);
+
+  
+          const transformedData = filtered?.reduce((result, item) => {
+            const { clid, duration, chat, filename } = item;
+            if (!result[clid]) {
+              result[clid] = {
+                duration,
+                clid,
+                chat: []
+              };
+            }
+            result[clid].chat.push({ chat, filename });
+            return result;
+          }, {});
+          
+          const transformedArray = Object.values(transformedData);
+          setTransfromedData(transformedArray);
+  
+        });
+
+
+
+
+
+
+
 
       });
+
+   
 
   }, []);
   return (

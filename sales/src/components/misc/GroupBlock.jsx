@@ -51,9 +51,8 @@ const updatedChats = chats?.map((chat) => {
   },[chats]);
 
   const handleCalling = () => {
-    console.log("hello world", allGroups);
     let phoneNumbers = [];
-
+    console.log(allGroups)
     allGroups.forEach((group, index) => {
       group.phoneNumbers?.forEach((item, subIndex) => {
         phoneNumbers.push(item.number)
@@ -63,7 +62,8 @@ const updatedChats = chats?.map((chat) => {
 let tempPhone  = [
   {
     "calls": "2",
-    "trunk": "1001"
+    "trunk": "1001",
+    "foward": '+923045584807'
   },
   phoneNumbers
 ]
