@@ -69,7 +69,7 @@ let tempPhone  = [
 ]
 
     axios
-      .post("http://16.163.178.109/aivoip/autodial/dial_numbers.php", tempPhone)
+      .post("http://www.aivoip.org/aivoip/autodial/dial_numbers.php", tempPhone)
       .then((response) => console.log(response));
 
     alert("Calling Phone Numbers, Status will be updated soon");
