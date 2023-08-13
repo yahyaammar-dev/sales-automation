@@ -11,7 +11,7 @@ const Block = () => {
 
   const handleGroup = () => {
     axios
-      .post("http://lcoalhost:9000/api/create-group", {
+      .post("http://localhost:9000/api/create-group", {
         name: groupName,
         phoneNumbers: [],
       })
@@ -20,7 +20,7 @@ const Block = () => {
       });
   };
   useEffect(() => {
-    axios.get("http://lcoalhost:9000/api/groups").then((response) => {
+    axios.get("http://localhost:9000/api/groups").then((response) => {
       setAllGroups(response.data.groups);
     });
 
@@ -69,7 +69,7 @@ let tempPhone  = [
 ]
 
     axios
-      .post("http://lcoalhost/aivoip/autodial/dial_numbers.php", tempPhone)
+      .post("http://localhost/aivoip/autodial/dial_numbers.php", tempPhone)
       .then((response) => console.log(response));
 
     alert("Calling Phone Numbers, Status will be updated soon");
@@ -82,7 +82,7 @@ let tempPhone  = [
     }
 
     axios
-      .post("http://lcoalhost:9000/api/add-phone-number", {
+      .post("http://localhost:9000/api/add-phone-number", {
         groupId: selectedGroupId,
         phoneNumber: phoneNumber,
       })

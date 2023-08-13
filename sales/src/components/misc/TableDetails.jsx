@@ -12,7 +12,7 @@ const TableDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`http://lcoalhost:9000/api/group/${id}`)
+      .get(`http://localhost:9000/api/group/${id}`)
       .then((response) => {
         setGroup(response.data.group);
 
@@ -24,7 +24,7 @@ const TableDetail = () => {
           return item?.number
         })
         axios
-        .get("http://lcoalhost/aivoip/speech/fetch-chat.php")
+        .get("http://localhost/aivoip/speech/fetch-chat.php")
         .then((response) => {
           let data = response?.data
   
