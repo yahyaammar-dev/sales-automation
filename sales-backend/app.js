@@ -7,10 +7,35 @@ const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
+const https = require("https");
+const fs = require("fs");
+
+
+
+const certificatePath = '/var/www/html/admin/modules/pm2/node/node_modules/@pm2/agent-node/node_modules/get-uri/test/server.crt';
+const privateKeyPath = '/var/www/html/admin/modules/pm2/node/node_modules/@pm2/agent-node/node_modules/get-uri/test/server.key';
+
+const options = {
+  key: fs.readFileSync(path.resolve(privateKeyPath)),
+  cert: fs.readFileSync(path.resolve(certificatePath))
+};
+
+
+
 const uploadsPath = path.join(__dirname, "uploads");
+
+
 app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
 app.use(express.json());
+
+
+const server = https.createServer(options, app);
+
+server.listen(port, () => {
+  console.log(`Server is running on https://localhost:${port}`);
+});
+
 const uri =
   "mongodb+srv://fypmanager:salesautomation123A@salesautomatoindb.jii8qx3.mongodb.net/?retryWrites=true&w=majority";
 async function connectToDatabase() {
@@ -276,9 +301,7 @@ app.put("/api/messages/:id", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on http://16.163.178.109:${port}`);
-});
+
 
 app.post("/api/add-phone-number", async (req, res) => {
   try {
@@ -383,6 +406,8 @@ app.post("/api/upload-audio", upload.single("sales_automation_messages"), async 
   try {
     const uploadedFile = req.file;
 
+    console.log('hello world')
+
     if (!uploadedFile) {
       return res.status(400).json({
         success: false,
@@ -400,7 +425,7 @@ app.post("/api/upload-audio", upload.single("sales_automation_messages"), async 
     console.log("Audio file uploaded successfully!");
 
     // Create the link for the uploaded audio file
-    const audioLink = `http://16.163.178.109:9000/uploads/${uploadedFile.filename}`;
+    const audioLink = `http://localhost:9000/uploads/${uploadedFile.filename}`;
 
     // Make a POST request to the specified URL with the audio link as a query parameter
     const postUrl = `http://103.18.20.195:8080/speech/save-audio-file.php?url=${encodeURIComponent(audioLink)}`;
