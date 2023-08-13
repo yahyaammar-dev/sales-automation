@@ -12,7 +12,7 @@
     const myref = useRef(null);
 
     const handlePlayMessage = (message) => {
-        let newAudioUrl = `http://16.163.178.109/aivoip/speech/${message}`
+        let newAudioUrl = `http://lcoalhost/aivoip/speech/${message}`
         let ele = myref.current
         let source = ele.querySelector('source')
         source.src = newAudioUrl || null
@@ -46,7 +46,7 @@
         currentChat?.map((item)=>{
             let obj = {
                 text: item?.chat,
-                audio: `http://16.163.178.109/aivoip/speech/${item?.filename}`,
+                audio: `http://lcoalhost/aivoip/speech/${item?.filename}`,
                 matchingKeywords: "yes",
                 date: "29-07-2023",
             }
@@ -90,7 +90,7 @@
         currentChat?.map((item)=>{
             let obj = {
                 text: item?.chat,
-                audio: `http://16.163.178.109/aivoip/speech/${item?.filename}`,
+                audio: `http://lcoalhost/aivoip/speech/${item?.filename}`,
                 matchingKeywords: "yes",
                 date: "29-07-2023",
             }

@@ -9,7 +9,7 @@ const Table = () => {
   const [open, setOpen] = useState(false);
   const [groups, setGroups] = useState([]);
   useEffect(() => {
-    axios.get("http://16.163.178.109:9000/api/groups").then((res) => {
+    axios.get("http://lcoalhost:9000/api/groups").then((res) => {
       setGroups(res.data.groups);
     });
   }, []);
