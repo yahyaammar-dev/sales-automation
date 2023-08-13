@@ -21,7 +21,6 @@ app.use(cors());
 app.use(express.json());
 
 
-const server = https.createServer(options, app);
 
 server.listen(port, () => {
   console.log(`Server is running on https://localhost:${port}`);
