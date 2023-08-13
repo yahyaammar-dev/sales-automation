@@ -10,16 +10,12 @@ const path = require("path");
 const https = require("https");
 
 
-
-
-
 const uploadsPath = path.join(__dirname, "uploads");
 
 
 app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
 app.use(express.json());
-
 
 
 app.listen(port, () => {
@@ -47,9 +43,6 @@ async function connectToDatabase() {
 }
 
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
 
 
 app.post("/api/create-group", async (req, res) => {
@@ -415,7 +408,7 @@ app.post("/api/upload-audio", upload.single("sales_automation_messages"), async 
     const collection = db.collection("sales_automation_messages");
 
     // Save the uploaded file to the collection (you can adjust the storage mechanism as needed)
-    // For example, you can use GridFS to store large audio files in MongoDB
+    // For example, you can use GridFS to store large audio files in Mon````goDB
     const result = await collection.insertOne({ audio: uploadedFile });
 
     console.log("Audio file uploaded successfully!");
