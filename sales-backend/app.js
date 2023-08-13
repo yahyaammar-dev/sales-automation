@@ -7,10 +7,21 @@ const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
+const https = require("https");
+
+
 const uploadsPath = path.join(__dirname, "uploads");
+
+
 app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
 app.use(express.json());
+
+
+app.listen(port, () => {
+  console.log(`Server is running on https://localhost:${port}`);
+});
+
 const uri =
   "mongodb+srv://fypmanager:salesautomation123A@salesautomatoindb.jii8qx3.mongodb.net/?retryWrites=true&w=majority";
 async function connectToDatabase() {
@@ -30,8 +41,6 @@ async function connectToDatabase() {
     throw error;
   }
 }
-
-
 
 
 
@@ -67,6 +76,7 @@ app.post("/api/create-group", async (req, res) => {
     });
   }
 });
+
 app.get("/api/group/:id", async (req, res) => {
   try {
     const groupId = req.params.id; // Get the group ID from the URL parameters
@@ -98,6 +108,7 @@ app.get("/api/group/:id", async (req, res) => {
     });
   }
 });
+
 app.put("/api/groups/:id", async (req, res) => {
   try {
     const db = await connectToDatabase();
@@ -148,6 +159,7 @@ app.put("/api/groups/:id", async (req, res) => {
     });
   }
 });
+
 app.get("/api/groups", async (req, res) => {
   try {
     const db = await connectToDatabase();
@@ -170,6 +182,7 @@ app.get("/api/groups", async (req, res) => {
     });
   }
 });
+
 app.post("/api/messages", async (req, res) => {
   try {
     const db = await connectToDatabase();
@@ -203,6 +216,7 @@ app.post("/api/messages", async (req, res) => {
     });
   }
 });
+
 app.get("/api/messages", async (req, res) => {
   try {
     const db = await connectToDatabase();
@@ -223,6 +237,7 @@ app.get("/api/messages", async (req, res) => {
     });
   }
 });
+
 app.put("/api/messages/:id", async (req, res) => {
   try {
     const db = await connectToDatabase();
@@ -274,6 +289,8 @@ app.put("/api/messages/:id", async (req, res) => {
     });
   }
 });
+
+
 
 app.post("/api/add-phone-number", async (req, res) => {
   try {
@@ -391,7 +408,7 @@ app.post("/api/upload-audio", upload.single("sales_automation_messages"), async 
     const collection = db.collection("sales_automation_messages");
 
     // Save the uploaded file to the collection (you can adjust the storage mechanism as needed)
-    // For example, you can use GridFS to store large audio files in MongoDB
+    // For example, you can use GridFS to store large audio files in Mon````goDB
     const result = await collection.insertOne({ audio: uploadedFile });
 
     console.log("Audio file uploaded successfully!");
