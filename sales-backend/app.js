@@ -8,17 +8,8 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
 const https = require("https");
-const fs = require("fs");
 
 
-
-const certificatePath = '/var/www/html/admin/modules/pm2/node/node_modules/@pm2/agent-node/node_modules/get-uri/test/server.crt';
-const privateKeyPath = '/var/www/html/admin/modules/pm2/node/node_modules/@pm2/agent-node/node_modules/get-uri/test/server.key';
-
-const options = {
-  key: fs.readFileSync(path.resolve(privateKeyPath)),
-  cert: fs.readFileSync(path.resolve(certificatePath))
-};
 
 
 
@@ -55,6 +46,12 @@ async function connectToDatabase() {
     throw error;
   }
 }
+
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
 
 app.post("/api/create-group", async (req, res) => {
   try {
