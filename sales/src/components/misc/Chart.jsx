@@ -6,7 +6,7 @@ import axios from "axios";
 const Chart = () => {
   const [messgaes, setMessages] = useState()
   useEffect(() => {
-    axios.get('http://localhost:9000/api/messages')
+    axios.get('http://16.163.178.109:9000/api/messages')
       .then((res) => {
         setMessages(res.data.messages[0].messages)
       })
