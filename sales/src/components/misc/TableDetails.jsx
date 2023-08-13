@@ -24,7 +24,7 @@ const TableDetail = () => {
           return item?.number
         })
         axios
-        .get("http://127.0.0.1/aivoip/speech/fetch-chat.php")
+        .get("https://www.aivoip.org/aivoip/speech/fetch-chat.php")
         .then((response) => {
           let data = response?.data
   
