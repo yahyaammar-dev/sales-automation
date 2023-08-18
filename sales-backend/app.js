@@ -17,17 +17,17 @@ const uploadsPath = path.join(__dirname, "uploads");
 
 
 
-// const certificatePath = '/var/www/html/admin/modules/pm2/node/node_modules/@pm2/agent-node/node_modules/get-uri/test/server.crt';
-// const privateKeyPath = '/var/www/html/admin/modules/pm2/node/node_modules/@pm2/agent-node/node_modules/get-uri/test/server.key';
+const certificatePath = '/var/www/html/admin/modules/pm2/node/node_modules/@pm2/agent-node/node_modules/get-uri/test/server.crt';
+const privateKeyPath = '/var/www/html/admin/modules/pm2/node/node_modules/@pm2/agent-node/node_modules/get-uri/test/server.key';
 
-// const options = {
-//   key: fs.readFileSync(path.resolve(privateKeyPath)),
-//   cert: fs.readFileSync(path.resolve(certificatePath))
-// };
+const options = {
+  key: fs.readFileSync(path.resolve(privateKeyPath)),
+  cert: fs.readFileSync(path.resolve(certificatePath))
+};
 
-// const server = https.createServer(options, app);
+const server = https.createServer(options, app);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running on https://localhost:${port}`);
 });
 
