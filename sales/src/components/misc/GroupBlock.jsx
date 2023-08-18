@@ -6,12 +6,12 @@ const Block = () => {
   const [groupName, setGroupName] = useState();
   const [allGroups, setAllGroups] = useState();
   const [chats, setAllChats] = useState(null);
-  const [chatWithPhone ,setChatWithPhone] = useState(null);
+  const [chatWithPhone, setChatWithPhone] = useState(null);
   const [transformedData, setTransfromedData] = useState()
 
   const handleGroup = () => {
     axios
-      .post("http://16.163.178.109:9000/api/create-group", {
+      .post("https://16.163.178.109:9000/api/create-group", {
         name: groupName,
         phoneNumbers: [],
       })
@@ -20,53 +20,49 @@ const Block = () => {
       });
   };
   useEffect(() => {
-    axios.get("http://16.163.178.109:9000/api/groups").then((response) => {
+    axios.get("https://16.163.178.109:9000/api/groups").then((response) => {
       setAllGroups(response.data.groups);
     });
 
-   
   }, []);
 
-
-
-
-// Function to extract the number inside the angle brackets from the clid property
-const extractNumberFromClid = (clid) => {
-  const regex = /<(\d{1,})>/;
-  const match = clid.match(regex);
-  return match && match[1] ? match[1] : null;
-};
-
-// Update the clid property for each chat object
-const updatedChats = chats?.map((chat) => {
-  const extractedNumber = extractNumberFromClid(chat.clid);
-  return {
-    ...chat,
-    clid: extractedNumber ? extractedNumber : chat.clid,
+  // Function to extract the number inside the angle brackets from the clid property
+  const extractNumberFromClid = (clid) => {
+    const regex = /<(\d{1,})>/;
+    const match = clid.match(regex);
+    return match && match[1] ? match[1] : null;
   };
-});
 
-  useEffect(()=>{
+  // Update the clid property for each chat object
+  const updatedChats = chats?.map((chat) => {
+    const extractedNumber = extractNumberFromClid(chat.clid);
+    return {
+      ...chat,
+      clid: extractedNumber ? extractedNumber : chat.clid,
+    };
+  });
+
+  useEffect(() => {
     setChatWithPhone(updatedChats);
-  },[chats]);
+  }, [chats]);
 
   const handleCalling = () => {
     let phoneNumbers = [];
     console.log(allGroups)
     allGroups.forEach((group, index) => {
       group.phoneNumbers?.forEach((item, subIndex) => {
-        phoneNumbers.push(item.number)
+        phoneNumbers.push('96' + item.number)
       });
     });
 
-let tempPhone  = [
-  {
-    "calls": "2",
-    "trunk": "1001",
-    "foward": '+923045584807'
-  },
-  phoneNumbers
-]
+    let tempPhone = [
+      {
+        "calls": "2",
+        "trunk": "1001",
+        "forward": '+923045584807'
+      },
+      phoneNumbers
+    ]
 
     axios
       .post("https://www.aivoip.org/aivoip/autodial/dial_numbers.php", tempPhone)
@@ -82,7 +78,7 @@ let tempPhone  = [
     }
 
     axios
-      .post("http://16.163.178.109:9000/api/add-phone-number", {
+      .post("https://16.163.178.109:9000/api/add-phone-number", {
         groupId: selectedGroupId,
         phoneNumber: phoneNumber,
       })
@@ -98,6 +94,13 @@ let tempPhone  = [
     // Clear the input fields after adding the phone number
     setSelectedGroupId("");
     setPhoneNumber("");
+  };
+
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleToggle = () => {
+    setIsChecked(!isChecked);
+    console.log('Toggle state:', !isChecked);
   };
 
 
@@ -194,6 +197,25 @@ let tempPhone  = [
           <Button text="Filter" active />
         </div>
       </div>
+
+
+      <div className="flex items-center space-x-4">
+      <label className="flex items-center cursor-pointer">
+        <div className="relative">
+          <input
+            type="checkbox"
+            className="sr-only"
+            checked={isChecked}
+            onChange={handleToggle}
+          />
+          <div className={`block bg-gray-600 w-10 h-6 rounded-full transition ${isChecked ? 'bg-green-500' : 'bg-gray-600'}`}></div>
+          <div className={`dot absolute  top-1 w-4 h-4 rounded-full transition ${isChecked ? 'bg-white left-5' : 'bg-gray-400 left-1'}`}></div>
+        </div>
+        <div className="ml-3 text-gray-700 font-medium">Filter Answered</div>
+      </label>
+    </div>
+
+
     </div>
   );
 };

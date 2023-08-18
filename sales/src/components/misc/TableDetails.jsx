@@ -12,7 +12,7 @@ const TableDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`http://16.163.178.109:9000/api/group/${id}`)
+      .get(`https://16.163.178.109:9000/api/group/${id}`)
       .then((response) => {
         setGroup(response.data.group);
 
@@ -57,16 +57,7 @@ const TableDetail = () => {
   
         });
 
-
-
-
-
-
-
-
       });
-
-   
 
   }, []);
   return (
@@ -93,6 +84,9 @@ const TableDetail = () => {
               </th>
               <th scope="col" class="px-6 py-3 cursor-pointer">
                 Detail
+              </th>
+              <th scope="col" class="px-6 py-3 cursor-pointer">
+                Answered
               </th>
             </tr>
           </thead>
@@ -134,6 +128,7 @@ const TableDetail = () => {
                       }}
                     />
                   </td>
+                  <td class="px-6 py-4 text-center">yes</td>
                 </tr>
               );
             })}
@@ -141,6 +136,7 @@ const TableDetail = () => {
             {group?.phoneNumbers.map((item, index) => {
               return (
                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                
                   <th
                     scope="row"
                     class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
@@ -173,6 +169,7 @@ const TableDetail = () => {
                       }}
                     />
                   </td>
+                  <td class="px-6 py-4 text-center">yes</td>
                 </tr>
               );
             })}
