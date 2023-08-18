@@ -12,7 +12,7 @@ const TableDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`https://16.163.178.109:9000/api/group/${id}`)
+      .get(`http://16.163.178.109:9000/api/group/${id}`)
       .then((response) => {
         setGroup(response.data.group);
 
