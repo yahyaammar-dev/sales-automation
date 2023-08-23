@@ -13,7 +13,7 @@ const fs = require("fs");
 
 
 const certificatePath = '/etc/ssl/certs/ca-certificates.crt';
-const privateKeyPath = '/etc/ssl/certs/ca-certificates.key';
+const privateKeyPath = '/var/www/html/admin/modules/pm2/node/node_modules/@pm2/agent-node/node_modules/get-uri/test/server.key';
 
 const options = {
   key: fs.readFileSync(path.resolve(privateKeyPath)),
