@@ -1,6 +1,6 @@
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
-const cors = require("cors"); 
+const cors = require("cors");
 const app = express();
 const port = 9000;
 const axios = require("axios");
@@ -10,13 +10,13 @@ const path = require("path");
 const https = require("https");
 const fs = require("fs");
 
-const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
-const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
+// const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
+// const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
 
-const options = {
-  key: fs.readFileSync(privateKeyPath),
-  cert: fs.readFileSync(certificatePath)
-};
+// const options = {
+//   key: fs.readFileSync(privateKeyPath),
+//   cert: fs.readFileSync(certificatePath)
+// };
 
 const uploadsPath = path.join(__dirname, "uploads");
 
@@ -24,10 +24,9 @@ app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
 app.use(express.json());
 
+// const server = https.createServer(options, app);
 
-const server = https.createServer(options, app);
-
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`Server is running on https://localhost:${port}`);
 });
 
@@ -55,16 +54,12 @@ async function connectToDatabase() {
   }
 }
 
-
-
-
 app.post("/api/create-group", async (req, res) => {
   try {
     const db = await connectToDatabase();
     const collection = db.collection("group");
 
     const { name, phoneNumbers } = req.body;
-
 
     // Create a new group document
     const newGroup = {
@@ -303,8 +298,6 @@ app.put("/api/messages/:id", async (req, res) => {
   }
 });
 
-
-
 app.post("/api/add-phone-number", async (req, res) => {
   try {
     const db = await connectToDatabase();
@@ -321,7 +314,9 @@ app.post("/api/add-phone-number", async (req, res) => {
     }
 
     // Find the group by its ObjectId
-    const existingGroup = await collection.findOne({ _id: new ObjectId(groupId) });
+    const existingGroup = await collection.findOne({
+      _id: new ObjectId(groupId),
+    });
 
     if (!existingGroup) {
       return res.status(404).json({
@@ -362,7 +357,9 @@ app.put("/api/update-phone-number", async (req, res) => {
     const collection = db.collection("group");
 
     // Find the phone number in the database based on the provided phoneNumber
-    const group = await collection.findOne({ "phoneNumbers.number": phoneNumber });
+    const group = await collection.findOne({
+      "phoneNumbers.number": phoneNumber,
+    });
 
     if (!group) {
       return res.status(404).json({
@@ -404,58 +401,69 @@ app.put("/api/update-phone-number", async (req, res) => {
   }
 });
 
-app.post("/api/upload-audio", upload.single("sales_automation_messages"), async (req, res) => {
-  try {
-    const uploadedFile = req.file;
+app.post(
+  "/api/upload-audio",
+  upload.single("sales_automation_messages"),
+  async (req, res) => {
+    try {
+      const uploadedFile = req.file;
 
-    console.log('hello world')
+      console.log("hello world");
 
-    if (!uploadedFile) {
-      return res.status(400).json({
+      if (!uploadedFile) {
+        return res.status(400).json({
+          success: false,
+          message: "No audio file uploaded.",
+        });
+      }
+
+      const db = await connectToDatabase();
+      const collection = db.collection("sales_automation_messages");
+
+      // Save the uploaded file to the collection (you can adjust the storage mechanism as needed)
+      // For example, you can use GridFS to store large audio files in Mon````goDB
+      const result = await collection.insertOne({ audio: uploadedFile });
+
+      console.log("Audio file uploaded successfully!");
+
+      // Create the link for the uploaded audio file
+      const audioLink = `http://localhost:9000/uploads/${uploadedFile.filename}`;
+
+      // Make a POST request to the specified URL with the audio link as a query parameter
+      const postUrl = `http://103.18.20.195:8080/speech/save-audio-file.php?url=${encodeURIComponent(
+        audioLink
+      )}`;
+      const response = await axios.get(postUrl);
+
+      console.log("POST request success:", response.data);
+
+      return res.status(200).json({
+        success: true,
+        message: "Audio file uploaded and posted successfully!",
+      });
+    } catch (error) {
+      console.error("Error uploading audio file:", error);
+      return res.status(500).json({
         success: false,
-        message: "No audio file uploaded.",
+        message: "Failed to upload audio file.",
       });
     }
-
-    const db = await connectToDatabase();
-    const collection = db.collection("sales_automation_messages");
-
-    // Save the uploaded file to the collection (you can adjust the storage mechanism as needed)
-    // For example, you can use GridFS to store large audio files in Mon````goDB
-    const result = await collection.insertOne({ audio: uploadedFile });
-
-    console.log("Audio file uploaded successfully!");
-
-    // Create the link for the uploaded audio file
-    const audioLink = `http://localhost:9000/uploads/${uploadedFile.filename}`;
-
-    // Make a POST request to the specified URL with the audio link as a query parameter
-    const postUrl = `http://103.18.20.195:8080/speech/save-audio-file.php?url=${encodeURIComponent(audioLink)}`;
-    const response = await axios.get(postUrl);
-
-    console.log("POST request success:", response.data);
-
-    return res.status(200).json({
-      success: true,
-      message: "Audio file uploaded and posted successfully!",
-    });
-  } catch (error) {
-    console.error("Error uploading audio file:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to upload audio file.",
-    });
   }
-});
+);
 
-app.post('/api/edit-text-message', async (req, res) => {
+app.post("/api/edit-text-message", async (req, res) => {
   try {
     const { currentMessage, currentPara, index } = req.body;
     const db = await connectToDatabase();
     const collection = db.collection("sales_automation_messages");
     const result = await collection.updateOne(
-      { _id: new ObjectId('64d204eadd432e73511b0f65') },
-      { $set: { [`messages.${index}.primary`]: currentMessage, [`messages.${index}.seconday`]: currentPara } }
+      { _id: new ObjectId("64d204eadd432e73511b0f65") },
+      {
+        $set: {
+          [`messages.${index}.primary`]: currentMessage,
+          [`messages.${index}.seconday`]: currentPara,
+        },
+      }
     );
     if (result.modifiedCount === 1) {
       return res.status(200).json({
@@ -475,4 +483,4 @@ app.post('/api/edit-text-message', async (req, res) => {
       message: "Failed to update phone number.",
     });
   }
-})
+});

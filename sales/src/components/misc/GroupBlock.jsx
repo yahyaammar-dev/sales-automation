@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import axios from "axios";
 
-const Block = () => {
+const Block = ({ setToggler }) => {
   const [groupName, setGroupName] = useState();
   const [allGroups, setAllGroups] = useState();
   const [chats, setAllChats] = useState(null);
   const [chatWithPhone, setChatWithPhone] = useState(null);
-  const [transformedData, setTransfromedData] = useState()
+  const [transformedData, setTransfromedData] = useState();
 
   const handleGroup = () => {
     axios
@@ -23,7 +23,6 @@ const Block = () => {
     axios.get("http://16.163.178.109:9000/api/groups").then((response) => {
       setAllGroups(response.data.groups);
     });
-
   }, []);
 
   // Function to extract the number inside the angle brackets from the clid property
@@ -48,24 +47,27 @@ const Block = () => {
 
   const handleCalling = () => {
     let phoneNumbers = [];
-    console.log(allGroups)
+    console.log(allGroups);
     allGroups.forEach((group, index) => {
       group.phoneNumbers?.forEach((item, subIndex) => {
-        phoneNumbers.push('96' + item.number)
+        phoneNumbers.push("96" + item.number);
       });
     });
 
     let tempPhone = [
       {
-        "calls": "2",
-        "trunk": "1001",
-        "forward": '+923045584807'
+        calls: "2",
+        trunk: "1001",
+        forward: "+923045584807",
       },
-      phoneNumbers
-    ]
+      phoneNumbers,
+    ];
 
     axios
-      .post("https://www.aivoip.org/aivoip/autodial/dial_numbers.php", tempPhone)
+      .post(
+        "https://www.aivoip.org/aivoip/autodial/dial_numbers.php",
+        tempPhone
+      )
       .then((response) => console.log(response));
 
     alert("Calling Phone Numbers, Status will be updated soon");
@@ -99,10 +101,10 @@ const Block = () => {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleToggle = () => {
+    localStorage.setItem("toggle", !isChecked);
     setIsChecked(!isChecked);
-    console.log('Toggle state:', !isChecked);
+    setToggler(!isChecked);
   };
-
 
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -198,24 +200,29 @@ const Block = () => {
         </div>
       </div>
 
-
       <div className="flex items-center space-x-4">
-      <label className="flex items-center cursor-pointer">
-        <div className="relative">
-          <input
-            type="checkbox"
-            className="sr-only"
-            checked={isChecked}
-            onChange={handleToggle}
-          />
-          <div className={`block bg-gray-600 w-10 h-6 rounded-full transition ${isChecked ? 'bg-green-500' : 'bg-gray-600'}`}></div>
-          <div className={`dot absolute  top-1 w-4 h-4 rounded-full transition ${isChecked ? 'bg-white left-5' : 'bg-gray-400 left-1'}`}></div>
-        </div>
-        <div className="ml-3 text-gray-700 font-medium">Filter Answered</div>
-      </label>
-    </div>
-
-
+        <label className="flex items-center cursor-pointer">
+          <div className="relative">
+            <input
+              type="checkbox"
+              className="sr-only"
+              checked={isChecked}
+              onChange={handleToggle}
+            />
+            <div
+              className={`block bg-gray-600 w-10 h-6 rounded-full transition ${
+                isChecked ? "bg-green-500" : "bg-gray-600"
+              }`}
+            ></div>
+            <div
+              className={`dot absolute  top-1 w-4 h-4 rounded-full transition ${
+                isChecked ? "bg-white left-5" : "bg-gray-400 left-1"
+              }`}
+            ></div>
+          </div>
+          <div className="ml-3 text-gray-700 font-medium">Filter Answered</div>
+        </label>
+      </div>
     </div>
   );
 };

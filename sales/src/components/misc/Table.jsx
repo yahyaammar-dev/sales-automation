@@ -14,6 +14,7 @@ const Table = () => {
     });
   }, []);
 
+  console.log("tkfjlskdjflkds :::", localStorage.getItem("toggle"));
   return (
     <div>
       <Modal open={open} setOpen={setOpen} />

@@ -3,63 +3,70 @@ import Modal from "./Modal";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-const TableDetail = () => {
+const TableDetail = ({ toggler }) => {
   const [open, setOpen] = useState(false);
   const { id } = useParams();
   const [group, setGroup] = useState();
-  const [transformedData, setTransfromedData] = useState()
-  const [currentChat, setCurrentChat] = useState()
+  const [transformedData, setTransfromedData] = useState();
+  const [currentChat, setCurrentChat] = useState();
+  const [filterData, setFilterData] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`http://16.163.178.109:9000/api/group/${id}`)
-      .then((response) => {
-        setGroup(response.data.group);
+    axios.get(`http://16.163.178.109:9000/api/group/${id}`).then((response) => {
+      setGroup(response.data.group);
 
-        let groups = response.data.group
+      let groups = response.data.group;
 
-        let groupPhones = groups?.phoneNumbers
-        
-        let arr = groupPhones?.map((item)=>{
-          return item?.number
-        })
-        axios
+      let groupPhones = groups?.phoneNumbers;
+
+      let arr = groupPhones?.map((item) => {
+        return item?.number;
+      });
+      axios
         .get("https://www.aivoip.org/aivoip/speech/fetch-chat.php")
         .then((response) => {
-          let data = response?.data
-  
-          let filtered = data?.map((item)=>{
-            if(item?.clid){
-              if(arr.includes(item?.clid)){
-                return item
+          let data = response?.data;
+
+          let filtered = data?.map((item) => {
+            if (item?.clid) {
+              if (arr.includes(item?.clid)) {
+                return item;
               }
             }
-          })
+          });
 
-          filtered = filtered.filter(item => item !== undefined);
+          filtered = filtered.filter((item) => item !== undefined);
 
-  
           const transformedData = filtered?.reduce((result, item) => {
             const { clid, duration, chat, filename } = item;
             if (!result[clid]) {
               result[clid] = {
                 duration,
                 clid,
-                chat: []
+                chat: [],
               };
             }
             result[clid].chat.push({ chat, filename });
             return result;
           }, {});
-          
+
           const transformedArray = Object.values(transformedData);
           setTransfromedData(transformedArray);
-  
         });
-
-      });
-
+    });
   }, []);
+
+  useEffect(() => {
+    let result;
+    if (toggler) {
+      result = group?.phoneNumbers.filter((dt) => dt?.chat?.length > 0);
+    } else {
+      result = group?.phoneNumbers.filter((dt) => !dt?.chat?.length);
+    }
+    setFilterData(result);
+    console.log("result ::", result);
+  }, [toggler, group]);
+
   return (
     <div>
       <Modal open={open} setOpen={setOpen} currentChat={currentChat} />
@@ -91,8 +98,7 @@ const TableDetail = () => {
             </tr>
           </thead>
           <tbody>
-
-            {transformedData?.map((item) => {
+            {/* {transformedData?.map((item) => {
               return (
                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                   <th
@@ -115,7 +121,7 @@ const TableDetail = () => {
                   <td
                     class="px-6 py-4 text-center cursor-pointer"
                     onClick={() => {
-                      setCurrentChat(item?.chat)
+                      setCurrentChat(item?.chat);
                       setOpen(true);
                     }}
                   >
@@ -131,12 +137,11 @@ const TableDetail = () => {
                   <td class="px-6 py-4 text-center">yes</td>
                 </tr>
               );
-            })}
+            })} */}
 
-            {group?.phoneNumbers.map((item, index) => {
+            {filterData?.map((item, index) => {
               return (
                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                
                   <th
                     scope="row"
                     class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
@@ -170,7 +175,7 @@ const TableDetail = () => {
                     />
                   </td>
                   <td class="px-6 py-4 text-center">
-                    {item?.chat?.length > 0  ? 'Yes':'No'}
+                    {item?.chat?.length > 0 ? "Yes" : "No"}
                   </td>
                 </tr>
               );
