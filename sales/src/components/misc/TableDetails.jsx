@@ -169,7 +169,9 @@ const TableDetail = () => {
                       }}
                     />
                   </td>
-                  <td class="px-6 py-4 text-center">yes</td>
+                  <td class="px-6 py-4 text-center">
+                    {item?.chat?.length > 0  ? 'Yes':'No'}
+                  </td>
                 </tr>
               );
             })}
