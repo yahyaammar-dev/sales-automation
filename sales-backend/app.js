@@ -1,6 +1,6 @@
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
-const cors = require("cors"); // Add the cors package
+const cors = require("cors"); 
 const app = express();
 const port = 9000;
 const axios = require("axios");
@@ -10,20 +10,15 @@ const path = require("path");
 const https = require("https");
 const fs = require("fs");
 
-
-
-const certificatePath = '/var/www/html/admin/modules/pm2/node/node_modules/@pm2/agent-node/node_modules/get-uri/test/server.crt';
-const privateKeyPath = '/var/www/html/admin/modules/pm2/node/node_modules/@pm2/agent-node/node_modules/get-uri/test/server.key';
+const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
+const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
 
 const options = {
-  key: fs.readFileSync(path.resolve(privateKeyPath)),
-  cert: fs.readFileSync(path.resolve(certificatePath))
+  key: fs.readFileSync(privateKeyPath),
+  cert: fs.readFileSync(certificatePath)
 };
 
-
-
 const uploadsPath = path.join(__dirname, "uploads");
-
 
 app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
@@ -36,14 +31,9 @@ server.listen(port, () => {
   console.log(`Server is running on https://localhost:${port}`);
 });
 
-
-
-
-
 app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
 app.use(express.json());
-
 
 const uri =
   "mongodb+srv://fypmanager:salesautomation123A@salesautomatoindb.jii8qx3.mongodb.net/?retryWrites=true&w=majority";
