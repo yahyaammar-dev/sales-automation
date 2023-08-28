@@ -5,12 +5,12 @@ const Navbar = () => {
         <div class="flex justify-between">
             <div class="w-6/12">
                 <h1 className='dashboard--heading'>Dashboard</h1>
-                <p className='dashboard--subheading'>Welcome Back Thomas!</p>
+                <p className='dashboard--subheading'>Welcome Back CY!</p>
             </div>
             <div class="w-6/12 flex items-end justify-end">
                 <div>
-                    <h3 className='dashboard--sidehead'>Thomas Edinson</h3>
-                    <p className='dashboard--sidepara'>thomasedison@gmail.com</p>
+                    <h3 className='dashboard--sidehead'>CY</h3>
+                    <p className='dashboard--sidepara'>superman</p>
                 </div>
                 <img 
                 class="inline-block h-12 w-12 rounded-full ring-2 ring-white object-cover" 

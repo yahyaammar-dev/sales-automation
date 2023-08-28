@@ -430,10 +430,10 @@ app.post("/api/upload-audio", upload.single("sales_automation_messages"), async 
     const audioLink = `http://localhost:9000/uploads/${uploadedFile.filename}`;
 
     // Make a POST request to the specified URL with the audio link as a query parameter
-    const postUrl = `http://103.18.20.195:8080/speech/save-audio-file.php?url=${encodeURIComponent(audioLink)}`;
-    const response = await axios.get(postUrl);
+    // const postUrl = `http://103.18.20.195:8080/speech/save-audio-file.php?url=${encodeURIComponent(audioLink)}`;
+    // const response = await axios.get(postUrl);
 
-    console.log("POST request success:", response.data);
+    console.log("POST request success:", 'response.data');
 
     return res.status(200).json({
       success: true,

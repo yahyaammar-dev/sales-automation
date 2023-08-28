@@ -6,7 +6,7 @@ import axios from "axios";
 const Chart = () => {
   const [messgaes, setMessages] = useState()
   useEffect(() => {
-    axios.get('http://16.163.178.109:9000/api/messages')
+    axios.get('http://localhost:9000/api/messages')
       .then((res) => {
         setMessages(res.data.messages[0].messages)
       })
@@ -40,6 +40,18 @@ const Chart = () => {
           </div>
           <div className='flex'>
             <Card index='10' message={messgaes[9]['primary']} para={messgaes[9]['seconday']} marginLeft='205px' background='#649F91' color='white' />
+          </div>
+          <div className='flex'>
+            <Card index='10' background='rgb(88 154 176)' message='Cannot hear you' para='Cannot Hear you' marginLeft='205px' background='#649F91' color='white' />
+          </div>
+          <div className='flex'>
+            <p className='ml-56'>Wait three seconds</p>
+          </div>
+          <div className='flex'>
+            <Card index='10' message='Yes' para='Move back to Sales Pitch' marginLeft='205px' background='#0F2C35' color='white' />
+          </div>
+          <div className='flex'>
+            <Card index='10' message='No' para='Call Ends' marginLeft='205px' background='#A8C5CE' color='white' />
           </div>
         </>
       }
