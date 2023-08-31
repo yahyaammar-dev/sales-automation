@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react";
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import 'react-datepicker/dist/react-datepicker.css';
+
 import Button from "./Button";
 import axios from "axios";
 
@@ -9,6 +13,8 @@ const Block = ({ setToggler }) => {
   const [chatWithPhone, setChatWithPhone] = useState(null);
   const [transformedData, setTransfromedData] = useState();
 
+    const [fromDate, setFromDate] = useState();
+    const [toDate, setToDate] = useState();
   const handleGroup = () => {
     axios
       .post("http://16.163.178.109:9000/api/create-group", {
@@ -178,22 +184,38 @@ const Block = ({ setToggler }) => {
         <div className="w-2/12">
           <input
             type="text"
+            name="fromDate"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
             className="group--block--input rounded"
-            placeholder=" /  / "
+            placeholder="  /  / "
           />
         </div>
         <div className="w-2/12">
-          <img src="/imgs/calendar.svg" />
+          <DatePicker
+            customInput={<img src="/imgs/calendar.svg" style={{ width: "2rem", height: "2rem" }} />}
+            maxDate={new Date()}
+            onChange={(date) => setFromDate(moment(date).format('YYYY/MM/DD'))}
+          />
         </div>
         <div className="w-2/12">
           <input
             type="text"
+            name="toDate"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
             className="group--block--input rounded"
-            placeholder=" /  / "
+            placeholder="  /  /  "
           />
         </div>
-        <div className="w-2/12">
-          <img src="/imgs/calendar.svg" />
+        <div className="w-2/12" >
+          <DatePicker
+            customInput={<img src="/imgs/calendar.svg" style={{ width: "2rem", height: "2rem" }} />}
+            maxDate={new Date()}
+            onChange={(date) => {
+              setToDate(moment(date).format('YYYY/MM/DD'))
+            }}
+          />
         </div>
         <div className="w-2/12">
           <Button text="Filter" active />
