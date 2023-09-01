@@ -34,8 +34,7 @@ app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
 app.use(express.json());
 
-const uri =
-  "mongodb+srv://fypmanager:salesautomation123A@salesautomatoindb.jii8qx3.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://sales-automation:sales-automation@cluster0.knl0a2f.mongodb.net/?retryWrites=true&w=majority"
 async function connectToDatabase() {
   const client = new MongoClient(uri, {
     serverApi: {
