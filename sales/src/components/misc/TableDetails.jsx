@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import moment from "moment";
 import Modal from "./Modal";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-const TableDetail = ({ toggler }) => {
+const TableDetail = ({ toggler, fromDate, toDate }) => {
   const [open, setOpen] = useState(false);
   const { id } = useParams();
   const [group, setGroup] = useState();
@@ -16,7 +17,7 @@ const TableDetail = ({ toggler }) => {
       setGroup(response.data.group);
 
       let groups = response.data.group;
-
+      // console.log("response  ::", response.data)
       let groupPhones = groups?.phoneNumbers;
 
       let arr = groupPhones?.map((item) => {
@@ -26,7 +27,7 @@ const TableDetail = ({ toggler }) => {
         .get("https://www.aivoip.org/aivoip/speech/fetch-chat.php")
         .then((response) => {
           let data = response?.data;
-
+          // console.log("data ::", data)
           let filtered = data?.map((item) => {
             if (item?.clid) {
               if (arr.includes(item?.clid)) {
@@ -56,6 +57,17 @@ const TableDetail = ({ toggler }) => {
     });
   }, []);
 
+
+  //dome data for testing purpose
+  // const testData = [
+  //   { "number": "0060126483638", "createdAt": "2023-08-24T07:46:52.761Z", "chat": ["1", "2"] },
+  //   { "number": "0060126483638", "createdAt": "2023-08-25T07:46:52.761Z" },
+  //   { "number": "0060126483638", "createdAt": "2023-08-26T07:46:52.761Z", "chat": ["1", "2"] },
+  //   { "number": "0060126483638", "createdAt": "2023-08-27T07:46:52.761Z" },
+  //   { "number": "0060126483638", "createdAt": "2023-08-28T07:46:52.761Z" },
+  //   { "number": "0060126483638", "createdAt": "2023-08-29T07:46:52.761Z", "chat": ["1", "2"] },
+  // ];
+
   useEffect(() => {
     let result;
     if (toggler) {
@@ -64,8 +76,31 @@ const TableDetail = ({ toggler }) => {
       result = group?.phoneNumbers.filter((dt) => !dt?.chat?.length);
     }
     setFilterData(result);
-    console.log("result ::", result);
+
   }, [toggler, group]);
+
+
+  //from and to date filtering handle here 
+  useEffect(() => {
+    if (fromDate && toDate) {
+      //real scenario here
+      // const filterResult = filterData.filter(item => {
+      //   const itemDate = moment(item?.createdAt).format('YYYY/MM/DD')
+      //   return itemDate >= fromDate && itemDate <= toDate;
+      // });
+
+
+      // for demo purpose 
+
+      // const filterResult = testData.filter(item => {
+      //   const itemDate = moment(item?.createdAt).format('YYYY/MM/DD')
+      //   return itemDate >= fromDate && itemDate <= toDate;
+      // });
+      // console.log("filterResult ::", filterResult)
+      // setFilterData(filterResult);
+    }
+  }, [fromDate, toDate, toggler])
+
 
   return (
     <div>

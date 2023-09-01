@@ -6,15 +6,15 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Button from "./Button";
 import axios from "axios";
 
-const Block = ({ setToggler }) => {
+const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
   const [groupName, setGroupName] = useState();
   const [allGroups, setAllGroups] = useState();
   const [chats, setAllChats] = useState(null);
   const [chatWithPhone, setChatWithPhone] = useState(null);
   const [transformedData, setTransfromedData] = useState();
 
-    const [fromDate, setFromDate] = useState();
-    const [toDate, setToDate] = useState();
+
+  
   const handleGroup = () => {
     axios
       .post("http://16.163.178.109:9000/api/create-group", {
@@ -188,7 +188,7 @@ const Block = ({ setToggler }) => {
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
             className="group--block--input rounded"
-            placeholder="  /  / "
+            placeholder="YYYY/MM/DD"
           />
         </div>
         <div className="w-2/12">
@@ -205,7 +205,7 @@ const Block = ({ setToggler }) => {
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
             className="group--block--input rounded"
-            placeholder="  /  /  "
+            placeholder="YYYY/MM/DD"
           />
         </div>
         <div className="w-2/12" >
@@ -232,14 +232,12 @@ const Block = ({ setToggler }) => {
               onChange={handleToggle}
             />
             <div
-              className={`block bg-gray-600 w-10 h-6 rounded-full transition ${
-                isChecked ? "bg-green-500" : "bg-gray-600"
-              }`}
+              className={`block bg-gray-600 w-10 h-6 rounded-full transition ${isChecked ? "bg-green-500" : "bg-gray-600"
+                }`}
             ></div>
             <div
-              className={`dot absolute  top-1 w-4 h-4 rounded-full transition ${
-                isChecked ? "bg-white left-5" : "bg-gray-400 left-1"
-              }`}
+              className={`dot absolute  top-1 w-4 h-4 rounded-full transition ${isChecked ? "bg-white left-5" : "bg-gray-400 left-1"
+                }`}
             ></div>
           </div>
           <div className="ml-3 text-gray-700 font-medium">Filter Answered</div>
