@@ -4,7 +4,7 @@ import Modal from "./Modal";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const Table = () => {
+const Table = ({ isGroupAdded }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [groups, setGroups] = useState([]);
@@ -12,7 +12,7 @@ const Table = () => {
     axios.get("http://16.163.178.109:9000/api/groups").then((res) => {
       setGroups(res.data.groups);
     });
-  }, []);
+  }, [isGroupAdded]);
 
   console.log("tkfjlskdjflkds :::", localStorage.getItem("toggle"));
   return (

@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Button from "./Button";
 import axios from "axios";
 
-const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
+const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, toDate, setToDate, filterData, setFilterData }) => {
   const [groupName, setGroupName] = useState();
   const [allGroups, setAllGroups] = useState();
   const [chats, setAllChats] = useState(null);
@@ -14,7 +14,7 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
   const [transformedData, setTransfromedData] = useState();
 
 
-  
+
   const handleGroup = () => {
     axios
       .post("http://16.163.178.109:9000/api/create-group", {
@@ -25,6 +25,7 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
         alert("Success: Group Created Successfully");
       });
   };
+
   useEffect(() => {
     axios.get("http://16.163.178.109:9000/api/groups").then((response) => {
       setAllGroups(response.data.groups);
@@ -101,10 +102,6 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
         alert("Successfully added a new phone number");
       });
 
-    // Log the group ID and phone number to the console
-    console.log("Group ID:", selectedGroupId);
-    console.log("Phone Number:", phoneNumber);
-
     // Clear the input fields after adding the phone number
     setSelectedGroupId("");
     setPhoneNumber("");
@@ -120,6 +117,20 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
 
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+
+  //from and to date filter handling here
+  const filterHandler = () => {
+    if (fromDate && toDate) {
+      const filterResult = group?.phoneNumbers.filter(item => {
+        const itemDate = moment(item?.createdAt).format('YYYY/MM/DD');
+        return itemDate >= fromDate && itemDate <= toDate;
+      });
+
+      setFilterData(filterResult);
+    }
+  }
+
+
   return (
     <div className="bg-white shadow-md sm:rounded-lg flex justify-end p-8 flex-wrap gap-3">
       <div className="w-full flex gap-2 items-center">
@@ -224,7 +235,7 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
           />
         </div>
         <div className="w-2/12">
-          <Button text="Filter" active />
+          <Button text="Filter" onClick={filterHandler} active />
         </div>
       </div>
 
