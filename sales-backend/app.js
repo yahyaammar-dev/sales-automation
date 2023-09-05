@@ -7,6 +7,10 @@ const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
+//Local Host Environment
+// const http = require("http");
+
+// Server Environment START
 const https = require("https");
 const fs = require("fs");
 
@@ -17,6 +21,7 @@ const options = {
   key: fs.readFileSync(privateKeyPath),
   cert: fs.readFileSync(certificatePath)
 };
+// Server Environment END
 
 const uploadsPath = path.join(__dirname, "uploads");
 
@@ -24,7 +29,12 @@ app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
 app.use(express.json());
 
+// Server Environment
 const server = https.createServer(options, app);
+
+//Local Host Environment
+// const server = http.createServer(app); // Use 'http' to create an HTTP server
+
 
 server.listen(port, () => {
   console.log(`Server is running on https://localhost:${port}`);
@@ -53,6 +63,8 @@ async function connectToDatabase() {
   }
 }
 
+
+
 app.post("/api/create-group", async (req, res) => {
   try {
     const db = await connectToDatabase();
@@ -60,10 +72,14 @@ app.post("/api/create-group", async (req, res) => {
 
     const { name, phoneNumbers } = req.body;
 
+    const currentTimestamp = new Date().toISOString();
+      
+
     // Create a new group document
     const newGroup = {
       name: name,
       phoneNumbers: phoneNumbers,
+      createdAt: currentTimestamp,
     };
 
     // Insert the new group document into the "group" collection
@@ -167,6 +183,7 @@ app.put("/api/groups/:id", async (req, res) => {
   }
 });
 
+
 app.get("/api/groups", async (req, res) => {
   try {
     const db = await connectToDatabase();
@@ -177,9 +194,34 @@ app.get("/api/groups", async (req, res) => {
 
     console.log("Fetched all groups:", groups);
 
+      // Calculate total phone numbers, total answered, and total duration for each group
+    const groupsWithTotals = groups.map((group) => {
+      let totalPhoneNumbers = 0;
+      let totalAnswered = 0;
+      let totalDuration = 0;
+
+      group.phoneNumbers.forEach((phoneNumber) => {
+        totalPhoneNumbers++;
+        if (phoneNumber.answered === "yes") {
+          totalAnswered++;
+          if (phoneNumber.duration) {
+            // Assuming duration is in seconds, you can convert it to minutes or hours if needed
+            totalDuration += parseInt(phoneNumber.duration);
+          }
+        }
+      });
+
+      return {
+        ...group,
+        totalPhoneNumbers: totalPhoneNumbers,
+        totalAnswered: totalAnswered,
+        totalDuration: totalDuration,
+      };
+    });
+
     return res.status(200).json({
       success: true,
-      groups: groups,
+      groups: groupsWithTotals,
     });
   } catch (error) {
     console.error("Error fetching groups:", error);
@@ -302,7 +344,8 @@ app.post("/api/add-phone-number", async (req, res) => {
     const db = await connectToDatabase();
     const collection = db.collection("group");
 
-    const { groupId, phoneNumber } = req.body;
+    // const { groupId, phoneNumber } = req.body;
+    const { groupId, phoneNumber, status, duration, keyword, answered } = req.body;
 
     // Check if groupId is a valid ObjectId
     if (!ObjectId.isValid(groupId)) {
@@ -324,8 +367,22 @@ app.post("/api/add-phone-number", async (req, res) => {
       });
     }
 
+    // Set the current timestamp as the createdAt value
+    const currentTimestamp = new Date().toISOString();
+
+    // Append the new phone number object to the group with additional fields
+    const newPhoneNumber = {
+      number: phoneNumber,
+      status: status,
+      createdAt: currentTimestamp, // Set the createdAt value here
+      duration: duration,
+      keyword: keyword,
+      answered: answered,
+    };
+
     // Append the new phone number to the group
-    existingGroup.phoneNumbers.push({ number: phoneNumber });
+    // existingGroup.phoneNumbers.push({ number: phoneNumber });
+    existingGroup.phoneNumbers.push(newPhoneNumber);
 
     // Update the group document in the "group" collection
     const result = await collection.updateOne(
@@ -426,7 +483,7 @@ app.post(
       console.log("Audio file uploaded successfully!");
 
       // Create the link for the uploaded audio file
-      const audioLink = `http://16.163.178.109:9000/uploads/${uploadedFile.filename}`;
+      const audioLink = `http://localhost:9000/uploads/${uploadedFile.filename}`;
 
       // Make a POST request to the specified URL with the audio link as a query parameter
       // const postUrl = `http://103.18.20.195:8080/speech/save-audio-file.php?url=${encodeURIComponent(

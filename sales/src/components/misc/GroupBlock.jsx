@@ -85,11 +85,17 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
       return;
     }
 
+    const newPhoneNumberData = {
+      groupId: selectedGroupId,
+      phoneNumber: phoneNumber,
+      status: "calling", // Example status value
+      duration: "10s", // Example duration value
+      keyword: "yes", // Example keyword value
+      answered: "yes", // Example answered value
+    };
+
     axios
-      .post("http://16.163.178.109:9000/api/add-phone-number", {
-        groupId: selectedGroupId,
-        phoneNumber: phoneNumber,
-      })
+      .post("http://16.163.178.109:9000/api/add-phone-number", newPhoneNumberData)
       .then((response) => {
         console.log(response);
         alert("Successfully added a new phone number");
