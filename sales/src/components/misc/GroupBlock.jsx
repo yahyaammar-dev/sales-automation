@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
-
+import { useParams } from "react-router-dom";
 import Button from "./Button";
 import axios from "axios";
 
@@ -12,12 +12,42 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
   const [chats, setAllChats] = useState(null);
   const [chatWithPhone, setChatWithPhone] = useState(null);
   const [transformedData, setTransfromedData] = useState();
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [file, setFile] = useState(null)
+
+  let { id } = useParams();
+  // upload excel file
+
+  const handleUploadFile = () => {
+    if (!file) {
+      console.log('No file selected.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('excel_file', file);
+    formData.append('id', id);
+
+    fetch('http://localhost:9000/api/upload-excel', {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => console.log(response))
+      .then((data) => {
+        console.log('Upload response:', data);
+      })
+      .catch((error) => {
+        console.error('Error uploading audio:', error);
+      });
+
+      alert('Uploaded Successfully');
+  };
 
 
-  
+
   const handleGroup = () => {
     axios
-      .post("http://16.163.178.109:9000/api/create-group", {
+      .post("http://localhost:9000/api/create-group", {
         name: groupName,
         phoneNumbers: [],
       })
@@ -26,7 +56,7 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
       });
   };
   useEffect(() => {
-    axios.get("http://16.163.178.109:9000/api/groups").then((response) => {
+    axios.get("http://localhost:9000/api/groups").then((response) => {
       setAllGroups(response.data.groups);
     });
   }, []);
@@ -86,7 +116,7 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
     }
 
     axios
-      .post("http://16.163.178.109:9000/api/add-phone-number", {
+      .post("http://localhost:9000/api/add-phone-number", {
         groupId: selectedGroupId,
         phoneNumber: phoneNumber,
       })
@@ -115,7 +145,8 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   return (
-    <div className="bg-white shadow-md sm:rounded-lg flex justify-end p-8 flex-wrap gap-3">
+    <div className="bg-white shadow-md sm:rounded-lg flex justify-end p-8 flex-wrap gap-3" data-testid="groupBlockContainer">
+     
       <div className="w-full flex gap-2 items-center">
         <div className="w-2/12">
           <p className="font-medium">Group Name</p>
@@ -171,15 +202,18 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
       </div>
 
       <div className="w-full flex gap-2 items-center">
-        <div className="w-3/12 flex">
-          <p className="font-medium">Phone No.</p>
-          <input type="text" className="group--block--input rounded w-1/2" />
+        <div className="w-4/12 flex items-center">
+          <p className="font-medium w-40 mr-4" style={{ textWrap: 'nowrap' }}>Upload Excel</p>
+          <input 
+            type="file" 
+            className="group--block--input rounded w-1/2"
+            id="file_input"
+            onChange={(e)=>{setFile(e.target.files[0])}}
+            />
         </div>
+
         <div className="w-2/12">
-          <p className="font-medium">Display Status</p>
-        </div>
-        <div className="w-2/12">
-          <Button text="All" active />
+          <button onClick={()=>{handleUploadFile()}} className="btn btn-primary flex gap-1 p-2 rounded items-center bg--active white-color button--main--color">Upload</button>
         </div>
         <div className="w-2/12">
           <input
@@ -243,6 +277,15 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
           <div className="ml-3 text-gray-700 font-medium">Filter Answered</div>
         </label>
       </div>
+
+      {
+        errorMessage && <>
+          <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 absolute top-2 left-50"  role="alert">
+            <span class="font-medium">Danger alert!</span> {errorMessage}
+          </div>
+        </> 
+      }
+
     </div>
   );
 };
