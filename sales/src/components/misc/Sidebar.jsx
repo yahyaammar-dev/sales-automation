@@ -81,7 +81,8 @@ const Sidebar = () => {
           )}
         </div>
         <Heading text={"Account"} />
-        <Button text="Notification" icon={icons[4]} my />
+        <Button text="Notification" my />
+        {/* <Button text="Notification" icon={icons[4]} my /> */}
         <div
           onClick={() => {
             // navigate("/setting");
@@ -95,7 +96,8 @@ const Sidebar = () => {
           )}
         </div>
       </div>
-      <Button text="Logout" danger icon={icons[6]} my />
+      <Button text="Logout" danger my />
+      {/* <Button text="Logout" danger icon={icons[6]} my /> */}
     </div>
   );
 };
