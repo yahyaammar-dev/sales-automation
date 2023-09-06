@@ -84,6 +84,7 @@ const Sidebar = () => {
         <Button text="Notification" icon={icons[4]} my />
         <div
           onClick={() => {
+            // navigate("/setting");
             navigate("/concurrent-calls");
           }}
         >
