@@ -4,13 +4,10 @@ import Modal from "./Modal";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-const TableDetail = ({ toggler, fromDate, toDate }) => {
+const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, toggler, fromDate, toDate, filterData, setFilterData }) => {
   const [open, setOpen] = useState(false);
   const { id } = useParams();
-  const [group, setGroup] = useState();
-  const [transformedData, setTransfromedData] = useState();
   const [currentChat, setCurrentChat] = useState();
-  const [filterData, setFilterData] = useState([]);
 
   useEffect(() => {
     axios.get(`http://16.163.178.109:9000/api/group/${id}`).then((response) => {
@@ -58,16 +55,6 @@ const TableDetail = ({ toggler, fromDate, toDate }) => {
   }, []);
 
 
-  //dome data for testing purpose
-  // const testData = [
-  //   { "number": "0060126483638", "createdAt": "2023-08-24T07:46:52.761Z", "chat": ["1", "2"] },
-  //   { "number": "0060126483638", "createdAt": "2023-08-25T07:46:52.761Z" },
-  //   { "number": "0060126483638", "createdAt": "2023-08-26T07:46:52.761Z", "chat": ["1", "2"] },
-  //   { "number": "0060126483638", "createdAt": "2023-08-27T07:46:52.761Z" },
-  //   { "number": "0060126483638", "createdAt": "2023-08-28T07:46:52.761Z" },
-  //   { "number": "0060126483638", "createdAt": "2023-08-29T07:46:52.761Z", "chat": ["1", "2"] },
-  // ];
-
   useEffect(() => {
     let result;
     if (toggler) {
@@ -80,26 +67,6 @@ const TableDetail = ({ toggler, fromDate, toDate }) => {
   }, [toggler, group]);
 
 
-  //from and to date filtering handle here 
-  useEffect(() => {
-    if (fromDate && toDate) {
-      //real scenario here
-      // const filterResult = filterData.filter(item => {
-      //   const itemDate = moment(item?.createdAt).format('YYYY/MM/DD')
-      //   return itemDate >= fromDate && itemDate <= toDate;
-      // });
-
-
-      // for demo purpose 
-
-      // const filterResult = testData.filter(item => {
-      //   const itemDate = moment(item?.createdAt).format('YYYY/MM/DD')
-      //   return itemDate >= fromDate && itemDate <= toDate;
-      // });
-      // console.log("filterResult ::", filterResult)
-      // setFilterData(filterResult);
-    }
-  }, [fromDate, toDate, toggler])
 
 
   return (
@@ -190,10 +157,10 @@ const TableDetail = ({ toggler, fromDate, toDate }) => {
                       <div class="text-base font-semibold">{item?.number}</div>
                     </div>
                   </th>
-                  <td class="px-6 py-4 text-center">Calling</td>
-                  <td class="px-6 py-4 text-center">1/1/2023 11:00:00</td>
-                  <td class="px-6 py-4 text-center">6s</td>
-                  <td class="px-6 py-4 text-center">yes</td>
+                  <td class="px-6 py-4 text-center">{item?.status}</td>
+                  <td class="px-6 py-4 text-center">{moment(item?.createdAt).format('YYYY/MM/DD')}   {moment(item?.createdAt).format('HH:mm')}</td>
+                  <td class="px-6 py-4 text-center">{item?.duration}</td>
+                  <td class="px-6 py-4 text-center">{item?.keyword}</td>
                   <td
                     class="px-6 py-4 text-center cursor-pointer"
                     onClick={() => {
