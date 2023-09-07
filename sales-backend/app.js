@@ -191,44 +191,44 @@ app.get("/api/groups", async (req, res) => {
   }
 });
 
-app.post("/api/messages", async (req, res) => {
-  try {
-    const db = await connectToDatabase();
-    const collection = db.collection("sales_automation_messages");
+// app.post("/api/messages", async (req, res) => {
+//   try {
+//     const db = await connectToDatabase();
+//     const collection = db.collection("messages");
 
-    const messages = req.body; // The array of messages received in the request body
+//     const messages = req.body; // The array of messages received in the request body
 
-    // Validate the data to ensure it is an array
-    if (!Array.isArray(messages)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid data format. Expecting an array of messages.",
-      });
-    }
+//     // Validate the data to ensure it is an array
+//     if (!Array.isArray(messages)) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Invalid data format. Expecting an array of messages.",
+//       });
+//     }
 
-    // Insert the array of messages into the "sales_automation_messages" collection
-    const result = await collection.insertMany(messages);
+//     // Insert the array of messages into the "sales_automation_messages" collection
+//     const result = await collection.insertMany(messages);
 
-    console.log(`${result.insertedCount} messages inserted successfully!`);
+//     console.log(`${result.insertedCount} messages inserted successfully!`);
 
-    return res.status(201).json({
-      success: true,
-      message: "Messages inserted successfully!",
-      insertedCount: result.insertedCount,
-    });
-  } catch (error) {
-    console.error("Error inserting messages:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to insert messages.",
-    });
-  }
-});
+//     return res.status(201).json({
+//       success: true,
+//       message: "Messages inserted successfully!",
+//       insertedCount: result.insertedCount,
+//     });
+//   } catch (error) {
+//     console.error("Error inserting messages:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to insert messages.",
+//     });
+//   }
+// });
 
 app.get("/api/messages", async (req, res) => {
   try {
     const db = await connectToDatabase();
-    const collection = db.collection("sales_automation_messages");
+    const collection = db.collection("messages");
 
     // Find all documents in the "sales_automation_messages" collection
     const messages = await collection.find({}).toArray();
@@ -558,8 +558,37 @@ app.post(
           message: "Failed to upload audio file.",
         });
       }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to upload audio file.",
+      });
+    }
+  }
+);
 
-     
+app.post(
+  "/api/insert-message",
+  upload.single("audioFile"),
+  async (req, res) => {
+    try {
+      const uploadedFile = req.file;
+      const textMessage = req.body.textMessage; // Use req.body.textMessage to access the text message
+
+      const db = await connectToDatabase();
+      const collection = db.collection("messages");
+      const newMessage = {
+        textMessage: textMessage,
+        audioFile: uploadedFile.filename, // Assuming you store the filename of the uploaded audio file
+      };
+
+      const response = await collection.insertOne(newMessage);
+
+      return res.status(200).json({
+        success: true,
+        message: `Response is: ${response.insertedId}`, // Send a plain string message
+      });
     } catch (error) {
       console.error("Error uploading file:", error);
       return res.status(500).json({
@@ -581,6 +610,5 @@ function validateData(data) {
       return false; // Data format is not as expected
     }
   }
-
   return true; // Data format is as expected
 }

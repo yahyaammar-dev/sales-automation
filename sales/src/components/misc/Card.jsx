@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const Card = ({ message, para, lineBottom, marginLeft, background, color, index }) => {
+const Card = ({ message = 'No Response', para = 'No Response', lineBottom, marginLeft, background, color, index }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [file, setFile] = useState(null);
@@ -30,6 +30,9 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index 
       console.log(res.data)
       alert('Your data has been saved')
       window.location.reload();
+    })
+    .catch((err)=>{
+      console.log(err)
     })
   }
 

@@ -44,7 +44,6 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
   };
 
 
-
   const handleGroup = () => {
     axios
       .post("http://localhost:9000/api/create-group", {

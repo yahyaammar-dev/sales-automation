@@ -4,7 +4,6 @@ const Navbar = () => {
   return (
     <div class="flex justify-between">
       <div class="w-6/12">
-        <h1 className="dashboard--heading">Dashboard</h1>
         <p className="dashboard--subheading">Welcome Back CY!</p>
       </div>
       {/* <div class="w-6/12 flex items-end justify-end">
