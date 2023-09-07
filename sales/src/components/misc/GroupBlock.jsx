@@ -13,6 +13,8 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   const [chatWithPhone, setChatWithPhone] = useState(null);
   const [transformedData, setTransfromedData] = useState();
 
+  const [selectedGroupId, setSelectedGroupId] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
 
   const handleGroup = () => {
@@ -52,12 +54,24 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
     setChatWithPhone(updatedChats);
   }, [chats]);
 
+
   const handleCalling = () => {
+
     let phoneNumbers = [];
-    console.log(allGroups);
-    allGroups.forEach((group, index) => {
+    console.log("allGroups ::", allGroups);
+    allGroups?.filter((itm) => {
+      if (selectedGroupId) {
+        return itm?._id === selectedGroupId
+      } else {
+        return true;
+      }
+    }).forEach((group, index) => {
       group.phoneNumbers?.forEach((item, subIndex) => {
-        phoneNumbers.push("96" + item.number);
+        if (item?.number) {
+          phoneNumbers.push("96" + item?.number);
+        } else {
+          phoneNumbers.push("96" + item);
+        }
       });
     });
 
@@ -115,8 +129,6 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
     setToggler(!isChecked);
   };
 
-  const [selectedGroupId, setSelectedGroupId] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
 
   //from and to date filter handling here
   const filterHandler = () => {
