@@ -13,7 +13,7 @@ const TableDetail = ({ toggler, fromDate, toDate }) => {
   const [filterData, setFilterData] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://16.163.178.109:9000/api/group/${id}`).then((response) => {
+    axios.get(`http://localhost:9000/api/group/${id}`).then((response) => {
       setGroup(response.data.group);
 
       let groups = response.data.group;

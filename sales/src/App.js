@@ -5,6 +5,7 @@ import GroupDetails from "./components/GroupDetails";
 import Speech from "./components/Speech";
 import Chat from "./components/misc/Chat";
 import ConcurrentCalls from "./components/ConcurrentCalls";
+import SocketClient from "./socket-client";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/speech" element={<Speech />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/concurrent-calls" element={<ConcurrentCalls  />} />
+        <Route path="/socket" element={<SocketClient  />} />
       </Routes>
     </BrowserRouter>
   );

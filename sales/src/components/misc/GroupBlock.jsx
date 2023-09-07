@@ -9,6 +9,7 @@ import axios from "axios";
 const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
   const [groupName, setGroupName] = useState();
   const [allGroups, setAllGroups] = useState();
+  const [forwardNumber, setForwardNumber] = useState();
   const [chats, setAllChats] = useState(null);
   const [chatWithPhone, setChatWithPhone] = useState(null);
   const [transformedData, setTransfromedData] = useState();
@@ -28,6 +29,17 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
   useEffect(() => {
     axios.get("http://16.163.178.109:9000/api/groups").then((response) => {
       setAllGroups(response.data.groups);
+    });
+  }, []);
+
+
+  useEffect(() => {
+    axios.get("http://16.163.178.109:9000/api/groups").then((response) => {
+      setAllGroups(response.data.groups);
+    });
+    axios.get("http://16.163.178.109:9000/api/forwarding").then((response) => {
+      // setForwardNumber(response.data.groups);
+      setForwardNumber(response.data.forwardingNumbers[0].number);
     });
   }, []);
 
@@ -64,14 +76,14 @@ const Block = ({ setToggler, fromDate, setFromDate, toDate, setToDate }) => {
       {
         calls: "2",
         trunk: "1001",
-        forward: "+923045584807",
+        forward: forwardNumber,
       },
       phoneNumbers,
     ];
 
     axios
       .post(
-        "https://www.aivoip.org/aivoip/autodial/dial_numbers.php",
+        "http://16.163.178.109/aivoip/autodial/dial_numbers_1.php",
         tempPhone
       )
       .then((response) => console.log(response));
