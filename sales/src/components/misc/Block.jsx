@@ -7,7 +7,7 @@ const Block = ({ isGroupAdded, setIsGroupAdded }) => {
 
   const handleGroup = () => {
     axios
-      .post("http://16.163.178.109:9000/api/create-group", {
+      .post("http://16.163.178.109:9001/api/create-group", {
         name: groupName,
         phoneNumbers: [],
       })

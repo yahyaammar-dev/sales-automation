@@ -32,7 +32,7 @@ function Setting() {
 
     useEffect(() => {
         //here call get setting list api
-        // axios.get("http://16.163.178.109:9000/api/settings").then((res) => {
+        // axios.get("http://16.163.178.109:9001/api/settings").then((res) => {
         //     console.log("response :::", res)
         // setSettings();
         // }).catch((err) => {

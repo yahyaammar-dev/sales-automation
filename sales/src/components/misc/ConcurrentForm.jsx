@@ -16,7 +16,7 @@ const ConcurrentForm = () => {
     const updateHandler = () => {
         console.log("update handler called ::", formData)
         //update current setting api call
-        // axios.post("http://16.163.178.109:9000/api/update-setting", formData).then((res) => {
+        // axios.post("http://16.163.178.109:9001/api/update-setting", formData).then((res) => {
         //     console.log("response :::", res)
         // setFormData();
         // }).catch((err) => {
@@ -36,7 +36,7 @@ const ConcurrentForm = () => {
 
     useEffect(() => {
         //here call get current setting api
-        // axios.get("http://16.163.178.109:9000/api/settings").then((res) => {
+        // axios.get("http://16.163.178.109:9001/api/settings").then((res) => {
         //     console.log("response :::", res)
         // setFormData();
         // }).catch((err) => {

@@ -12,7 +12,7 @@ class SocketClient extends Component {
 
   componentDidMount() {
     // Connect to the Socket.IO server
-    this.socket = io('http://16.163.178.109:9000');
+    this.socket = io('http://16.163.178.109:9001');
 
     this.socket.on('connect', () => {
       console.log('Connected to Socket.IO server');
