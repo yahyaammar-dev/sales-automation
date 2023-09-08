@@ -17,7 +17,6 @@ const Main = ({ group }) => {
   const [transformedData, setTransfromedData] = useState();
   const [filterData, setFilterData] = useState([]);
 
-
   // Extract the string after the last slash (/)
   const pathSegments = currentPath.split("/");
   const lastSegment = pathSegments[pathSegments.length - 2];

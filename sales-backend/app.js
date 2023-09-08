@@ -8,11 +8,11 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
 //Local Host Environment
-// const http = require("http");
+const http = require("http");
 const socketIO = require('socket.io');
 
 // Server Environment START
-const https = require("https");
+// const https = require("https");
 const fs = require("fs");
 const xlsx = require('xlsx');
 
@@ -31,14 +31,14 @@ app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
 app.use(express.json());
 
-// const server = https.createServer(options, app);
+// const server = https.createServer(app);
 
 //Local Host Environment
-// const server = http.createServer(app); // Use 'http' to create an HTTP server
+const server = http.createServer(app); // Use 'http' to create an HTTP server
 
 const io = socketIO(server, {
   cors: {
-    origin: 'http://16.163.178.109:3000', // Specify the origin you want to allow
+    origin: '*', // Specify the origin you want to allow
     methods: ['GET', 'POST'], // Specify the HTTP methods you want to allow
   }});
 
@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => {
-  console.log(`Server is running on https://16.163.178.109:${port}`);
+  console.log(`Server is running on https://lcoalhost:${port}`);
 });
 
 app.use("/uploads", express.static(uploadsPath));
@@ -389,12 +389,15 @@ app.put("/api/messages/:id", async (req, res) => {
       });
     }
 
-    const { text, children } = req.body;
+    const { id, parent_id, keyword , audio_file, text } = req.body;
 
     // Update the message document based on the provided data
     const updatedMessage = {
-      text: text,
-      children: children,
+      id: id, 
+      parent_id: parent_id, 
+      keyword: keyword, 
+      audio_file: audio_file, 
+      text: text
     };
 
     // Find the message document by its ID and update it

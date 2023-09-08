@@ -11,21 +11,12 @@ function Setting() {
     const navigate = useNavigate();
     const [settings, setSettings] = useState([
         {
-            id: "324324",
-            sip_ip: "123",
-            port: "534.34543.435",
-            username: "alikhan",
-            password: "8798798",
-            concurrent_call: "iuf9u09"
-        },
-        {
-            id: "85353123",
-            sip_ip: "8987",
-            port: "87.123.56768",
-            username: "khan ali",
-            password: "534432",
-            concurrent_call: "dskjfoiu"
-        },
+            id: "1",
+            sip_ip: "16.163.178.109",
+            port: "8000",
+            username: "1601",
+            password: "ab975@yTpL9",
+        }
     ]);
 
     //update setting 

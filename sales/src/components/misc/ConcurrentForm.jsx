@@ -4,13 +4,12 @@ import { useParams } from "react-router-dom";
 
 const ConcurrentForm = () => {
     const { id } = useParams();
-    const [formData, setFormData] = useState({
-        id: "",
-        sip_ip: "",
-        port: "",
-        username: "",
-        password: "",
-        concurrent_call: ""
+    const [formData, setFormData] = useState( {
+        id: "1",
+        sip_ip: "16.163.178.109",
+        port: "8000",
+        username: "1601",
+        password: "ab975@yTpL9",
     })
 
     //update handler
@@ -44,12 +43,12 @@ const ConcurrentForm = () => {
         //     console.log("error ::", err)
         // });
 
-        setFormData({
-            sip_ip: "23432.234324.234",
-            port: "56565",
-            username: "ali khan",
-            password: "3454353",
-            concurrent_call: "manager"
+        setFormData( {
+            id: "1",
+            sip_ip: "16.163.178.109",
+            port: "8000",
+            username: "1601",
+            password: "ab975@yTpL9",
         })
     }, []);
 
@@ -105,7 +104,7 @@ const ConcurrentForm = () => {
                 </div>
 
 
-                <div class="mb-4">
+                {/* <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
                         Concurrent Calls
                     </label>
@@ -114,10 +113,10 @@ const ConcurrentForm = () => {
                         value={formData?.concurrent_call}
                         onChange={handleChange}
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Concurrent Connection" />
-                </div>
+                </div> */}
 
                 <div class="flex items-center justify-between">
-                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onClick={() => {
+                    <button class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onClick={() => {
                         updateHandler()
                     }}>
                         Update

@@ -73,10 +73,19 @@ const Card = ({ message = 'No Response', para = 'No Response', lineBottom, margi
     >
       <div className={lineBottom ? "container" : ""}>
         <p className="card__para" style={{ color: color }}>
-          {message}
+          Count: 1
+        </p>
+        <p className="card__para" style={{ color: color }}>
+          parent_id: 0
+        </p>
+        <p className="card__para" style={{ color: color }}>
+          keyword: null
+        </p>
+        <p className="card__para" style={{ color: color }}>
+          Audio: 'Link'
         </p>
         <h2 className="card__heading" style={{ color: color }}>
-          {para}
+          Message: {message}
         </h2>
         <div className="flex justify-end gap-3">
           {/* Step 3: Add the modal trigger buttons */}
@@ -165,7 +174,6 @@ const Card = ({ message = 'No Response', para = 'No Response', lineBottom, margi
               onChange={(e)=>{setFile(e.target.files[0])}}
             />
 
-            {/* Your upload file UI components can go here */}
             <button
               onClick={handleCloseUpload}
               className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
