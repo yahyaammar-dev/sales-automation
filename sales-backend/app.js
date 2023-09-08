@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => {
-  console.log(`Server is running on https://lcoalhost:${port}`);
+  console.log(`Server is running on https://localhost:${port}`);
 });
 
 app.use("/uploads", express.static(uploadsPath));
@@ -773,10 +773,18 @@ app.post("/api/create-logs", async (req, res) => {
      {number, start_time, end_time, text, user, seq, date, call_status}
     );
   } catch (error) {
-    console.error("Error updating phone number:", error);
+    console.error("Error in creating logs:", error);
     return res.status(500).json({
       success: false,
-      message: "Failed to update phone number.",
+      message: "Failed to create logs.",
     });
   }
 });
+
+
+app.get("/api/test", async(req, res) => {
+  return res.status(200).json({
+    succes: "true",
+    message: "Api is called successfully"
+  })
+})
