@@ -9,6 +9,7 @@ const upload = multer({ dest: "uploads/" });
 const path = require("path");
 //Local Host Environment
 // const http = require("http");
+const socketIO = require('socket.io');
 
 // Server Environment START
 const https = require("https");
@@ -26,13 +27,39 @@ const xlsx = require('xlsx');
 const uploadsPath = path.join(__dirname, "uploads");
 
 app.use("/uploads", express.static(uploadsPath));
+// app.use(cors());
 app.use(cors());
 app.use(express.json());
 
 // const server = https.createServer(options, app);
 
-app.listen(port, () => {
-  console.log(`Server is running on https://localhost:${port}`);
+//Local Host Environment
+// const server = http.createServer(app); // Use 'http' to create an HTTP server
+
+const io = socketIO(server, {
+  cors: {
+    origin: 'http://16.163.178.109:3000', // Specify the origin you want to allow
+    methods: ['GET', 'POST'], // Specify the HTTP methods you want to allow
+  }});
+
+io.on('connection', (socket) => {
+  console.log('A user connected to the WebSocket.');
+
+  // You can handle events and messages from the connected clients here
+  socket.on('chat message', (message) => {
+    console.log(message);
+    // Broadcast the message to all connected clients
+    io.emit('chat message', message);
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('A user disconnected from the WebSocket.');
+  });
+});
+
+server.listen(port, () => {
+  console.log(`Server is running on https://16.163.178.109:${port}`);
 });
 
 app.use("/uploads", express.static(uploadsPath));
@@ -57,6 +84,71 @@ async function connectToDatabase() {
     throw error;
   }
 }
+
+app.post("/api/forwarding", async (req, res) => {
+  try {
+    const { number } = req.body;
+
+    // Assuming you have a "forwardingNumbers" collection in your MongoDB
+    const db = await connectToDatabase();
+    const collection = db.collection("forwardingNumber");
+
+    // Find the existing forwarding number (if any)
+    const existingForwardingNumber = await collection.findOne();
+
+    if (existingForwardingNumber) {
+      // If an existing forwarding number is found, update it
+      await collection.updateOne(
+        { _id: existingForwardingNumber._id }, // Use the existing document's ID for the update
+        { $set: { number: number } }
+      );
+      console.log("Forwarding number updated:", number);
+    } else {
+      // If no existing forwarding number is found, create a new one
+      const forwardingNumber = {
+        number: number,
+      };
+      await collection.insertOne(forwardingNumber);
+      console.log("Forwarding number added:", forwardingNumber);
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: "Forwarding number added/updated successfully!",
+    });
+  } catch (error) {
+    console.error("Error adding/updating forwarding number:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to add/update forwarding number",
+    });
+  }
+});
+``
+
+app.get("/api/forwarding", async (req, res) => {
+  try {
+    // Assuming you have a "forwardingNumbers" collection in your MongoDB
+    const db = await connectToDatabase();
+    const collection = db.collection("forwardingNumber");
+
+    // Find all forwarding numbers in the collection
+    const forwardingNumbers = await collection.find({}).toArray();
+
+    console.log("Fetched all forwarding numbers:", forwardingNumbers);
+
+    return res.status(200).json({
+      success: true,
+      forwardingNumbers: forwardingNumbers,
+    });
+  } catch (error) {
+    console.error("Error fetching forwarding numbers:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch forwarding numbers.",
+    });
+  }
+});
 
 
 
