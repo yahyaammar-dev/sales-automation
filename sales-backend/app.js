@@ -680,8 +680,6 @@ app.post("/api/edit-text-message", async (req, res) => {
       }
     );
 
-    console.log(result);
-    console.log("result");
 
     if (result.modifiedCount === 1) {
       return res.status(200).json({
