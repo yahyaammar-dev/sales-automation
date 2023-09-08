@@ -96,8 +96,6 @@ const Sidebar = () => {
           )}
         </div>
       </div>
-      <Button text="Logout" danger my />
-      {/* <Button text="Logout" danger icon={icons[6]} my /> */}
     </div>
   );
 };

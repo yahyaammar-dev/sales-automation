@@ -10,13 +10,12 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
   const [currentChat, setCurrentChat] = useState();
 
   useEffect(() => {
-    axios.get(`http://16.163.178.109:9000/api/group/${id}`).then((response) => {
+    axios.get(`http://localhost:9000/api/group/${id}`).then((response) => {
       setGroup(response.data.group);
 
       let groups = response.data.group;
       // console.log("response  ::", response.data)
       let groupPhones = groups?.phoneNumbers;
-
       let arr = groupPhones?.map((item) => {
         return item?.number;
       });
@@ -68,6 +67,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
 
 
 
+  console.log(filterData)
 
   return (
     <div>
@@ -154,7 +154,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
                       alt="Jese image"
                     />
                     <div class="pl-3">
-                      <div class="text-base font-semibold">{item?.number}</div>
+                      <div class="text-base font-semibold">{item?.number ? item?.number : item}</div>
                     </div>
                   </th>
                   <td class="px-6 py-4 text-center">{item?.status}</td>
