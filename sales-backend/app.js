@@ -9,21 +9,21 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
 //Local Host Environment
-// const http = require("http");
+const http = require("http");
 const socketIO = require('socket.io');
 
 // Server Environment START
-const https = require("https");
-const fs = require("fs");
-const xlsx = require('xlsx');
+// const https = require("https");
+// const fs = require("fs");
+// const xlsx = require('xlsx');
 
-const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
-const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
+// const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
+// const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
 
-const options = {
-  key: fs.readFileSync(privateKeyPath),
-  cert: fs.readFileSync(certificatePath)
-};
+// const options = {
+//   key: fs.readFileSync(privateKeyPath),
+//   cert: fs.readFileSync(certificatePath)
+// };
 
 const uploadsPath = path.join(__dirname, "uploads");
 
@@ -31,8 +31,8 @@ app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
 app.use(express.json());
 
-const server = https.createServer(app);
-// const server = http.createServer(app);
+// const server = https.createServer(app);
+const server = http.createServer(app);
 
 
 const io = socketIO(server, {
@@ -762,15 +762,63 @@ function validateData(data) {
 }
 
 
+// app.post("/api/create-logs", async (req, res) => {
+//   try {
+
+//     const { number, start_time, end_time, text, user, seq, date, call_status } = req.body;
+//     const db = await connectToDatabase();
+//     const collection = db.collection("logs");
+//     const result = await collection.insertOne(
+//      {number, start_time, end_time, text, user, seq, date, call_status}
+//     );
+//   } catch (error) {
+//     console.error("Error in creating logs:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to create logs.",
+//     });
+//   }
+// });
+
 app.post("/api/create-logs", async (req, res) => {
   try {
-
     const { number, start_time, end_time, text, user, seq, date, call_status } = req.body;
     const db = await connectToDatabase();
-    const collection = db.collection("logs");
-    const result = await collection.insertOne(
-     {number, start_time, end_time, text, user, seq, date, call_status}
-    );
+    const logsCollection = db.collection("logs");
+    const groupsCollection = db.collection("group");
+
+    // Check if the provided number exists in any group
+    console.log("Searching for number:", number);
+
+    const groupWithNumber = await groupsCollection.findOne({
+      phoneNumbers: number,
+    });
+    console.log("Group with Number:", groupWithNumber);
+
+    if (groupWithNumber) {
+      // If the number is found in a group, save the log along with the group information
+      const result = await logsCollection.insertOne({
+        number,
+        start_time,
+        end_time,
+        text,
+        user,
+        seq,
+        date,
+        call_status,
+        groupId: groupWithNumber._id, // Store the group ID with the log
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Log created successfully!",
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Number not found in any group.",
+      });
+    }
   } catch (error) {
     console.error("Error in creating logs:", error);
     return res.status(500).json({
@@ -779,6 +827,34 @@ app.post("/api/create-logs", async (req, res) => {
     });
   }
 });
+
+
+app.post("/api/get-chat-text", async (req, res) => {
+  try {
+    const { number, groupId } = req.body;
+    const db = await connectToDatabase();
+    const logsCollection = db.collection("logs");
+    const groupIdObjectId = new ObjectId(groupId);
+    // Find all logs with the provided number and group ID
+    const chatLogs = await logsCollection.find({ number, groupId: groupIdObjectId }).toArray();
+
+    // Extract the text from each chat log
+    const chatText = chatLogs.map((log) => log.text);
+
+    return res.status(200).json({
+      success: true,
+      chatText,
+    });
+  } catch (error) {
+    console.error("Error in retrieving chat text:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve chat text.",
+    });
+  }
+});
+
+
 
 
 app.get("/api/test", async(req, res) => {

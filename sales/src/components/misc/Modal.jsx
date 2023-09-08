@@ -1,11 +1,15 @@
     import React, { useRef, useState, useEffect } from "react";
     import { useNavigate } from "react-router-dom";
     import AudioPlayer from "./AudioPlayer";
+    import axios from "axios";
 
-    const Modal = ({ open, setOpen, currentChat }) => {
+    const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
+
+    const Modal = ({ open, setOpen, currentChat, id, groupNumber }) => {
     const navigate = useNavigate();
     const [chat, setChat] = useState()
-    const [userChat, setUserChat] = useState()
+    const [userChat, setUserChat] = useState();
+    const [chatData, setChatData] = useState([]);
     const handleHomeNav = () => {
         navigate("/");
     };
@@ -127,6 +131,37 @@
         };
         setChat(customChat)
     },[])
+
+    useEffect(() => {
+        const fetchChatData = () => {
+          const data = {
+            groupId: id,
+            number: groupNumber, // Make sure you provide the actual number here
+          };
+          axios
+            .post(`${apiUrl}/api/get-chat-text`, data)
+            .then((response) => {
+              const chatText = response.data.chatText;
+              console.log(chatText);
+              // Update the chat data in your component state
+              setChatData(chatText);
+            })
+            .catch((error) => {
+              console.error("Error fetching chat text:", error);
+            });
+        };
+    
+        if (open) {
+          // Fetch chat data when the modal is opened
+          fetchChatData();
+    
+          // Set up an interval to fetch chat data every 10 seconds
+          const intervalId = setInterval(fetchChatData, 10000);
+    
+          // Clean up the interval when the component unmounts or the modal is closed
+          return () => clearInterval(intervalId);
+        }
+      }, [open, id, groupNumber]);
 
     const [selectedMessage, setSelectedMessage] = useState(null);
 

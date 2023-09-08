@@ -10,6 +10,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
   const [open, setOpen] = useState(false);
   const { id } = useParams();
   const [currentChat, setCurrentChat] = useState();
+  const [currentNumber, setCurrNumber] = useState();
 
   useEffect(() => {
     axios.get(`${apiUrl}/api/group/${id}`).then((response) => {
@@ -67,13 +68,15 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
 
   }, [toggler, group]);
 
+  
 
 
-  console.log(filterData)
+
+  // console.log(filterData)
 
   return (
     <div>
-      <Modal open={open} setOpen={setOpen} currentChat={currentChat} />
+      <Modal open={open} setOpen={setOpen} currentChat={currentChat} id={id} groupNumber={currentNumber}/>
       <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 bg-white">
           <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -167,6 +170,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
                     class="px-6 py-4 text-center cursor-pointer"
                     onClick={() => {
                       setOpen(true);
+                      setCurrNumber(item);
                     }}
                   >
                     <img
