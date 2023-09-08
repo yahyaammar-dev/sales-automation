@@ -6,6 +6,9 @@ import { useParams } from "react-router-dom";
 import Button from "./Button";
 import axios from "axios";
 
+const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
+
+
 const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, toDate, setToDate, filterData, setFilterData }) => {
   const [groupName, setGroupName] = useState();
   const [allGroups, setAllGroups] = useState();
@@ -29,7 +32,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
     formData.append('excel_file', file);
     formData.append('id', id);
 
-    fetch('http://localhost:9000/api/upload-excel', {
+    fetch(`${apiUrl}/api/upload-excel`, {
       method: 'POST',
       body: formData,
     })
@@ -50,7 +53,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
   const handleGroup = () => {
     axios
-      .post("http://localhost:9000/api/create-group", {
+      .post(`${apiUrl}/api/create-group`, {
         name: groupName,
         phoneNumbers: [],
       })
@@ -60,17 +63,17 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   };
 
   useEffect(() => {
-    axios.get("http://localhost:9000/api/groups").then((response) => {
+    axios.get(`${apiUrl}/api/groups`).then((response) => {
       setAllGroups(response.data.groups);
     });
   }, []);
 
 
   useEffect(() => {
-    axios.get("http://16.163.178.109:9000/api/groups").then((response) => {
+    axios.get(`${apiUrl}/api/groups`).then((response) => {
       setAllGroups(response.data.groups);
     });
-    axios.get("http://16.163.178.109:9000/api/forwarding").then((response) => {
+    axios.get(`${apiUrl}/api/forwarding`).then((response) => {
       // setForwardNumber(response.data.groups);
       setForwardNumber(response.data.forwardingNumbers[0].number);
     });
@@ -152,7 +155,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
     };
 
     axios
-      .post("http://localhost:9000/api/add-phone-number", {
+      .post(`${apiUrl}/api/add-phone-number`, {
         groupId: selectedGroupId,
         phoneNumber: phoneNumber,
       })

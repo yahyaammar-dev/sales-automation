@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+
+const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
+
 const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', para = 'No Response', lineBottom, marginLeft, background, color, index }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -37,7 +40,7 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
 
   const handleChangeText = () => {
     let data = { currentMessage, currentPara, index }
-    axios.post('http://localhost:9000/api/edit-text-message', data)
+    axios.post(`${apiUrl}/api/edit-text-message`, data)
       .then((res) => {
         console.log(res.data)
         alert('Your data has been saved')

@@ -4,13 +4,15 @@ import Modal from "./Modal";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
+const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
+
 const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, toggler, fromDate, toDate, filterData, setFilterData }) => {
   const [open, setOpen] = useState(false);
   const { id } = useParams();
   const [currentChat, setCurrentChat] = useState();
 
   useEffect(() => {
-    axios.get(`http://localhost:9000/api/group/${id}`).then((response) => {
+    axios.get(`${apiUrl}/api/group/${id}`).then((response) => {
       setGroup(response.data.group);
 
       let groups = response.data.group;

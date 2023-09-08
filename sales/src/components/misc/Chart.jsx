@@ -3,6 +3,8 @@ import Card from './Card'
 import Navbar from './Navbar'
 import axios from "axios";
 
+const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
+
 const Chart = () => {
   const [messgaes, setmessgaes] = useState()
   const [formVisible, setFormVisible] = useState(false)
@@ -16,7 +18,7 @@ const Chart = () => {
   })
 
   useEffect(() => {
-    axios.get('http://localhost:9000/api/messages')
+    axios.get(`${apiUrl}/api/messages`)
       .then((res) => {
         console.log(res.data)
         if (res.data.messages.length == 0) {
@@ -41,7 +43,7 @@ const Chart = () => {
     formData.append('keyword', newMessage.keyword);
     formData.append('text', newMessage.text);
    
-    fetch('http://localhost:9000/api/messages', {
+    fetch(`${apiUrl}/api/messages`, {
       method: 'POST',
       body: formData,
     })
