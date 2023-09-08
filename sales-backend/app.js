@@ -761,3 +761,22 @@ function validateData(data) {
   }
   return true; // Data format is as expected
 }
+
+
+app.post("/api/create-logs", async (req, res) => {
+  try {
+
+    const { number, start_time, end_time, text, user, seq, date, call_status } = req.body;
+    const db = await connectToDatabase();
+    const collection = db.collection("logs");
+    const result = await collection.insertOne(
+     {number, start_time, end_time, text, user, seq, date, call_status}
+    );
+  } catch (error) {
+    console.error("Error updating phone number:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update phone number.",
+    });
+  }
+});
