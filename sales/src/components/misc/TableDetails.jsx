@@ -177,7 +177,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
                     />
                   </td>
                   <td class="px-6 py-4 text-center">
-                    {item?.chat?.length > 0 ? "Yes" : "No"}
+                    {item?.duration?.length > 0 ? "Yes" : "No"}
                   </td>
                 </tr>
               );

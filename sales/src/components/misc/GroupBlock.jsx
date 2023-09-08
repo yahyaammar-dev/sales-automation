@@ -14,6 +14,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   const [chatWithPhone, setChatWithPhone] = useState(null);
   const [transformedData, setTransfromedData] = useState();
   const [errorMessage, setErrorMessage] = useState(null)
+  const [messages, setMessages] = useState();
   const [file, setFile] = useState(null)
 
   let { id } = useParams();
@@ -67,12 +68,16 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
 
   useEffect(() => {
-    axios.get("http://16.163.178.109:9000/api/groups").then((response) => {
+    axios.get("http://localhost:9000/api/groups").then((response) => {
       setAllGroups(response.data.groups);
     });
-    axios.get("http://16.163.178.109:9000/api/forwarding").then((response) => {
+    axios.get("http://localhost:9000/api/forwarding").then((response) => {
       // setForwardNumber(response.data.groups);
       setForwardNumber(response.data.forwardingNumbers[0].number);
+    });
+    axios.get("http://localhost:9000/api/messages").then((response) => {
+      setMessages(response.data.messages);
+      // console.log('MESSAGES ::::', response.data.messages)
     });
   }, []);
 
@@ -124,6 +129,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         forward: forwardNumber,
       },
       phoneNumbers,
+      messages
     ];
 
     axios
@@ -131,7 +137,24 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         "http://16.163.178.109/aivoip/autodial/dial_numbers_1.php",
         tempPhone
       )
-      .then((response) => console.log(response));
+      .then((response) => {
+        console.log(response)
+
+        // Check if the response indicates an error
+    if (response.data && response.data.error) {
+      // Display an alert with the error message
+      alert(`Error: ${response.data.error}`);
+    } else {
+      // Success, show a success message or perform any other actions
+      alert("Calling Phone Numbers, Status will be updated soon");
+    }
+
+      }).catch((error) => {
+        console.error("Error:", error);
+    
+        // Display an alert for any network or request-related errors
+        alert("An error occurred while making the API request.");
+      });
 
     alert("Calling Phone Numbers, Status will be updated soon");
   };

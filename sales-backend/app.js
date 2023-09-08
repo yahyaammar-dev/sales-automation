@@ -160,13 +160,14 @@ app.post("/api/create-group", async (req, res) => {
     const { name, phoneNumbers } = req.body;
 
     const currentTimestamp = new Date().toISOString();
+    const formattedTimestamp = currentTimestamp.replace(/T/, ' ').replace(/\.\d+Z$/, '');
       
 
     // Create a new group document
     const newGroup = {
       name: name,
       phoneNumbers: phoneNumbers,
-      createdAt: currentTimestamp,
+      createdAt: formattedTimestamp,
     };
 
     // Insert the new group document into the "group" collection
@@ -286,6 +287,7 @@ app.get("/api/groups", async (req, res) => {
       let totalPhoneNumbers = 0;
       let totalAnswered = 0;
       let totalDuration = 0;
+      let formattedDuration;
 
       group.phoneNumbers.forEach((phoneNumber) => {
         totalPhoneNumbers++;
@@ -294,15 +296,27 @@ app.get("/api/groups", async (req, res) => {
           if (phoneNumber.duration) {
             // Assuming duration is in seconds, you can convert it to minutes or hours if needed
             totalDuration += parseInt(phoneNumber.duration);
+          
           }
         }
       });
+      
+
+      if (totalDuration < 60) {
+        // If the duration is less than 60 seconds, display it as seconds
+        formattedDuration = `${totalDuration} sec`;
+      } else {
+        // If the duration is 60 seconds or more, convert it to minutes
+        const durationInMinutes = durationInSeconds / 60;
+        formattedDuration = `${durationInMinutes} min`;
+      }
 
       return {
         ...group,
         totalPhoneNumbers: totalPhoneNumbers,
         totalAnswered: totalAnswered,
-        totalDuration: totalDuration,
+        totalDuration: formattedDuration,
+        createdAt: group.createdAt,
       };
     });
 
@@ -600,36 +614,91 @@ app.put("/api/update-phone-number", async (req, res) => {
 
 
 
+// app.post("/api/edit-text-message", async (req, res) => {
+//   try {
+//     const { currentMessage, currentPara, index } = req.body;
+//     const db = await connectToDatabase();
+//     const collection = db.collection("sales_automation_messages");
+//     const result = await collection.updateOne(
+//       { _id: new ObjectId("64d204eadd432e73511b0f65") },
+//       {
+//         $set: {
+//           [`messages.${index}.primary`]: currentMessage,
+//           [`messages.${index}.seconday`]: currentPara,
+//         },
+//       }
+//     );
+//     if (result.modifiedCount === 1) {
+//       return res.status(200).json({
+//         success: true,
+//         message: "Message updated successfully!",
+//       });
+//     } else {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Message not found or not updated.",
+//       });
+//     }
+//   } catch (error) {
+//     console.error("Error updating phone number:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to update phone number.",
+//     });
+//   }
+// });
+
+
 app.post("/api/edit-text-message", async (req, res) => {
   try {
-    const { currentMessage, currentPara, index } = req.body;
+    const { id, count, parent_id, keyword, audio, message, para, index } = req.body;
     const db = await connectToDatabase();
-    const collection = db.collection("sales_automation_messages");
+    const collection = db.collection("messages");
+
+    // Create an object to represent the updated message
+    const updatedMessage = {
+      count: count,
+      parent_id: parent_id,
+      keyword: keyword,
+      uploadedFile: audio,
+      text: message,
+    };
+
+    
+
+    // Update the message based on the provided ID
     const result = await collection.updateOne(
-      { _id: new ObjectId("64d204eadd432e73511b0f65") },
+      { _id: new ObjectId(id) }, // Use the provided ID
       {
         $set: {
-          [`messages.${index}.primary`]: currentMessage,
-          [`messages.${index}.seconday`]: currentPara,
+          count: count,
+          parent_id: parent_id,
+          keyword: keyword,
+          uploadedFile: audio,
+          text: message,
         },
       }
     );
+
+    console.log(result);
+    console.log("result");
+
     if (result.modifiedCount === 1) {
       return res.status(200).json({
         success: true,
         message: "Message updated successfully!",
       });
     } else {
-      return res.status(404).json({
+      return res.status(403).json({
         success: false,
         message: "Message not found or not updated.",
       });
     }
   } catch (error) {
-    console.error("Error updating phone number:", error);
+    console.error("Error updating message:", error);
     return res.status(500).json({
       success: false,
-      message: "Failed to update phone number.",
+      message: "Failed to update message.",
     });
   }
 });

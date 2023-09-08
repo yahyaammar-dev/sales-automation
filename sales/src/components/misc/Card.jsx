@@ -6,7 +6,7 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [file, setFile] = useState(null);
 
-
+  let indexInt = parseInt(index, 10);
   const [cardData, setCardData] = useState({
     id: id,
     count: count,
@@ -14,9 +14,9 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
     keyword: keyword,
     audio: audio,
     message: message,
-    para: para
+    para: para,
+    index: index
   })
-
 
   const handleOpenEdit = () => {
     setIsEditModalOpen(true);
@@ -36,12 +36,11 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
 
 
   const handleChangeText = () => {
-    let data = { currentMessage, currentPara, index }
-    axios.post('http://localhost:9000/api/edit-text-message', data)
+    // let data = { currentMessage, currentPara, index }
+    axios.post('http://localhost:9000/api/edit-text-message', cardData)
       .then((res) => {
         console.log(res.data)
         alert('Your data has been saved')
-        window.location.reload();
       })
       .catch((err) => {
         console.log(err)
@@ -158,7 +157,7 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 id="file_input"
                 type="text"
-                value={cardData?.keyword}
+                value={cardData?.message}
                 onChange={(e) => { setCardData({ ...cardData, message: e.target.value }) }}
               />
               <p>Enter Audio</p>

@@ -11,6 +11,7 @@ const Table = ({ isGroupAdded }) => {
   useEffect(() => {
     axios.get("http://localhost:9000/api/groups").then((res) => {
       setGroups(res.data.groups);
+      console.log(res.data.groups)
     });
   }, [isGroupAdded]);
 
@@ -58,10 +59,10 @@ const Table = ({ isGroupAdded }) => {
                     <div class="text-base font-semibold">{item?.name}</div>
                   </div>
                 </th>
-                <td class="px-6 py-4 text-center">105/10283</td>
-                <td class="px-6 py-4 text-center">10</td>
-                <td class="px-6 py-4 text-center">5 mins</td>
-                <td class="px-6 py-4 text-center">12-12-2023</td>
+                <td class="px-6 py-4 text-center">{item?.totalPhoneNumbers}/10283</td>
+                <td class="px-6 py-4 text-center">{item?.totalAnswered}</td>
+                <td class="px-6 py-4 text-center">{item?.totalDuration}</td>
+                <td class="px-6 py-4 text-center">{item?.createdAt}</td>
                 <td
                   class="px-6 py-4 text-center cursor-pointer"
                   onClick={() => navigate(`/group-details/${item?._id}`)}
