@@ -319,39 +319,90 @@ app.get("/api/groups", async (req, res) => {
   }
 });
 
-// app.post("/api/messages", async (req, res) => {
-//   try {
-//     const db = await connectToDatabase();
-//     const collection = db.collection("messages");
+app.post(
+  "/api/upload-audio",
+  upload.single("sales_automation_messages"),
+  async (req, res) => {
+    try {
+      const uploadedFile = req.file;
 
-//     const messages = req.body; // The array of messages received in the request body
+      console.log("hello world");
 
-//     // Validate the data to ensure it is an array
-//     if (!Array.isArray(messages)) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Invalid data format. Expecting an array of messages.",
-//       });
-//     }
+      if (!uploadedFile) {
+        return res.status(400).json({
+          success: false,
+          message: "No audio file uploaded.",
+        });
+      }
 
-//     // Insert the array of messages into the "sales_automation_messages" collection
-//     const result = await collection.insertMany(messages);
+      const db = await connectToDatabase();
+      const collection = db.collection("sales_automation_messages");
 
-//     console.log(`${result.insertedCount} messages inserted successfully!`);
+      // Save the uploaded file to the collection (you can adjust the storage mechanism as needed)
+      // For example, you can use GridFS to store large audio files in Mon````goDB
+      const result = await collection.insertOne({ audio: uploadedFile });
 
-//     return res.status(201).json({
-//       success: true,
-//       message: "Messages inserted successfully!",
-//       insertedCount: result.insertedCount,
-//     });
-//   } catch (error) {
-//     console.error("Error inserting messages:", error);
-//     return res.status(500).json({
-//       success: false,
-//       message: "Failed to insert messages.",
-//     });
-//   }
-// });
+      console.log("Audio file uploaded successfully!");
+
+      // Create the link for the uploaded audio file
+      const audioLink = `http://16.163.178.109:9000/uploads/${uploadedFile.filename}`;
+
+      // Make a POST request to the specified URL with the audio link as a query parameter
+      // const postUrl = `http://103.18.20.195:8080/speech/save-audio-file.php?url=${encodeURIComponent(
+      //   audioLink
+      // )}`;
+      // const response = await axios.get(postUrl);
+
+      console.log("POST request success:", 'response.data');
+
+      return res.status(200).json({
+        success: true,
+        message: "Audio file uploaded and posted successfully!",
+      });
+    } catch (error) {
+      console.error("Error uploading audio file:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to upload audio file.",
+      });
+    }
+  }
+);
+
+app.post("/api/messages",
+ upload.single("audio_file"), 
+ async (req, res) => {
+  try {
+    const uploadedFile = req.file.filename;
+
+    const db = await connectToDatabase();
+    const collection = db.collection("messages");
+
+    const request = req.body
+    const message = {
+      ...request, 
+      uploadedFile
+    }
+    
+
+    // Insert the array of messages into the "sales_automation_messages" collection
+    const result = await collection.insertOne(message);
+
+    console.log(`${result.insertedCount} messages inserted successfully!`);
+
+    return res.status(201).json({
+      success: true,
+      message: "Messages inserted successfully!",
+      insertedCount: result,
+    });
+  } catch (error) {
+    console.error("Error inserting messages:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to insert messages.",
+    });
+  }
+});
 
 app.get("/api/messages", async (req, res) => {
   try {
@@ -547,55 +598,7 @@ app.put("/api/update-phone-number", async (req, res) => {
   }
 });
 
-app.post(
-  "/api/upload-audio",
-  upload.single("sales_automation_messages"),
-  async (req, res) => {
-    try {
-      const uploadedFile = req.file;
 
-      console.log("hello world");
-
-      if (!uploadedFile) {
-        return res.status(400).json({
-          success: false,
-          message: "No audio file uploaded.",
-        });
-      }
-
-      const db = await connectToDatabase();
-      const collection = db.collection("sales_automation_messages");
-
-      // Save the uploaded file to the collection (you can adjust the storage mechanism as needed)
-      // For example, you can use GridFS to store large audio files in Mon````goDB
-      const result = await collection.insertOne({ audio: uploadedFile });
-
-      console.log("Audio file uploaded successfully!");
-
-      // Create the link for the uploaded audio file
-      const audioLink = `http://16.163.178.109:9000/uploads/${uploadedFile.filename}`;
-
-      // Make a POST request to the specified URL with the audio link as a query parameter
-      // const postUrl = `http://103.18.20.195:8080/speech/save-audio-file.php?url=${encodeURIComponent(
-      //   audioLink
-      // )}`;
-      // const response = await axios.get(postUrl);
-
-      console.log("POST request success:", 'response.data');
-
-      return res.status(200).json({
-        success: true,
-        message: "Audio file uploaded and posted successfully!",
-      });
-    } catch (error) {
-      console.error("Error uploading audio file:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Failed to upload audio file.",
-      });
-    }
-  }
-);
 
 app.post("/api/edit-text-message", async (req, res) => {
   try {

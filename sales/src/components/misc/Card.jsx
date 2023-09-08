@@ -1,10 +1,22 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const Card = ({ message = 'No Response', para = 'No Response', lineBottom, marginLeft, background, color, index }) => {
+const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', para = 'No Response', lineBottom, marginLeft, background, color, index }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [file, setFile] = useState(null);
+
+
+  const [cardData, setCardData] = useState({
+    id: id,
+    count: count,
+    parent_id: parent_id,
+    keyword: keyword,
+    audio: audio,
+    message: message,
+    para: para
+  })
+
 
   const handleOpenEdit = () => {
     setIsEditModalOpen(true);
@@ -24,16 +36,16 @@ const Card = ({ message = 'No Response', para = 'No Response', lineBottom, margi
 
 
   const handleChangeText = () => {
-    let data =  {currentMessage, currentPara, index}
+    let data = { currentMessage, currentPara, index }
     axios.post('http://localhost:9000/api/edit-text-message', data)
-    .then((res)=>{
-      console.log(res.data)
-      alert('Your data has been saved')
-      window.location.reload();
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
+      .then((res) => {
+        console.log(res.data)
+        alert('Your data has been saved')
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
 
@@ -58,8 +70,8 @@ const Card = ({ message = 'No Response', para = 'No Response', lineBottom, margi
         console.error('Error uploading audio:', error);
       });
 
-      setIsUploadModalOpen(false);
-      alert('Uploaded Successfully');
+    setIsUploadModalOpen(false);
+    alert('Uploaded Successfully');
   };
 
   const [currentMessage, setCurrentMessage] = useState(message)
@@ -73,16 +85,16 @@ const Card = ({ message = 'No Response', para = 'No Response', lineBottom, margi
     >
       <div className={lineBottom ? "container" : ""}>
         <p className="card__para" style={{ color: color }}>
-          Count: 1
+          Count: {count}
         </p>
         <p className="card__para" style={{ color: color }}>
-          parent_id: 0
+          parent_id: {parent_id}
         </p>
         <p className="card__para" style={{ color: color }}>
-          keyword: null
+          keyword: {keyword}
         </p>
         <p className="card__para" style={{ color: color }}>
-          Audio: 'Link'
+          Audio: {audio?.substr(1,15)}
         </p>
         <h2 className="card__heading" style={{ color: color }}>
           Message: {message}
@@ -95,12 +107,12 @@ const Card = ({ message = 'No Response', para = 'No Response', lineBottom, margi
           >
             <img src="/imgs/edit.svg" />
           </button>
-          <button
+          {/* <button
             onClick={handleUploadAudioFile}
             className="icon block text-white font-medium rounded-lg text-sm text-center"
           >
             <img src="/imgs/microphone.svg" />
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -113,24 +125,51 @@ const Card = ({ message = 'No Response', para = 'No Response', lineBottom, margi
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
               Edit Modal
             </h3>
-
             <div>
+              <p>Enter count</p>
               <input
                 type="text"
-                id="first_name"
-                class="mb-2 mt-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                value={currentMessage}
-                onChange={(e)=>{setCurrentMessage(e.target.value)}}
+                id="count"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                value={cardData?.count}
+                onChange={(e) => { setCardData({ ...cardData, count: e.target.value }) }}
                 required
               />
-                <input
+              <p>Enter Parent_id</p>
+              <input
                 type="text"
-                id="first_name"
-                class="mt-2 mb-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                value={currentPara}
-                onChange={(e)=>{setCurrentPara(e.target.value)}}
+                id="parent_id"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                value={cardData?.parent_id}
+                onChange={(e) => { setCardData({ ...cardData, parent_id: e.target.value }) }}
                 required
               />
+              <p>Enter Keyword</p>
+              <input
+                type="text"
+                id="keyword"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                value={cardData?.keyword}
+                onChange={(e) => { setCardData({ ...cardData, keyword: e.target.value }) }}
+                required
+              />
+              <p>Enter Message</p>
+              <input
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                id="file_input"
+                type="text"
+                value={cardData?.keyword}
+                onChange={(e) => { setCardData({ ...cardData, message: e.target.value }) }}
+              />
+              <p>Enter Audio</p>
+              <input
+                class="mb-2 px-1 py-2 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                id="file_input"
+                type="file"
+                onChange={(e) => { setFile(e.target.files[0]) }}
+              />
+
+
             </div>
 
             <button
@@ -141,11 +180,11 @@ const Card = ({ message = 'No Response', para = 'No Response', lineBottom, margi
             </button>
 
             <button
-            onClick={()=>{
-              handleCloseEdit() 
-              handleChangeText()
-            }
-            }
+              onClick={() => {
+                handleCloseEdit()
+                handleChangeText()
+              }
+              }
               className="ml-3 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               Save
@@ -171,7 +210,7 @@ const Card = ({ message = 'No Response', para = 'No Response', lineBottom, margi
               class="my-5 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
               id="file_input"
               type="file"
-              onChange={(e)=>{setFile(e.target.files[0])}}
+              onChange={(e) => { setFile(e.target.files[0]) }}
             />
 
             <button
@@ -182,7 +221,7 @@ const Card = ({ message = 'No Response', para = 'No Response', lineBottom, margi
             </button>
 
             <button
-            onClick={handleUploadFile}
+              onClick={handleUploadFile}
               className="ml-3 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               Upload
