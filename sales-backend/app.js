@@ -762,15 +762,63 @@ function validateData(data) {
 }
 
 
+// app.post("/api/create-logs", async (req, res) => {
+//   try {
+
+//     const { number, start_time, end_time, text, user, seq, date, call_status } = req.body;
+//     const db = await connectToDatabase();
+//     const collection = db.collection("logs");
+//     const result = await collection.insertOne(
+//      {number, start_time, end_time, text, user, seq, date, call_status}
+//     );
+//   } catch (error) {
+//     console.error("Error in creating logs:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to create logs.",
+//     });
+//   }
+// });
+
 app.post("/api/create-logs", async (req, res) => {
   try {
-
     const { number, start_time, end_time, text, user, seq, date, call_status } = req.body;
     const db = await connectToDatabase();
-    const collection = db.collection("logs");
-    const result = await collection.insertOne(
-     {number, start_time, end_time, text, user, seq, date, call_status}
-    );
+    const logsCollection = db.collection("logs");
+    const groupsCollection = db.collection("group");
+
+    // Check if the provided number exists in any group
+    console.log("Searching for number:", number);
+
+    const groupWithNumber = await groupsCollection.findOne({
+      phoneNumbers: number,
+    });
+    console.log("Group with Number:", groupWithNumber);
+
+    if (groupWithNumber) {
+      // If the number is found in a group, save the log along with the group information
+      const result = await logsCollection.insertOne({
+        number,
+        start_time,
+        end_time,
+        text,
+        user,
+        seq,
+        date,
+        call_status,
+        groupId: groupWithNumber._id, // Store the group ID with the log
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Log created successfully!",
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Number not found in any group.",
+      });
+    }
   } catch (error) {
     console.error("Error in creating logs:", error);
     return res.status(500).json({
@@ -779,6 +827,34 @@ app.post("/api/create-logs", async (req, res) => {
     });
   }
 });
+
+
+app.post("/api/get-chat-text", async (req, res) => {
+  try {
+    const { number, groupId } = req.body;
+    const db = await connectToDatabase();
+    const logsCollection = db.collection("logs");
+    const groupIdObjectId = new ObjectId(groupId);
+    // Find all logs with the provided number and group ID
+    const chatLogs = await logsCollection.find({ number, groupId: groupIdObjectId }).toArray();
+
+    // Extract the text from each chat log
+    const chatText = chatLogs.map((log) => log.text);
+
+    return res.status(200).json({
+      success: true,
+      chatText,
+    });
+  } catch (error) {
+    console.error("Error in retrieving chat text:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve chat text.",
+    });
+  }
+});
+
+
 
 
 app.get("/api/test", async(req, res) => {
