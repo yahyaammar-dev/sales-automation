@@ -839,7 +839,7 @@ app.post("/api/get-chat-text", async (req, res) => {
     const chatLogs = await logsCollection.find({ number, groupId: groupIdObjectId }).toArray();
 
     // Extract the text from each chat log
-    const chatText = chatLogs.map((log) => log.text);
+    const chatText = chatLogs.map((log) => log);
 
     return res.status(200).json({
       success: true,

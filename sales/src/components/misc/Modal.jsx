@@ -44,94 +44,6 @@
 
     }
 
-
-    useEffect(()=>{
-        let data = []
-        currentChat?.map((item)=>{
-            let obj = {
-                text: item?.chat,
-                audio: `http://16.163.178.109/aivoip/speech/${item?.filename}`,
-                matchingKeywords: "yes",
-                date: "29-07-2023",
-            }
-            data.push(obj)
-        })
-
-        const customChat = {
-            number: "",
-            bot: [
-            {
-                text: "Hello, Do you want to buy Insurance?",
-                audio:
-                "http://103.18.20.195:8080/speech/welcome.wav",
-                matchingKeywords: "yes",
-                date: "29-07-2023",
-            },
-            {
-                text: "Okay, I am referring you to my manager",
-                audio:
-                "http://103.18.20.195:8080/speech/yes.wav",
-                matchingKeywords: "Ok",
-                date: "29-07-2023",
-            },
-            {
-                text: "No Problem, have a good day!",
-                audio:
-                "http://103.18.20.195:8080/speech/no.wav",
-                matchingKeywords: "Ok",
-                date: "29-07-2023",
-            }
-            ],
-            user: data
-        };
-        setChat(customChat)
-
-    },[open])
-
-
-    useEffect(()=>{
-        let data = []
-        currentChat?.map((item)=>{
-            let obj = {
-                text: item?.chat,
-                audio: `http://16.163.178.109/aivoip/speech/${item?.filename}`,
-                matchingKeywords: "yes",
-                date: "29-07-2023",
-            }
-            data.push(obj)
-        })
-
-       
-        const customChat = {
-            number: "",
-            bot: [
-            {
-                text: "Hello, Do you want to buy Insurance?",
-                audio:
-                "http://103.18.20.195:8080/speech/welcome.wav",
-                matchingKeywords: "yes",
-                date: "29-07-2023",
-            },
-            {
-                text: "Okay, I am referring you to my manager",
-                audio:
-                "http://103.18.20.195:8080/speech/yes.wav",
-                matchingKeywords: "Ok",
-                date: "29-07-2023",
-            },
-            {
-                text: "No Problem, have a good day!",
-                audio:
-                "http://103.18.20.195:8080/speech/no.wav",
-                matchingKeywords: "Ok",
-                date: "29-07-2023",
-            }
-            ],
-            user: data
-        };
-        setChat(customChat)
-    },[])
-
     useEffect(() => {
         const fetchChatData = () => {
           const data = {
@@ -331,10 +243,11 @@
                     </header>
                     <div>
                     {
-                        currentChat?.map((item, index)=>{
+                        chatData?.map((item, index)=>{
+                            console.log('hello world')
                             return <>
                               <div className="px-10 py-2 z-0" key={index}>
-                            {index % 2 === 0 ? (
+                            {item?.user  == 'bot' ? (
                                 <div className="flex gap-5 my-2">
                                 
                                 <img src="/imgs/bot.svg" alt="Bot Avatar" />
@@ -344,7 +257,7 @@
                                         <h4 className="text-bold font-serif text-lg">
                                         Bot
                                         </h4>
-                                        <button onClick={()=>handlePlayMessage(item?.filename)}>
+                                        <button>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
@@ -369,13 +282,13 @@
                                     </div>
                                     <div className="flex">
                                         <p>
-                                            Matching Keyword: yes
+                                            Date: {item?.date}
                                         </p>
                                     </div>
                                     </div>
                                     <div className="w-4/5 border rounded-lg">
                                     <p className="bg-gray-100 px-4 py-3">
-                                        {item?.chat ? item?.chat : 'No Messgae Found'}
+                                        {item?.text ? item?.text : 'No Messgae Found'}
                                     </p>
                                     </div>
                                 </div>
@@ -390,7 +303,7 @@
                                         User
                                     </h4>
                                     <p>{item?.chat ? item?.chat : 'No Messgae Found'}</p>
-                                    <button onClick={()=>handlePlayMessage(item?.filename)}>
+                                    <button>
                                         {/* User Icon */}
                                         <svg
                                         xmlns="http:www.w3.org/2000/svg"
