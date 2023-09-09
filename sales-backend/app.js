@@ -2,28 +2,29 @@ const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const app = express();
-const port = 9001;
+// const port = 9001;
+const port = 9000;
 // chaned to 9001
 const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
 //Local Host Environment
-const http = require("http");
+// const http = require("http");
 const socketIO = require('socket.io');
 
 // Server Environment START
-// const https = require("https");
+const https = require("https");
 const fs = require("fs");
 const xlsx = require('xlsx');
 
-// const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
-// const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
+const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
+const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
 
-// const options = {
-//   key: fs.readFileSync(privateKeyPath),
-//   cert: fs.readFileSync(certificatePath)
-// };
+const options = {
+  key: fs.readFileSync(privateKeyPath),
+  cert: fs.readFileSync(certificatePath)
+};
 
 const uploadsPath = path.join(__dirname, "uploads");
 
@@ -31,8 +32,8 @@ app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
 app.use(express.json());
 
-// const server = https.createServer(app);
-const server = http.createServer(app);
+const server = https.createServer(options, app);
+// const server = http.createServer(app);
 
 
 const io = socketIO(server, {
