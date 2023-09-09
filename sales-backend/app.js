@@ -23,7 +23,14 @@ const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
 
 const options = {
   key: fs.readFileSync(privateKeyPath),
-  cert: fs.readFileSync(certificatePath)
+  cert: fs.readFileSync(certificatePath),
+  host: "16.163.178.109",
+  port: "9001",
+  path: 'https://16.163.178.109:9001/api/',
+  method: 'GET',
+  headers: {
+      Host: 'https://localhost:9001'
+  }
 };
 
 const uploadsPath = path.join(__dirname, "uploads");
