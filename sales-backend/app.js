@@ -43,7 +43,13 @@ const options = {
 const uploadsPath = path.join(__dirname, "uploads");
 
 app.use("/uploads", express.static(uploadsPath));
-app.use(cors());
+// app.use(cors());
+// Configure CORS to allow requests from your React frontend domain
+app.use(cors({
+  origin: 'https://aivoip.org', // Replace with your React frontend URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Allow cookies and other credentials to be sent
+}));
 app.use(express.json());
 
 const server = https.createServer(options, app);
