@@ -2,7 +2,7 @@ const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const app = express();
-const port = 8000;
+const port = 80;
 // const port = 9000;
 // chaned to 9001
 const axios = require("axios");
@@ -10,14 +10,14 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
 //Local Host Environment
-// const http = require("http");
+const http = require("http");
 const socketIO = require('socket.io');
 
 var ip = require('ip');
 
 
 // Server Environment START
-const https = require("https");
+// const https = require("https");
 const fs = require("fs");
 const xlsx = require('xlsx');
 
@@ -52,8 +52,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-const server = https.createServer(options, app);
-// const server = http.createServer(app);
+// const server = https.createServer(options, app);
+const server = http.createServer(app);
 
 
 const io = socketIO(server, {
