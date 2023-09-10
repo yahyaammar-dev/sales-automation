@@ -13,6 +13,9 @@ const path = require("path");
 // const http = require("http");
 const socketIO = require('socket.io');
 
+var ip = require('ip');
+
+
 // Server Environment START
 const https = require("https");
 const fs = require("fs");
@@ -23,15 +26,19 @@ const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
 
 const options = {
   key: fs.readFileSync(privateKeyPath),
-  cert: fs.readFileSync(certificatePath),
-  host: "16.163.178.109",
-  port: "9001",
-  path: 'https://16.163.178.109:9001/api/',
-  method: 'GET',
-  headers: {
-      Host: 'https://localhost:9001'
-  }
+  cert: fs.readFileSync(certificatePath)
 };
+// const options = {
+//   key: fs.readFileSync(privateKeyPath),
+//   cert: fs.readFileSync(certificatePath),
+//   host: "16.163.178.109",
+//   port: "9001",
+//   path: 'https://16.163.178.109:9001/api/',
+//   method: 'GET',
+//   headers: {
+//       Host: 'https://localhost:9001'
+//   }
+// };
 
 const uploadsPath = path.join(__dirname, "uploads");
 
@@ -66,6 +73,7 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => {
+  console.log("Your IP address is " + ip.address());
   console.log(`Server is running on https://localhost:${port}`);
 });
 
