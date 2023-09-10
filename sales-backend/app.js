@@ -2,7 +2,7 @@ const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const app = express();
-const port = 9001;
+const port = 8000;
 // const port = 9000;
 // chaned to 9001
 const axios = require("axios");
