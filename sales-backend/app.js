@@ -3,36 +3,57 @@ const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const app = express();
 const port = 9001;
+// const port = 9000;
 // chaned to 9001
 const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
 //Local Host Environment
-const http = require("http");
+// const http = require("http");
 const socketIO = require('socket.io');
 
+var ip = require('ip');
+
+
 // Server Environment START
-// const https = require("https");
+const https = require("https");
 const fs = require("fs");
 const xlsx = require('xlsx');
 
-// const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
-// const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
+const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
+const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
 
+const options = {
+  key: fs.readFileSync(privateKeyPath),
+  cert: fs.readFileSync(certificatePath)
+};
 // const options = {
 //   key: fs.readFileSync(privateKeyPath),
-//   cert: fs.readFileSync(certificatePath)
+//   cert: fs.readFileSync(certificatePath),
+//   host: "16.163.178.109",
+//   port: "9001",
+//   path: 'https://16.163.178.109:9001/api/',
+//   method: 'GET',
+//   headers: {
+//       Host: 'https://localhost:9001'
+//   }
 // };
 
 const uploadsPath = path.join(__dirname, "uploads");
 
 app.use("/uploads", express.static(uploadsPath));
-app.use(cors());
+// app.use(cors());
+// Configure CORS to allow requests from your React frontend domain
+app.use(cors({
+  origin: 'https://aivoip.org', // Replace with your React frontend URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Allow cookies and other credentials to be sent
+}));
 app.use(express.json());
 
-// const server = https.createServer(app);
-const server = http.createServer(app);
+const server = https.createServer(options, app);
+// const server = http.createServer(app);
 
 
 const io = socketIO(server, {
@@ -58,6 +79,7 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => {
+  console.log("Your IP address is " + ip.address());
   console.log(`Server is running on https://localhost:${port}`);
 });
 

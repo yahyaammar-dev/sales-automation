@@ -1,5 +1,6 @@
 {
   "name": "sales-backend",
+  "homepage": "https://aivoip.org",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
