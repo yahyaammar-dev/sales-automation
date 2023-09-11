@@ -1,27 +1,31 @@
 import React, { useState, useEffect } from "react"
 import { useParams } from "react-router-dom";
+import axios from 'axios'
 
 
 const ConcurrentForm = () => {
-    const { id } = useParams();
     const [formData, setFormData] = useState( {
-        id: "1",
-        sip_ip: "16.163.178.109",
-        port: "8000",
-        username: "1601",
-        password: "ab975@yTpL9",
+        sip_ip: "",
+        port: "",
+        username: "",
+        password: "",
     })
 
     //update handler
     const updateHandler = () => {
         console.log("update handler called ::", formData)
         //update current setting api call
-        // axios.post("http://16.163.178.109:9001/api/update-setting", formData).then((res) => {
-        //     console.log("response :::", res)
-        // setFormData();
-        // }).catch((err) => {
-        //     console.log("error ::", err)
-        // });
+        axios.post("http://16.163.178.109:9001/api/update-setting", formData).then((res) => {
+            console.log("response :::", res)
+        setFormData({
+            sip_ip: res.data.SIP_IP,
+            port: res.data.PORT,
+            username: res.data.UserName,
+            password: res.data.Password,
+        });
+        }).catch((err) => {
+            console.log("error ::", err)
+        });
         alert('Updated Concurrent Number in FreePbx')
     }
 
@@ -35,21 +39,19 @@ const ConcurrentForm = () => {
     }
 
     useEffect(() => {
-        //here call get current setting api
-        // axios.get("http://16.163.178.109:9001/api/settings").then((res) => {
-        //     console.log("response :::", res)
-        // setFormData();
-        // }).catch((err) => {
-        //     console.log("error ::", err)
-        // });
+        axios.get("http://16.163.178.109/aivoip/sip/fetch-sip.php").then((res) => {
+            console.log('res', res.data)
+            setFormData( {
+                sip_ip: res.data.SIP_IP,
+                port: res.data.PORT,
+                username: res.data.UserName,
+                password: res.data.Password,
+            })
+        }).catch((err) => {
+            alert('Error Fetching details from Server')
+            console.log("error ::", err)
+        });
 
-        setFormData( {
-            id: "1",
-            sip_ip: "16.163.178.109",
-            port: "8000",
-            username: "1601",
-            password: "ab975@yTpL9",
-        })
     }, []);
 
 
@@ -101,6 +103,15 @@ const ConcurrentForm = () => {
                         value={formData?.password}
                         onChange={handleChange}
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="password" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                        Concurrent Calls
+                    </label>
+                    <input
+                        name="concurrent Calls"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Concurrent Calls" />
                 </div>
 
 
