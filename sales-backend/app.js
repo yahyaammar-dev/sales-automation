@@ -3,31 +3,29 @@ const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const app = express();
 const port = 9001;
-// const port = 9000;
-// chaned to 9001
 const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
 //Local Host Environment
-// const http = require("http");
-const socketIO = require('socket.io');
+const http = require("http");
+// const socketIO = require('socket.io');
 
-var ip = require('ip');
+// var ip = require('ip');
 
 
 // Server Environment START
-const https = require("https");
+// const https = require("https");
 const fs = require("fs");
 const xlsx = require('xlsx');
 
-const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
-const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
+// const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
+// const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
 
-const options = {
-  key: fs.readFileSync(privateKeyPath),
-  cert: fs.readFileSync(certificatePath)
-};
+// const options = {
+//   key: fs.readFileSync(privateKeyPath),
+//   cert: fs.readFileSync(certificatePath)
+// };
 // const options = {
 //   key: fs.readFileSync(privateKeyPath),
 //   cert: fs.readFileSync(certificatePath),
@@ -43,7 +41,7 @@ const options = {
 const uploadsPath = path.join(__dirname, "uploads");
 
 app.use("/uploads", express.static(uploadsPath));
-// app.use(cors());
+app.use(cors());
 // Configure CORS to allow requests from your React frontend domain
 app.use(cors({
   origin: 'https://aivoip.org', // Replace with your React frontend URL
@@ -52,34 +50,33 @@ app.use(cors({
 }));
 app.use(express.json());
 
-const server = https.createServer(options, app);
+const server = http.createServer(app);
 // const server = http.createServer(app);
 
 
-const io = socketIO(server, {
-  cors: {
-    origin: '*', // Specify the origin you want to allow
-    methods: ['GET', 'POST'], // Specify the HTTP methods you want to allow
-  }});
+// const io = socketIO(server, {
+//   cors: {
+//     origin: '*', // Specify the origin you want to allow
+//     methods: ['GET', 'POST'], // Specify the HTTP methods you want to allow
+//   }});
 
-io.on('connection', (socket) => {
-  console.log('A user connected to the WebSocket.');
+// io.on('connection', (socket) => {
+//   console.log('A user connected to the WebSocket.');
 
-  // You can handle events and messages from the connected clients here
-  socket.on('chat message', (message) => {
-    console.log(message);
-    // Broadcast the message to all connected clients
-    io.emit('chat message', message);
-  });
+//   // You can handle events and messages from the connected clients here
+//   socket.on('chat message', (message) => {
+//     console.log(message);
+//     // Broadcast the message to all connected clients
+//     io.emit('chat message', message);
+//   });
 
-  // Handle disconnection
-  socket.on('disconnect', () => {
-    console.log('A user disconnected from the WebSocket.');
-  });
-});
+//   // Handle disconnection
+//   socket.on('disconnect', () => {
+//     console.log('A user disconnected from the WebSocket.');
+//   });
+// });
 
 server.listen(port, () => {
-  console.log("Your IP address is " + ip.address());
   console.log(`Server is running on https://localhost:${port}`);
 });
 
@@ -625,9 +622,9 @@ app.post("/api/edit-text-message", async (req, res) => {
   try {
     const { currentMessage, currentPara, index } = req.body;
     const db = await connectToDatabase();
-    const collection = db.collection("sales_automation_messages");
+    const collection = db.collection("messages");
     const result = await collection.updateOne(
-      { _id: new ObjectId("64d204eadd432e73511b0f65") },
+      { _id: new ObjectId(req.body.id) },
       {
         $set: {
           [`messages.${index}.primary`]: currentMessage,

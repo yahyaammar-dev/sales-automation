@@ -1,25 +1,12 @@
+
 import React, { useState } from "react";
 import axios from "axios";
 
-
-const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
-
-const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', para = 'No Response', lineBottom, marginLeft, background, color, index }) => {
+const Card = ({ message, para, lineBottom, marginLeft, background, color, index, id }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [file, setFile] = useState(null);
-
-
-  const [cardData, setCardData] = useState({
-    id: id,
-    count: count,
-    parent_id: parent_id,
-    keyword: keyword,
-    audio: audio,
-    message: message,
-    para: para
-  })
-
+  
 
   const handleOpenEdit = () => {
     setIsEditModalOpen(true);
@@ -39,16 +26,16 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
 
 
   const handleChangeText = () => {
-    let data = { currentMessage, currentPara, index }
-    axios.post(`${apiUrl}/api/edit-text-message`, data)
-      .then((res) => {
-        console.log(res.data)
-        alert('Your data has been saved')
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    let data =  {currentMessage, currentPara, index}
+    data  = { ...data, id: id }
+    axios.post('http://localhost:9001/api/edit-text-message', data)
+    .then((res)=>{
+      console.log(res.data)
+      alert('Your data has been saved')
+      window.location.reload();
+    }).catch((err)=>{
+      console.log(err)
+    })
   }
 
 
@@ -61,7 +48,7 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
     const formData = new FormData();
     formData.append('sales_automation_messages', file);
 
-    fetch('http://localhost:9000/api/upload-audio', {
+    fetch('http://localhost:9001/api/upload-audio', {
       method: 'POST',
       body: formData,
     })
@@ -73,8 +60,8 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
         console.error('Error uploading audio:', error);
       });
 
-    setIsUploadModalOpen(false);
-    alert('Uploaded Successfully');
+      setIsUploadModalOpen(false);
+      alert('Uploaded Successfully');
   };
 
   const [currentMessage, setCurrentMessage] = useState(message)
@@ -88,19 +75,10 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
     >
       <div className={lineBottom ? "container" : ""}>
         <p className="card__para" style={{ color: color }}>
-          Count: {count}
-        </p>
-        <p className="card__para" style={{ color: color }}>
-          parent_id: {parent_id}
-        </p>
-        <p className="card__para" style={{ color: color }}>
-          keyword: {keyword}
-        </p>
-        <p className="card__para" style={{ color: color }}>
-          Audio: {audio?.substr(1,15)}
+          {message}
         </p>
         <h2 className="card__heading" style={{ color: color }}>
-          Message: {message}
+          {para}
         </h2>
         <div className="flex justify-end gap-3">
           {/* Step 3: Add the modal trigger buttons */}
@@ -110,12 +88,12 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
           >
             <img src="/imgs/edit.svg" />
           </button>
-          {/* <button
+          <button
             onClick={handleUploadAudioFile}
             className="icon block text-white font-medium rounded-lg text-sm text-center"
           >
             <img src="/imgs/microphone.svg" />
-          </button> */}
+          </button>
         </div>
       </div>
 
@@ -128,51 +106,24 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
               Edit Modal
             </h3>
+
             <div>
-              <p>Enter count</p>
               <input
                 type="text"
-                id="count"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                value={cardData?.count}
-                onChange={(e) => { setCardData({ ...cardData, count: e.target.value }) }}
+                id="first_name"
+                class="mb-2 mt-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                value={currentMessage}
+                onChange={(e)=>{setCurrentMessage(e.target.value)}}
                 required
               />
-              <p>Enter Parent_id</p>
-              <input
+                <input
                 type="text"
-                id="parent_id"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                value={cardData?.parent_id}
-                onChange={(e) => { setCardData({ ...cardData, parent_id: e.target.value }) }}
+                id="first_name"
+                class="mt-2 mb-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                value={currentPara}
+                onChange={(e)=>{setCurrentPara(e.target.value)}}
                 required
               />
-              <p>Enter Keyword</p>
-              <input
-                type="text"
-                id="keyword"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                value={cardData?.keyword}
-                onChange={(e) => { setCardData({ ...cardData, keyword: e.target.value }) }}
-                required
-              />
-              <p>Enter Message</p>
-              <input
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                id="file_input"
-                type="text"
-                value={cardData?.keyword}
-                onChange={(e) => { setCardData({ ...cardData, message: e.target.value }) }}
-              />
-              <p>Enter Audio</p>
-              <input
-                class="mb-2 px-1 py-2 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                id="file_input"
-                type="file"
-                onChange={(e) => { setFile(e.target.files[0]) }}
-              />
-
-
             </div>
 
             <button
@@ -183,11 +134,11 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
             </button>
 
             <button
-              onClick={() => {
-                handleCloseEdit()
-                handleChangeText()
-              }
-              }
+            onClick={()=>{
+              handleCloseEdit() 
+              handleChangeText()
+            }
+            }
               className="ml-3 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               Save
@@ -213,9 +164,10 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
               class="my-5 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
               id="file_input"
               type="file"
-              onChange={(e) => { setFile(e.target.files[0]) }}
+              onChange={(e)=>{setFile(e.target.files[0])}}
             />
 
+            {/* Your upload file UI components can go here */}
             <button
               onClick={handleCloseUpload}
               className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
@@ -224,7 +176,7 @@ const Card = ({ id, count, parent_id, keyword, audio, message = 'No Response', p
             </button>
 
             <button
-              onClick={handleUploadFile}
+            onClick={handleUploadFile}
               className="ml-3 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               Upload
