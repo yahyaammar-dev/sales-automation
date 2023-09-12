@@ -42,13 +42,13 @@ const options = {
 const uploadsPath = path.join(__dirname, "uploads");
 
 app.use("/uploads", express.static(uploadsPath));
-app.use(cors());
+// app.use(cors());
 // Configure CORS to allow requests from your React frontend domain
-// app.use(cors({
-//   origin: 'https://aivoip.org', // Replace with your React frontend URL
-//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//   credentials: true, // Allow cookies and other credentials to be sent
-// }));
+app.use(cors({
+  origin: 'https://aivoip.org', // Replace with your React frontend URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Allow cookies and other credentials to be sent
+}));
 app.use(express.json());
 
 // const server = http.createServer(app);
@@ -80,12 +80,12 @@ const server = https.createServer(options,app);
 server.listen(port, () => {
   const hostname = os.hostname();
   console.log("Your IP address is " + ip.address());
-  console.log(`Server is running on https://${hostname}:${port}`);
+  console.log(`Server is running on https://localhost:${port}`);
 });
 
-app.use("/uploads", express.static(uploadsPath));
-app.use(cors());
-app.use(express.json());
+// app.use("/uploads", express.static(uploadsPath));
+// app.use(cors());
+// app.use(express.json());
 
 const uri = "mongodb+srv://sales-automation:sales-automation@cluster0.knl0a2f.mongodb.net/?retryWrites=true&w=majority"
 async function connectToDatabase() {
