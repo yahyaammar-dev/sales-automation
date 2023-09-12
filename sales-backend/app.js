@@ -12,6 +12,7 @@ const path = require("path");
 // const socketIO = require('socket.io');
 
 var ip = require('ip');
+const os = require('os');
 
 
 // Server Environment START
@@ -82,9 +83,9 @@ server.listen(port, () => {
   console.log(`Server is running on https://${hostname}:${port}`);
 });
 
-// app.use("/uploads", express.static(uploadsPath));
-// app.use(cors());
-// app.use(express.json());
+app.use("/uploads", express.static(uploadsPath));
+app.use(cors());
+app.use(express.json());
 
 const uri = "mongodb+srv://sales-automation:sales-automation@cluster0.knl0a2f.mongodb.net/?retryWrites=true&w=majority"
 async function connectToDatabase() {
