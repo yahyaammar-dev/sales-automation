@@ -4,12 +4,14 @@ import Modal from "./Modal";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
+
 const Table = ({ isGroupAdded }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [groups, setGroups] = useState([]);
   useEffect(() => {
-    axios.get("http://16.163.178.109:9000/api/groups").then((res) => {
+    axios.get(`${apiUrl}/api/groups`).then((res) => {
       setGroups(res.data.groups);
     });
   }, [isGroupAdded]);

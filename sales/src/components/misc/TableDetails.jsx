@@ -4,19 +4,21 @@ import Modal from "./Modal";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
+const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
+
 const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, toggler, fromDate, toDate, filterData, setFilterData }) => {
   const [open, setOpen] = useState(false);
   const { id } = useParams();
   const [currentChat, setCurrentChat] = useState();
+  const [currentNumber, setCurrNumber] = useState();
 
   useEffect(() => {
-    axios.get(`http://16.163.178.109:9000/api/group/${id}`).then((response) => {
+    axios.get(`${apiUrl}/api/group/${id}`).then((response) => {
       setGroup(response.data.group);
 
       let groups = response.data.group;
       // console.log("response  ::", response.data)
       let groupPhones = groups?.phoneNumbers;
-
       let arr = groupPhones?.map((item) => {
         return item?.number;
       });
@@ -66,12 +68,15 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
 
   }, [toggler, group]);
 
+  
 
 
+
+  // console.log(filterData)
 
   return (
     <div>
-      <Modal open={open} setOpen={setOpen} currentChat={currentChat} />
+      <Modal open={open} setOpen={setOpen} currentChat={currentChat} id={id} groupNumber={currentNumber}/>
       <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 bg-white">
           <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -154,7 +159,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
                       alt="Jese image"
                     />
                     <div class="pl-3">
-                      <div class="text-base font-semibold">{item?.number}</div>
+                      <div class="text-base font-semibold">{item?.number ? item?.number : item}</div>
                     </div>
                   </th>
                   <td class="px-6 py-4 text-center">{item?.status}</td>
@@ -165,6 +170,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
                     class="px-6 py-4 text-center cursor-pointer"
                     onClick={() => {
                       setOpen(true);
+                      setCurrNumber(item);
                     }}
                   >
                     <img

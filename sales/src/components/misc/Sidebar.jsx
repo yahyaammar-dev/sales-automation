@@ -80,8 +80,6 @@ const Sidebar = () => {
             <Button text="Speech" icon={icons[3]} my />
           )}
         </div>
-        <Heading text={"Account"} />
-        <Button text="Notification" my />
         {/* <Button text="Notification" icon={icons[4]} my /> */}
         <div
           onClick={() => {
@@ -96,8 +94,6 @@ const Sidebar = () => {
           )}
         </div>
       </div>
-      <Button text="Logout" danger my />
-      {/* <Button text="Logout" danger icon={icons[6]} my /> */}
     </div>
   );
 };
