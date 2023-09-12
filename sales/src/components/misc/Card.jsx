@@ -30,9 +30,14 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
     data  = { ...data, id: id }
     axios.post('http://localhost:9001/api/edit-text-message', data)
     .then((res)=>{
+      console.log('Response ::::',res.status)
+      if(res.status == 200){
       console.log(res.data)
       alert('Your data has been saved')
-      window.location.reload();
+      // window.location.reload();
+      }else{
+        console.log('Response ::::',res.status)
+      }
     }).catch((err)=>{
       console.log(err)
     })

@@ -25,6 +25,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
       axios
         .get("https://www.aivoip.org/aivoip/speech/fetch-chat.php")
         .then((response) => {
+          if(response.status == 200){
           let data = response?.data;
           // console.log("data ::", data)
           let filtered = data?.map((item) => {
@@ -52,6 +53,9 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
 
           const transformedArray = Object.values(transformedData);
           setTransfromedData(transformedArray);
+        }else{
+          alert('Unable to fetch teh chat')
+        }
         });
     });
   }, []);
@@ -183,7 +187,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
                     />
                   </td>
                   <td class="px-6 py-4 text-center">
-                    {item?.chat?.length > 0 ? "Yes" : "No"}
+                    {item?.duration?.length > 0 ? "Yes" : "No"}
                   </td>
                 </tr>
               );

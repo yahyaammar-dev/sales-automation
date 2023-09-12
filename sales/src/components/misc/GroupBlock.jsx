@@ -53,7 +53,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
   const handleGroup = () => {
     axios
-      .post(`${apiUrl}/api/create-group`, {
+      .post(`http://localhost:9001/api/create-group`, {
         name: groupName,
         phoneNumbers: [],
       })
@@ -62,11 +62,11 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       });
   };
 
-  useEffect(() => {
-    axios.get(`${apiUrl}/api/groups`).then((response) => {
-      setAllGroups(response.data.groups);
-    });
-  }, []);
+  // useEffect(() => {
+  //   axios.get(`${apiUrl}/api/groups`).then((response) => {
+  //     setAllGroups(response.data.groups);
+  //   });
+  // }, []);
 
 
   useEffect(() => {
