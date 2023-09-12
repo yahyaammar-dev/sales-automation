@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react"
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useParams } from "react-router-dom";
 
 
 const ConcurrentForm = () => {
     const { id } = useParams();
+    const [passwordVisible, setPasswordVisible] = useState(false)
     const [formData, setFormData] = useState({
         id: "",
         sip_ip: "",
@@ -53,7 +55,7 @@ const ConcurrentForm = () => {
         })
     }, []);
 
-
+  
     return <>
 
         <div class="w-full max-w-xs" style={{ margin: 'auto', marginTop: '10rem' }}>
@@ -93,15 +95,25 @@ const ConcurrentForm = () => {
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username" />
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-4" style={{ position: "relative" }}>
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
                         Password
                     </label>
                     <input
+                        type={passwordVisible ? 'text' : 'password'}
                         name="password"
                         value={formData?.password}
                         onChange={handleChange}
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="password" />
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="username"
+                        placeholder="password" />
+                        <span className="password-toggle" style={{
+                            position: "absolute",
+                            top: "2.5rem",
+                            right: " 1rem",
+                        }} onClick={() => setPasswordVisible(!passwordVisible)}>
+                            {passwordVisible ? <FaEye /> : <FaEyeSlash />}
+                        </span>
                 </div>
 
 
@@ -124,9 +136,9 @@ const ConcurrentForm = () => {
                     </button>
 
                 </div>
-            </form>
+            </form >
 
-        </div>
+        </div >
 
     </>
 }
