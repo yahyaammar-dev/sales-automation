@@ -76,8 +76,7 @@ const server = https.createServer(options,app);
 //   });
 // });
 
-server.listen(port, (req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
+server.listen(port, () => {
   const hostname = os.hostname();
   console.log("Your IP address is " + ip.address());
   console.log(`Server is running on https://${hostname}:${port}`);
