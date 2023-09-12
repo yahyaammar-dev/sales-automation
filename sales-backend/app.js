@@ -11,7 +11,7 @@ const path = require("path");
 // const http = require("http");
 // const socketIO = require('socket.io');
 
-// var ip = require('ip');
+var ip = require('ip');
 
 
 // Server Environment START
@@ -22,32 +22,32 @@ const xlsx = require('xlsx');
 const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
 const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
 
-// const options = {
-//   key: fs.readFileSync(privateKeyPath),
-//   cert: fs.readFileSync(certificatePath)
-// };
 const options = {
   key: fs.readFileSync(privateKeyPath),
-  cert: fs.readFileSync(certificatePath),
-  host: "https://aivoip.org",
-  port: "9001",
-  path: 'https://aivoip.org/api/',
-  method: 'GET',
-  headers: {
-      Host: 'https://aivoip.org/api/'
-  }
+  cert: fs.readFileSync(certificatePath)
 };
+// const options = {
+//   key: fs.readFileSync(privateKeyPath),
+//   cert: fs.readFileSync(certificatePath),
+//   host: "https://aivoip.org",
+//   port: "9001",
+//   path: 'https://aivoip.org/api/',
+//   method: 'GET',
+//   headers: {
+//       Host: 'https://aivoip.org/api/'
+//   }
+// };
 
 const uploadsPath = path.join(__dirname, "uploads");
 
 app.use("/uploads", express.static(uploadsPath));
-// app.use(cors());
+app.use(cors());
 // Configure CORS to allow requests from your React frontend domain
-app.use(cors({
-  origin: 'https://aivoip.org', // Replace with your React frontend URL
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Allow cookies and other credentials to be sent
-}));
+// app.use(cors({
+//   origin: 'https://aivoip.org', // Replace with your React frontend URL
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   credentials: true, // Allow cookies and other credentials to be sent
+// }));
 app.use(express.json());
 
 // const server = http.createServer(app);
@@ -77,7 +77,10 @@ const server = https.createServer(options,app);
 // });
 
 server.listen(port, () => {
-  console.log(`Server is running on https://localhost:${port}`);
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  const hostname = os.hostname();
+  console.log("Your IP address is " + ip.address());
+  console.log(`Server is running on https://${hostname}:${port}`);
 });
 
 // app.use("/uploads", express.static(uploadsPath));
