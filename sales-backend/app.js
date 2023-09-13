@@ -20,13 +20,13 @@ const os = require('os');
 const fs = require("fs");
 const xlsx = require('xlsx');
 
-const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
-const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
+// const certificatePath = '/etc/letsencrypt/live/aivoip.org/fullchain.pem';
+// const privateKeyPath = '/etc/letsencrypt/live/aivoip.org/privkey.pem';
 
-const options = {
-  key: fs.readFileSync(privateKeyPath),
-  cert: fs.readFileSync(certificatePath)
-};
+// const options = {
+//   key: fs.readFileSync(privateKeyPath),
+//   cert: fs.readFileSync(certificatePath)
+// };
 // const options = {
 //   key: fs.readFileSync(privateKeyPath),
 //   cert: fs.readFileSync(certificatePath),
