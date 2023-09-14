@@ -44,7 +44,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         console.error('Error uploading audio:', error);
       });
 
-      alert('Uploaded Successfully');
+    alert('Uploaded Successfully');
   };
 
   const [selectedGroupId, setSelectedGroupId] = useState("");
@@ -131,12 +131,11 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
     axios
       .post(
-        "http://16.163.178.109/aivoip/autodial/dial_numbers_1.php",
+        `${APIURL}/api/call-numbers`,
         tempPhone
       )
-      .then((response) => console.log(response));
-
-    alert("Calling Phone Numbers, Status will be updated soon");
+      .then((response) => alert('Started Calling On Given Numbers!'))
+      .catch((err) => alert('Something failed! Try again Later'))
   };
 
   const handleAddPhoneNumber = () => {
@@ -193,7 +192,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
   return (
     <div className="bg-white shadow-md sm:rounded-lg flex justify-end p-8 flex-wrap gap-3" data-testid="groupBlockContainer">
-     
+
       <div className="w-full flex gap-2 items-center">
         <div className="w-2/12">
           <p className="font-medium">Group Name</p>
@@ -251,16 +250,16 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       <div className="w-full flex gap-2 items-center">
         <div className="w-4/12 flex items-center">
           <p className="font-medium w-40 mr-4" style={{ textWrap: 'nowrap' }}>Upload Excel</p>
-          <input 
-            type="file" 
+          <input
+            type="file"
             className="group--block--input rounded w-1/2"
             id="file_input"
-            onChange={(e)=>{setFile(e.target.files[0])}}
-            />
+            onChange={(e) => { setFile(e.target.files[0]) }}
+          />
         </div>
 
         <div className="w-2/12">
-          <button onClick={()=>{handleUploadFile()}} className="btn btn-primary flex gap-1 p-2 rounded items-center bg--active white-color button--main--color">Upload</button>
+          <button onClick={() => { handleUploadFile() }} className="btn btn-primary flex gap-1 p-2 rounded items-center bg--active white-color button--main--color">Upload</button>
         </div>
         <div className="w-2/12">
           <input
@@ -327,10 +326,10 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
       {
         errorMessage && <>
-          <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 absolute top-2 left-50"  role="alert">
+          <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 absolute top-2 left-50" role="alert">
             <span class="font-medium">Danger alert!</span> {errorMessage}
           </div>
-        </> 
+        </>
       }
 
     </div>

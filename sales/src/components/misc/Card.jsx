@@ -2,6 +2,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+const APIURL = process.env.REACT_APP_BASE_URL_LIVE;
+
+
 const Card = ({ message, para, lineBottom, marginLeft, background, color, index, id }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -48,11 +51,11 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
     const formData = new FormData();
     formData.append('sales_automation_messages', file);
 
-    fetch('https://api.aivoip.org/api/upload-audio', {
+    fetch(`${APIURL}/api/upload-audio`, {
       method: 'POST',
       body: formData,
     })
-      .then((response) => console.log(response))
+      .then((response) => alert('Audio File Uploaded Successfully') )
       .then((data) => {
         console.log('Upload response:', data);
       })
@@ -61,7 +64,6 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
       });
 
       setIsUploadModalOpen(false);
-      alert('Uploaded Successfully');
   };
 
   const [currentMessage, setCurrentMessage] = useState(message)

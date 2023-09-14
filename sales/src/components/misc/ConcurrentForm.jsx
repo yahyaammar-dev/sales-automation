@@ -18,7 +18,7 @@ const ConcurrentForm = () => {
     const updateHandler = () => {
         console.log("update handler called ::", formData)
         //update current setting api call
-        axios.post("http://16.163.178.109:9001/api/update-setting", formData).then((res) => {
+        axios.post(`${APIURL}/api/updateSetting`, formData).then((res) => {
             console.log("response :::", res)
         setFormData({
             sip_ip: res.data.SIP_IP,
@@ -42,13 +42,13 @@ const ConcurrentForm = () => {
     }
 
     useEffect(() => {
-        axios.get("http://16.163.178.109/aivoip/sip/fetch-sip.php").then((res) => {
-            console.log('res', res.data)
+        axios.get(`${APIURL}/api/getSipSetting`).then((res) => {
+            console.log('res', res.data.data)
             setFormData( {
-                sip_ip: res.data.SIP_IP,
-                port: res.data.PORT,
-                username: res.data.UserName,
-                password: res.data.Password,
+                sip_ip: res.data.data.SIP_IP,
+                port: res.data.data.Port,
+                username: res.data.data.UserName,
+                password: res.data.data.Password,
             })
         }).catch((err) => {
             alert('Error Fetching details from Server')

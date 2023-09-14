@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios"
 import Button from './Button'
+const APIURL = process.env.REACT_APP_BASE_URL_LIVE;
 
 const Block = ({ isGroupAdded, setIsGroupAdded }) => {
   const [groupName, setGroupName] = useState();
 
   const handleGroup = () => {
     axios
-      .post("http://16.163.178.109:9001/api/create-group", {
+      .post(`${APIURL}/api/create-group`, {
         name: groupName,
         phoneNumbers: [],
       })

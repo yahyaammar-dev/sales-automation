@@ -181,7 +181,7 @@ app.post("/api/create-group", async (req, res) => {
     const { name, phoneNumbers } = req.body;
 
     const currentTimestamp = new Date().toISOString();
-      
+
 
     // Create a new group document
     const newGroup = {
@@ -302,7 +302,7 @@ app.get("/api/groups", async (req, res) => {
 
     console.log("Fetched all groups:", groups);
 
-      // Calculate total phone numbers, total answered, and total duration for each group
+    // Calculate total phone numbers, total answered, and total duration for each group
     const groupsWithTotals = groups.map((group) => {
       let totalPhoneNumbers = 0;
       let totalAnswered = 0;
@@ -344,6 +344,7 @@ app.post(
   "/api/upload-audio",
   upload.single("sales_automation_messages"),
   async (req, res) => {
+    console.log('hello')
     try {
       const uploadedFile = req.file;
 
@@ -363,18 +364,17 @@ app.post(
       // For example, you can use GridFS to store large audio files in Mon````goDB
       const result = await collection.insertOne({ audio: uploadedFile });
 
-      console.log("Audio file uploaded successfully!");
 
       // Create the link for the uploaded audio file
       const audioLink = `http://16.163.178.109:9000/uploads/${uploadedFile.filename}`;
 
       // Make a POST request to the specified URL with the audio link as a query parameter
-      // const postUrl = `http://103.18.20.195:8080/speech/save-audio-file.php?url=${encodeURIComponent(
-      //   audioLink
-      // )}`;
-      // const response = await axios.get(postUrl);
+      const url = `http://16.163.178.109/aivoip/speech/save-audio-file.php?url=${encodeURIComponent(
+        audioLink
+      )}&message=welcome&message_text=welcome`
 
-      console.log("POST request success:", 'response.data');
+      const response =  axios.get(url);
+
 
       return res.status(200).json({
         success: true,
@@ -391,39 +391,39 @@ app.post(
 );
 
 app.post("/api/messages",
- upload.single("audio_file"), 
- async (req, res) => {
-  try {
-    const uploadedFile = req.file.filename;
+  upload.single("audio_file"),
+  async (req, res) => {
+    try {
+      const uploadedFile = req.file.filename;
 
-    const db = await connectToDatabase();
-    const collection = db.collection("messages");
+      const db = await connectToDatabase();
+      const collection = db.collection("messages");
 
-    const request = req.body
-    const message = {
-      ...request, 
-      uploadedFile
+      const request = req.body
+      const message = {
+        ...request,
+        uploadedFile
+      }
+
+
+      // Insert the array of messages into the "sales_automation_messages" collection
+      const result = await collection.insertOne(message);
+
+      console.log(`${result.insertedCount} messages inserted successfully!`);
+
+      return res.status(201).json({
+        success: true,
+        message: "Messages inserted successfully!",
+        insertedCount: result,
+      });
+    } catch (error) {
+      console.error("Error inserting messages:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to insert messages.",
+      });
     }
-    
-
-    // Insert the array of messages into the "sales_automation_messages" collection
-    const result = await collection.insertOne(message);
-
-    console.log(`${result.insertedCount} messages inserted successfully!`);
-
-    return res.status(201).json({
-      success: true,
-      message: "Messages inserted successfully!",
-      insertedCount: result,
-    });
-  } catch (error) {
-    console.error("Error inserting messages:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to insert messages.",
-    });
-  }
-});
+  });
 
 app.get("/api/messages", async (req, res) => {
   try {
@@ -461,14 +461,14 @@ app.put("/api/messages/:id", async (req, res) => {
       });
     }
 
-    const { id, parent_id, keyword , audio_file, text } = req.body;
+    const { id, parent_id, keyword, audio_file, text } = req.body;
 
     // Update the message document based on the provided data
     const updatedMessage = {
-      id: id, 
-      parent_id: parent_id, 
-      keyword: keyword, 
-      audio_file: audio_file, 
+      id: id,
+      parent_id: parent_id,
+      keyword: keyword,
+      audio_file: audio_file,
       text: text
     };
 
@@ -663,7 +663,7 @@ app.post(
   async (req, res) => {
     try {
       const uploadedFile = req.file;
-      const groupId= req.body.id
+      const groupId = req.body.id
       const db = await connectToDatabase();
 
 
@@ -699,17 +699,17 @@ app.post(
 
 
         const keys = Object.values(jsonData);
-        const numbers = keys?.map((item)=>{
+        const numbers = keys?.map((item) => {
           return item[Object.keys(jsonData[0])[0]]
         })
-    
+
 
         // Update the group document based on the provided data
         const updatedGroup = {
           phoneNumbers: numbers,
         };
         const collection = db.collection("group");
-    
+
         // Find the group document by its ID and update it
         const result = await collection.updateOne(
           { _id: new ObjectId(groupId) }, // Create a new instance of ObjectId
@@ -878,10 +878,63 @@ app.post("/api/get-chat-text", async (req, res) => {
 
 
 
+app.get('/api/getSipSetting', async (req, res) => {
 
-app.get("/api/test", async(req, res) => {
-  return res.status(200).json({
-    succes: "true",
-    message: "Api is called successfully"
-  })
+  axios.get('http://16.163.178.109/aivoip/sip/fetch-sip.php')
+    .then((response) => {
+      return res.status(200).json({
+        status: 'success',
+        data: response.data
+      });
+    })
+    .catch((err) => {
+      return res.status(400).json({
+        status: 'Failed',
+        data: err.message
+      })
+    })
 })
+
+
+
+
+app.post('/api/updateSetting', async (req, res) => {
+
+  const data = req.body
+
+  axios.post('http://16.163.178.109:9001/api/update-setting', data)
+    .then((response) => {
+      return res.status(200).json({
+        status: 'success',
+        data: response.data
+      });
+    })
+    .catch((err) => {
+      return res.status(400).json({
+        status: 'Failed',
+        data: err.message
+      })
+    })
+})
+
+
+
+
+
+
+
+
+app.post('/api/call-numbers', async (req, res) => {
+
+  const data = req.body
+
+  axios.post('http://16.163.178.109/aivoip/autodial/dial_numbers_1.php', data)
+  
+  return res.status(200).json({
+    status: 'success',
+    data: "Calls has been Started"
+  });
+
+
+})
+
