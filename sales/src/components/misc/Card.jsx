@@ -33,9 +33,14 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
     data  = { ...data, id: id }
     axios.post('https://api.aivoip.org/api/edit-text-message', data)
     .then((res)=>{
+      console.log('Response ::::',res.status)
+      if(res.status == 200){
       console.log(res.data)
       alert('Your data has been saved')
       window.location.reload();
+      }else{
+        console.log('Response ::::',res.status)
+      }
     }).catch((err)=>{
       console.log(err)
     })
