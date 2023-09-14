@@ -288,7 +288,6 @@ app.put("/api/groups/:id", async (req, res) => {
   }
 });
 
-
 app.get("/api/groups", async (req, res) => {
   try {
     const db = await connectToDatabase();
@@ -304,6 +303,7 @@ app.get("/api/groups", async (req, res) => {
       let totalPhoneNumbers = 0;
       let totalAnswered = 0;
       let totalDuration = 0;
+      let formattedDuration;
 
       group.phoneNumbers.forEach((phoneNumber) => {
         totalPhoneNumbers++;
@@ -312,15 +312,27 @@ app.get("/api/groups", async (req, res) => {
           if (phoneNumber.duration) {
             // Assuming duration is in seconds, you can convert it to minutes or hours if needed
             totalDuration += parseInt(phoneNumber.duration);
+          
           }
         }
       });
+      
+
+      if (totalDuration < 60) {
+        // If the duration is less than 60 seconds, display it as seconds
+        formattedDuration = `${totalDuration} sec`;
+      } else {
+        // If the duration is 60 seconds or more, convert it to minutes
+        const durationInMinutes = durationInSeconds / 60;
+        formattedDuration = `${durationInMinutes} min`;
+      }
 
       return {
         ...group,
         totalPhoneNumbers: totalPhoneNumbers,
         totalAnswered: totalAnswered,
-        totalDuration: totalDuration,
+        totalDuration: formattedDuration,
+        createdAt: group.createdAt,
       };
     });
 
@@ -620,15 +632,15 @@ app.put("/api/update-phone-number", async (req, res) => {
 
 app.post("/api/edit-text-message", async (req, res) => {
   try {
-    const { currentMessage, currentPara, index } = req.body;
+    const { currentMessage, currentPara, index, id } = req.body;
     const db = await connectToDatabase();
     const collection = db.collection("messages");
     const result = await collection.updateOne(
-      { _id: new ObjectId(req.body.id) },
+      { _id: new ObjectId(id) },
       {
         $set: {
-          [`messages.${index}.primary`]: currentMessage,
-          [`messages.${index}.seconday`]: currentPara,
+          primary: currentMessage,
+          secondary: currentPara,
         },
       }
     );
