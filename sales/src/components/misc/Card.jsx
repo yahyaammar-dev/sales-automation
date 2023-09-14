@@ -28,7 +28,7 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
   const handleChangeText = () => {
     let data =  {currentMessage, currentPara, index}
     data  = { ...data, id: id }
-    axios.post('http://localhost:9001/api/edit-text-message', data)
+    axios.post('https://api.aivoip.org/api/edit-text-message', data)
     .then((res)=>{
       console.log(res.data)
       alert('Your data has been saved')
@@ -48,7 +48,7 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
     const formData = new FormData();
     formData.append('sales_automation_messages', file);
 
-    fetch('http://localhost:9001/api/upload-audio', {
+    fetch('https://api.aivoip.org/api/upload-audio', {
       method: 'POST',
       body: formData,
     })

@@ -6,7 +6,7 @@ import axios from "axios";
 const Chart = () => {
   const [messgaes, setMessages] = useState()
   useEffect(() => {
-    axios.get('http://localhost:9001/api/messages')
+    axios.get('https://api.aivoip.org/api/messages')
       .then((res) => {
         setMessages(res.data.messages)
       })
