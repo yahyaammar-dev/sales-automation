@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react'
 import Card from './Card'
 import Navbar from './Navbar'
 import axios from "axios";
+const APIURL = process.env.REACT_APP_BASE_URL_LIVE;
 
 const Chart = () => {
   const [messgaes, setMessages] = useState()
   useEffect(() => {
-    axios.get('http://localhost:9001/api/messages')
+    axios.get(`${APIURL}/api/messages`)
       .then((res) => {
         setMessages(res.data.messages)
       })
