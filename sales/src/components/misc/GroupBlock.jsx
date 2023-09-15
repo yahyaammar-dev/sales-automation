@@ -73,11 +73,13 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   useEffect(() => {
     axios.get(`${apiUrl}/api/groups`).then((response) => {
       setAllGroups(response.data.groups);
-    });
+    })
+    .catch((err)=>console.log(err.message));
     axios.get(`${apiUrl}/api/forwarding`).then((response) => {
       // setForwardNumber(response.data.groups);
       setForwardNumber(response.data.forwardingNumbers[0].number);
-    });
+    })
+    .catch((err)=>console.log(err));
   }, []);
 
   // Function to extract the number inside the angle brackets from the clid property
