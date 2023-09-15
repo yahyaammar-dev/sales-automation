@@ -5,11 +5,11 @@ import axios from "axios";
 const APIURL = process.env.REACT_APP_BASE_URL_LIVE;
 
 
-const Card = ({ message, para, lineBottom, marginLeft, background, color, index, id }) => {
+const Card = ({ message, para, lineBottom, marginLeft, background, color, index, id, disabled }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [file, setFile] = useState(null);
-  
+
 
   const handleOpenEdit = () => {
     setIsEditModalOpen(true);
@@ -29,21 +29,24 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
 
 
   const handleChangeText = () => {
-    let data =  {currentMessage, currentPara, index}
-    data  = { ...data, id: id }
+    let data = { currentMessage, currentPara, index }
+    data = { ...data, id: id }
     axios.post('https://api.aivoip.org/api/edit-text-message', data)
-    .then((res)=>{
-      console.log('Response ::::',res.status)
-      if(res.status == 200){
-      console.log(res.data)
-      alert('Your data has been saved')
-      window.location.reload();
-      }else{
-        console.log('Response ::::',res.status)
-      }
-    }).catch((err)=>{
-      console.log(err)
-    })
+      .then((res) => {
+        console.log('Response ::::', res.status)
+        if (res.status == 200) {
+          console.log(res.data)
+          alert('Your data has been saved')
+          window.location.reload();
+        } else {
+          alert("Failed to update your message")
+          console.log('Response ::::', res.status)
+        }
+      }).catch((err) => {
+        alert("Failed to update your message")
+
+        console.log(err)
+      })
   }
 
 
@@ -55,12 +58,14 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
 
     const formData = new FormData();
     formData.append('sales_automation_messages', file);
+    formData.append('index', index)
 
-    fetch(`${APIURL}/api/upload-audio`, {
+
+    fetch(`http://localhost:9001/api/upload-audio`, {
       method: 'POST',
       body: formData,
     })
-      .then((response) => alert('Audio File Uploaded Successfully') )
+      .then((response) => alert('Audio File Uploaded Successfully'))
       .then((data) => {
         console.log('Upload response:', data);
       })
@@ -68,7 +73,20 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
         console.error('Error uploading audio:', error);
       });
 
-      setIsUploadModalOpen(false);
+
+    // fetch(`${APIURL}/api/upload-audio`, {
+    //   method: 'POST',
+    //   body: formData,
+    // })
+    //   .then((response) => alert('Audio File Uploaded Successfully') )
+    //   .then((data) => {
+    //     console.log('Upload response:', data);
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error uploading audio:', error);
+    //   });
+
+    setIsUploadModalOpen(false);
   };
 
   const [currentMessage, setCurrentMessage] = useState(message)
@@ -87,21 +105,26 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
         <h2 className="card__heading" style={{ color: color }}>
           {para}
         </h2>
-        <div className="flex justify-end gap-3">
-          {/* Step 3: Add the modal trigger buttons */}
-          <button
-            onClick={handleOpenEdit}
-            className="icon block text-white font-medium rounded-lg text-sm text-center"
-          >
-            <img src="/imgs/edit.svg" />
-          </button>
-          <button
-            onClick={handleUploadAudioFile}
-            className="icon block text-white font-medium rounded-lg text-sm text-center"
-          >
-            <img src="/imgs/microphone.svg" />
-          </button>
-        </div>
+        {
+          !disabled && <>
+            <div className="flex justify-end gap-3">
+              {/* Step 3: Add the modal trigger buttons */}
+              <button
+                onClick={handleOpenEdit}
+                className="icon block text-white font-medium rounded-lg text-sm text-center"
+              >
+                <img src="/imgs/edit.svg" />
+              </button>
+              <button
+                onClick={handleUploadAudioFile}
+                className="icon block text-white font-medium rounded-lg text-sm text-center"
+              >
+                <img src="/imgs/microphone.svg" />
+              </button>
+            </div>
+          </>
+        }
+
       </div>
 
       {isEditModalOpen && (
@@ -120,15 +143,15 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
                 id="first_name"
                 class="mb-2 mt-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 value={currentMessage}
-                onChange={(e)=>{setCurrentMessage(e.target.value)}}
+                onChange={(e) => { setCurrentMessage(e.target.value) }}
                 required
               />
-                <input
+              <input
                 type="text"
                 id="first_name"
                 class="mt-2 mb-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 value={currentPara}
-                onChange={(e)=>{setCurrentPara(e.target.value)}}
+                onChange={(e) => { setCurrentPara(e.target.value) }}
                 required
               />
             </div>
@@ -141,11 +164,11 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
             </button>
 
             <button
-            onClick={()=>{
-              handleCloseEdit() 
-              handleChangeText()
-            }
-            }
+              onClick={() => {
+                handleCloseEdit()
+                handleChangeText()
+              }
+              }
               className="ml-3 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               Save
@@ -171,7 +194,7 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
               class="my-5 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
               id="file_input"
               type="file"
-              onChange={(e)=>{setFile(e.target.files[0])}}
+              onChange={(e) => { setFile(e.target.files[0]) }}
             />
 
             {/* Your upload file UI components can go here */}
@@ -183,7 +206,7 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
             </button>
 
             <button
-            onClick={handleUploadFile}
+              onClick={handleUploadFile}
               className="ml-3 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               Upload

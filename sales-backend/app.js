@@ -356,7 +356,6 @@ app.post(
   "/api/upload-audio",
   upload.single("sales_automation_messages"),
   async (req, res) => {
-    console.log('hello')
     try {
       const uploadedFile = req.file;
 
@@ -380,10 +379,29 @@ app.post(
       // Create the link for the uploaded audio file
       const audioLink = `http://16.163.178.109:9000/uploads/${uploadedFile.filename}`;
 
+
+      var filename
+
+      if(index == '0'){
+        filename= 'welcome'
+      }else if(index == '1'){
+        filename= 'sales-pitch'
+      }else if(index == '2'){
+        filename= 'yes'
+      }else if(index == '5'){
+        filename= 'yes'
+      }else if(index == '7'){
+        filename= 'hearme'
+      }else{
+        fliename = 'message'
+      }
+
+
+
       // Make a POST request to the specified URL with the audio link as a query parameter
       const url = `http://16.163.178.109/aivoip/speech/save-audio-file.php?url=${encodeURIComponent(
         audioLink
-      )}&message=welcome&message_text=welcome`
+      )}&message=${filename}&message_text=${filename}`
 
       const response =  axios.get(url);
 
