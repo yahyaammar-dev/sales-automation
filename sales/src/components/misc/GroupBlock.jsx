@@ -10,17 +10,26 @@ const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
 const APIURL = process.env.REACT_APP_BASE_URL_LIVE;
 
 
-const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, toDate, setToDate, filterData, setFilterData }) => {
+const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, toDate, setToDate, filterData, setFilterData, allGroups, setAllGroups }) => {
   const [groupName, setGroupName] = useState();
-  const [allGroups, setAllGroups] = useState();
+
   const [forwardNumber, setForwardNumber] = useState();
   const [chats, setAllChats] = useState(null);
   const [chatWithPhone, setChatWithPhone] = useState(null);
   const [transformedData, setTransfromedData] = useState();
   const [errorMessage, setErrorMessage] = useState(null)
   const [file, setFile] = useState(null)
+  const [selectedGroupId, setSelectedGroupId] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   let { id } = useParams();
+
+
+  useEffect(()=>{
+    setSelectedGroupId(id)
+    console.log(id)
+  },[])
+
   // upload excel file
 
   const handleUploadFile = () => {
@@ -48,8 +57,6 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
     alert('Uploaded Successfully');
   };
 
-  const [selectedGroupId, setSelectedGroupId] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
 
 
   const handleGroup = () => {
@@ -70,7 +77,9 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   // }, []);
 
 
-  useEffect(() => {
+  const firstData = () => {
+    setAllGroups(null)
+    setForwardNumber(null)
     axios.get(`${apiUrl}/api/groups`).then((response) => {
       setAllGroups(response.data.groups);
     })
@@ -80,6 +89,11 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       setForwardNumber(response.data.forwardingNumbers[0].number);
     })
     .catch((err)=>console.log(err));
+  }
+
+
+  useEffect(() => {
+    firstData()
   }, []);
 
   // Function to extract the number inside the angle brackets from the clid property
@@ -142,8 +156,10 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   };
 
   const handleAddPhoneNumber = () => {
-    if (!selectedGroupId || !phoneNumber) {
-      alert("Please select a group and provide a phone number.");
+   
+    setSelectedGroupId(id)
+    if (!id || !phoneNumber) {
+      alert("Please select a group and provide a phone number.", id, phoneNumber);
       return;
     }
 
@@ -162,7 +178,8 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         phoneNumber: phoneNumber,
       })
       .then((response) => {
-        console.log(response);
+        console.log(response)
+        firstData()
         alert("Successfully added a new phone number");
       });
 
@@ -219,8 +236,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         {/* <div className="w-2/12">
                     <Button text='Upload Phone .xls' active />
                 </div> */}
-        <div className="w-6/12">
-          {/* Select box to display all group names */}
+        {/* <div className="w-6/12">
           <select
             className="group--block--input rounded"
             value={selectedGroupId}
@@ -233,10 +249,11 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
               </option>
             ))}
           </select>
-        </div>
-        <div className="w-3/12">
+        </div> */}
+        <div className="w-6/12">
           <input
             type="text"
+            placeholder="Add phone Number"
             className="group--block--input rounded"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}

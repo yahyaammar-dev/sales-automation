@@ -90,8 +90,8 @@ server.listen(port, () => {
 
 
 
-const uri = "mongodb+srv://sales-automation:sales-automation@cluster0.knl0a2f.mongodb.net/?retryWrites=true&w=majority"
-// const uri = "mongodb+srv://yahyaammar:wkBM0FIbJDZSb9Hl@cluster0.skkmm1v.mongodb.net/"
+// const uri = "mongodb+srv://sales-automation:sales-automation@cluster0.knl0a2f.mongodb.net/?retryWrites=true&w=majority"
+const uri = "mongodb+srv://yahyaammar:wkBM0FIbJDZSb9Hl@cluster0.skkmm1v.mongodb.net/"
 async function connectToDatabase() {
   const client = new MongoClient(uri, {
     serverApi: {

@@ -108,14 +108,14 @@
                         Call details
                         </h1>
                         <div className="flex gap-6">
-                        <div className="flex gap-2">
+                        {/* <div className="flex gap-2">
                             <button className="bg-gray-300 text-sm px-1 py-1 border border-black font-medium rounded-sm">
                             Last Pass
                             </button>
                             <button className="bg-gray-300 text-sm px-1 py-1 border border-black font-medium rounded-sm">
                             Next Pass
                             </button>
-                        </div>
+                        </div> */}
                         <div className="flex items-center">
                             <button>
                             <svg
@@ -158,16 +158,16 @@
                     </div>
                     <div className="flex flex-row justify-between items-center">
                         <div className="flex flex-col gap-2">
-                        <p className="font-serif font-medium text-sm">
+                        {/* <p className="font-serif font-medium text-sm">
                             Testing-083474376473
                         </p>
                         <div className="mb-5">
                             <p className="text-sm">Celler Id: 34345434</p>
                             <p className="text-sm">Call duration: 323</p>
-                        </div>
+                        </div> */}
                         </div>
                         <div className="flex gap-1">
-                        <button
+                        {/* <button
                             className="bg-blue-500 text-xs px-1 py-1 border rounded-xl text-white"
                             style={{ backgroundColor: "#377D8D" }}
                         >
@@ -178,10 +178,10 @@
                             style={{ backgroundColor: "#677B7C" }}
                         >
                             To be classified
-                        </button>
+                        </button> */}
                         </div>
                         <div className="flex gap-2">
-                        <button>
+                        {/* <button>
                             <svg
                             xmlns="http:www.w3.org/2000/svg"
                             fill="none"
@@ -202,8 +202,8 @@
                                 d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z"
                             />
                             </svg>
-                        </button>
-                        <button>
+                        </button> */}
+                        {/* <button>
                             <svg
                             xmlns="http:www.w3.org/2000/svg"
                             fill="none"
@@ -219,8 +219,8 @@
                                 d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
                             />
                             </svg>
-                        </button>
-                        <button>
+                        </button> */}
+                        {/* <button>
                             <svg
                             xmlns="http:www.w3.org/2000/svg"
                             fill="none"
@@ -236,7 +236,7 @@
                                 d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"
                             />
                             </svg>
-                        </button>
+                        </button> */}
                         </div>
                     </div>
                     <div className="border border-gray-200"></div>

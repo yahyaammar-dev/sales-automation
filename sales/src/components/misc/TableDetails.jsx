@@ -6,11 +6,18 @@ import axios from "axios";
 
 const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
 
-const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, toggler, fromDate, toDate, filterData, setFilterData }) => {
+const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, toggler, fromDate, toDate, filterData, setFilterData, allGroups, setAllGroups }) => {
   const [open, setOpen] = useState(false);
   const { id } = useParams();
   const [currentChat, setCurrentChat] = useState();
   const [currentNumber, setCurrNumber] = useState();
+
+
+  useEffect(()=>{
+
+      console.log('this has ben chanedsdfajlds fs', allGroups)
+
+  },[allGroups, setAllGroups])
 
   useEffect(() => {
     axios.get(`${apiUrl}/api/group/${id}`).then((response) => {
@@ -58,7 +65,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
         }
         });
     });
-  }, []);
+  }, [allGroups]);
 
 
   useEffect(() => {
@@ -70,7 +77,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
     }
     setFilterData(result);
 
-  }, [toggler, group]);
+  }, [toggler, group, allGroups]);
 
   
 

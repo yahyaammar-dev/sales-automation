@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import Tabs from "./Tabs";
 import Block from "./Block";
@@ -16,10 +16,16 @@ const Main = ({ group }) => {
   const [groups, setGroup] = useState();
   const [transformedData, setTransfromedData] = useState();
   const [filterData, setFilterData] = useState([]);
+  const [allGroups, setAllGroups] = useState();
 
   // Extract the string after the last slash (/)
   const pathSegments = currentPath.split("/");
   const lastSegment = pathSegments[pathSegments.length - 2];
+
+  useEffect(()=>{
+    console.log('All groups have been changed')
+  }, [allGroups, setAllGroups])
+
 
   return (
     <div className="mainBg p-5 h-screen">
@@ -35,6 +41,8 @@ const Main = ({ group }) => {
         group={groups}
         setGroup={setGroup}
         filterData={filterData} setFilterData={setFilterData}
+        setAllGroups={setAllGroups}
+        allGroups={allGroups}
 
       /> : <Block isGroupAdded={isGroupAdded} setIsGroupAdded={setIsGroupAdded} />}
       {lastSegment == "group-details" ? (
@@ -48,6 +56,8 @@ const Main = ({ group }) => {
           setTransfromedData={setTransfromedData}
           filterData={filterData}
           setFilterData={setFilterData}
+          setAllGroups={setAllGroups}
+          allGroups={allGroups}
         />
       ) : (
         <Table isGroupAdded={isGroupAdded} />
