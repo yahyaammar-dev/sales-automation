@@ -61,7 +61,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
   const handleGroup = () => {
     axios
-      .post(`http://localhost:9001/api/create-group`, {
+      .post(`${apiUrl}/api/create-group`, {
         name: groupName,
         phoneNumbers: [],
       })

@@ -61,7 +61,7 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
     formData.append('index', index)
 
 
-    fetch(`http://localhost:9001/api/upload-audio`, {
+    fetch(`${APIURL}/api/upload-audio`, {
       method: 'POST',
       body: formData,
     })
