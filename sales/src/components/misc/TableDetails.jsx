@@ -90,7 +90,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
       <Modal open={open} setOpen={setOpen} currentChat={currentChat} id={id} groupNumber={currentNumber} />
       <div style={{width: "100%"}} className="py-5 flex gap-5">
         <h1>Group Name:</h1>
-        <p>{group.name}</p>
+        <p>{group?.name}</p>
       </div>
       <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 bg-white">
