@@ -212,7 +212,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
   return (
     <div className="bg-white shadow-md sm:rounded-lg flex justify-end p-8 flex-wrap gap-3" data-testid="groupBlockContainer">
-
+    
       <div className="w-full flex gap-2 items-center">
         <div className="w-2/12">
           <p className="font-medium">Group Name</p>
