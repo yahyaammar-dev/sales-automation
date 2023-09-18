@@ -23,7 +23,6 @@ const Main = ({ group }) => {
   const lastSegment = pathSegments[pathSegments.length - 2];
 
   useEffect(()=>{
-    console.log('All groups have been changed')
   }, [allGroups, setAllGroups])
 
 

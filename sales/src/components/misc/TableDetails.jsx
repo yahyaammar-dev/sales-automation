@@ -15,8 +15,6 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
 
   useEffect(()=>{
 
-      console.log('this has ben chanedsdfajlds fs', allGroups)
-
   },[allGroups, setAllGroups])
 
   useEffect(() => {
@@ -24,7 +22,6 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
       setGroup(response.data.group);
 
       let groups = response.data.group;
-      // console.log("response  ::", response.data)
       let groupPhones = groups?.phoneNumbers;
       let arr = groupPhones?.map((item) => {
         return item?.number;
@@ -34,7 +31,6 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
         .then((response) => {
           if(response.status == 200){
           let data = response?.data;
-          // console.log("data ::", data)
           let filtered = data?.map((item) => {
             if (item?.clid) {
               if (arr.includes(item?.clid)) {
@@ -79,11 +75,7 @@ const TableDetail = ({ group, setGroup, transformedData, setTransfromedData, tog
 
   }, [toggler, group, allGroups]);
 
-  
 
-
-
-  // console.log(filterData)
 
   return (
     <div>

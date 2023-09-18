@@ -6,6 +6,7 @@ import Sidebar from './misc/Sidebar';
 import Navbar from './misc/Navbar';
 import Button from "./misc/Button";
 
+const apiURL = process.env.REACT_APP_BASE_URL_LOCAL
 function Setting() {
 
     const navigate = useNavigate();
@@ -18,6 +19,10 @@ function Setting() {
             password: "ab975@yTpL9",
         }
     ]);
+
+    console.log('are you even there?')
+ 
+
 
     //update setting 
     const updateHandler = (id) => {

@@ -7,12 +7,13 @@ import Button from "./Button";
 import axios from "axios";
 
 const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
+const apiURL = process.env.REACT_APP_BASE_URL_LIVE;
 const APIURL = process.env.REACT_APP_BASE_URL_LIVE;
 
 
 const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, toDate, setToDate, filterData, setFilterData, allGroups, setAllGroups }) => {
   const [groupName, setGroupName] = useState();
-
+  const [active, setActive] = useState(false)
   const [forwardNumber, setForwardNumber] = useState();
   const [chats, setAllChats] = useState(null);
   const [chatWithPhone, setChatWithPhone] = useState(null);
@@ -21,20 +22,26 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   const [file, setFile] = useState(null)
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [concur, setConcur] = useState()
 
   let { id } = useParams();
 
 
-  useEffect(()=>{
+  useEffect(() => {
     setSelectedGroupId(id)
-    console.log(id)
-  },[])
+    axios.get(`${apiURL}/api/concurrent-number`)
+      .then((res) => {
+        setConcur(res?.data?.concurrentNumber)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [])
 
   // upload excel file
 
   const handleUploadFile = () => {
     if (!file) {
-      console.log('No file selected.');
       return;
     }
 
@@ -48,10 +55,8 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
     })
       .then((response) => console.log(response))
       .then((data) => {
-        console.log('Upload response:', data);
       })
       .catch((error) => {
-        console.error('Error uploading audio:', error);
       });
 
     alert('Uploaded Successfully');
@@ -83,17 +88,24 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
     axios.get(`${apiUrl}/api/groups`).then((response) => {
       setAllGroups(response.data.groups);
     })
-    .catch((err)=>console.log(err.message));
+      .catch((err) => console.log(err.message));
     axios.get(`${apiUrl}/api/forwarding`).then((response) => {
       // setForwardNumber(response.data.groups);
       setForwardNumber(response.data.forwardingNumbers[0].number);
     })
-    .catch((err)=>console.log(err));
+      .catch((err) => console.log(err));
   }
 
 
   useEffect(() => {
     firstData()
+
+    axios.get(`${APIURL}/api/concurrent-number`)
+      .then((res) => {
+        setConcur(res?.data?.concurrentNumber)
+      })
+      .catch((err) => {
+      })
   }, []);
 
   // Function to extract the number inside the angle brackets from the clid property
@@ -117,10 +129,21 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   }, [chats]);
 
 
-  const handleCalling = () => {
+  function divideArrayIntoSubarrays(array, subarraySize) {
+    const dividedArrays = [];
 
+    for (let i = 0; i < array.length; i += subarraySize) {
+      const subarray = array.slice(i, i + subarraySize);
+      dividedArrays.push(subarray);
+    }
+
+    return dividedArrays;
+  }
+
+
+  const handleCalling = () => {
+    setActive(!active)
     let phoneNumbers = [];
-    console.log("allGroups ::", allGroups);
     allGroups?.filter((itm) => {
       if (selectedGroupId) {
         return itm?._id === selectedGroupId
@@ -137,6 +160,13 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       });
     });
 
+    // there should be a loop here
+
+    // console.log('---------------------------------------', phoneNumbers)
+    // const subarraySize = 5; // Specify the size of each subarray
+    // const dividedArrays = divideArrayIntoSubarrays(phoneNumbers, subarraySize);
+    // console.log('***********', dividedArrays)
+
     let tempPhone = [
       {
         calls: "2",
@@ -151,12 +181,13 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         `${APIURL}/api/call-numbers`,
         tempPhone
       )
-      .then((response) => alert('Started Calling On Given Numbers!'))
+      .then((response) => alert('Calling Status Changed!'))
       .catch((err) => alert('Something failed! Try again Later'))
+
   };
 
   const handleAddPhoneNumber = () => {
-   
+
     setSelectedGroupId(id)
     if (!id || !phoneNumber) {
       alert("Please select a group and provide a phone number.", id, phoneNumber);
@@ -212,7 +243,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
   return (
     <div className="bg-white shadow-md sm:rounded-lg flex justify-end p-8 flex-wrap gap-3" data-testid="groupBlockContainer">
-    
+
       <div className="w-full flex gap-2 items-center">
         <div className="w-2/12">
           <p className="font-medium">Group Name</p>
@@ -263,7 +294,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
           <Button text="Add Phone" onClick={handleAddPhoneNumber} active />
         </div>
         <div className="w-3/12">
-          <Button onClick={handleCalling} text="Start / Stop Calling" active />
+          <button className="btn btn-primary flex gap-1 p-2 rounded items-center   w-full white-color " style={{ background: active ? '#256d85' : 'black' }} onClick={handleCalling}>Start / Stop Calling</button>
         </div>
       </div>
 

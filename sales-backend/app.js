@@ -7,103 +7,44 @@ const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
-//Local Host Environment
 const http = require("http");
-// const socketIO = require('socket.io');
-
 var ip = require('ip');
 const os = require('os');
-
-
-// Server Environment START
-// const https = require("https");
 const fs = require("fs");
 const xlsx = require('xlsx');
-
-// const certificatePath = '/etc/letsencrypt/live/api.aivoip.org/fullchain.pem';
-// const privateKeyPath = '/etc/letsencrypt/live/api.aivoip.org/privkey.pem';
-
-// const options = {
-//    key: fs.readFileSync(privateKeyPath),
-//    cert: fs.readFileSync(certificatePath)
-// };
-// const options = {
-//   key: fs.readFileSync(privateKeyPath),
-//   cert: fs.readFileSync(certificatePath),
-//   host: "https://aivoip.org",
-//   port: "9001",
-//   path: 'https://aivoip.org/api/',
-//   method: 'GET',
-//   headers: {
-//       Host: 'https://aivoip.org/api/'
-//   }
-// };
-
 const uploadsPath = path.join(__dirname, "uploads");
-
 app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
-// Configure CORS to allow requests from your React frontend domain
-// app.use(cors({
-//   origin: 'https://aivoip.org', // Replace with your React frontend URL
-//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//   credentials: true, // Allow cookies and other credentials to be sent
-// }));
 app.use(express.json());
-
 const server = http.createServer(app);
-// const server = https.createServer(options,app);
-
-
-// const io = socketIO(server, {
-//   cors: {
-//     origin: '*', // Specify the origin you want to allow
-//     methods: ['GET', 'POST'], // Specify the HTTP methods you want to allow
-//   }});
-
-// io.on('connection', (socket) => {
-//   console.log('A user connected to the WebSocket.');
-
-//   // You can handle events and messages from the connected clients here
-//   socket.on('chat message', (message) => {
-//     console.log(message);
-//     // Broadcast the message to all connected clients
-//     io.emit('chat message', message);
-//   });
-
-//   // Handle disconnection
-//   socket.on('disconnect', () => {
-//     console.log('A user disconnected from the WebSocket.');
-//   });
-// });
-
 server.listen(port, () => {
   const hostname = os.hostname();
   console.log("Your IP address is " + ip.address());
   console.log(`Server is running on https://localhost:${port}`);
 });
-
-// app.use("/uploads", express.static(uploadsPath));
-// app.use(cors());
-// app.use(express.json());
-
-
-
-
-// const uri = "mongodb+srv://sales-automation:sales-automation@cluster0.knl0a2f.mongodb.net/?retryWrites=true&w=majority"
 const uri = "mongodb+srv://yahyaammar:wkBM0FIbJDZSb9Hl@cluster0.skkmm1v.mongodb.net/?retryWrites=true&w=majority"
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: "1",
+    strict: true,
+  },
+});
 async function connectToDatabase() {
-  const client = new MongoClient(uri, {
-    serverApi: {
-      version: "1",
-      strict: true,
-    },
-  });
-
   try {
     await client.connect();
     console.log("Connected to MongoDB Atlas!");
     return client.db("salesautomationdb");
+  } catch (error) {
+    console.error("Error connecting to MongoDB Atlas: hehe", error);
+    throw error;
+  }
+}
+
+async function closeTheDB() {
+  try {
+    await client.close();
+    console.log("Closed Connection");
+    return 
   } catch (error) {
     console.error("Error connecting to MongoDB Atlas:", error);
     throw error;
@@ -175,8 +116,6 @@ app.get("/api/forwarding", async (req, res) => {
   }
 });
 
-
-
 app.post("/api/create-group", async (req, res) => {
   try {
     const db = await connectToDatabase();
@@ -215,13 +154,11 @@ app.post("/api/create-group", async (req, res) => {
 app.get("/api/group/:id", async (req, res) => {
   try {
     const groupId = req.params.id; // Get the group ID from the URL parameters
-
-    const db = await connectToDatabase();
+    await client.connect();
+    db = client.db("salesautomationdb");
     const collection = db.collection("group");
-
     // Find the group by its ID
     const group = await collection.findOne({ _id: new ObjectId(groupId) });
-
     if (!group) {
       // If no group found with the given ID, return a 404 response
       return res.status(404).json({
@@ -229,7 +166,6 @@ app.get("/api/group/:id", async (req, res) => {
         message: "Group not found",
       });
     }
-
     // If the group is found, return it as a response
     return res.status(200).json({
       success: true,
@@ -297,9 +233,11 @@ app.put("/api/groups/:id", async (req, res) => {
 
 app.get("/api/groups", async (req, res) => {
   try {
-    const db = await connectToDatabase();
+    await client.connect();
+    db = client.db("salesautomationdb");
     const collection = db.collection("group");
 
+   
     // Find all group documents in the collection
     const groups = await collection.find({}).toArray();
 
@@ -334,6 +272,7 @@ app.get("/api/groups", async (req, res) => {
         formattedDuration = `${durationInMinutes} min`;
       }
 
+
       return {
         ...group,
         totalPhoneNumbers: totalPhoneNumbers,
@@ -342,6 +281,8 @@ app.get("/api/groups", async (req, res) => {
         createdAt: group.createdAt,
       };
     });
+
+
 
     return res.status(200).json({
       success: true,
@@ -669,6 +610,9 @@ app.post("/api/edit-text-message", async (req, res) => {
         },
       }
     );
+
+
+
     if (result.modifiedCount === 1) {
       return res.status(200).json({
         success: true,
@@ -896,7 +840,6 @@ app.post("/api/get-chat-text", async (req, res) => {
 
     // Extract the text from each chat log
     const chatText = chatLogs.map((log) => log);
-
     return res.status(200).json({
       success: true,
       chatText,
@@ -972,3 +915,53 @@ app.post('/api/call-numbers', async (req, res) => {
 
 })
 
+app.post('/api/concurrent-number', async (req, res) => {
+  try {
+    const data = req.body.con
+    const { number, groupId } = req.body;
+    const db = await connectToDatabase();
+    const con = db.collection("con");
+
+    // delete pervious concurrent number
+    const result = await con.deleteMany({});
+
+    const result2 = await con.insertOne({con: data});
+
+    return res.status(200).json({
+      success: true,
+      result2,
+    });
+  } catch (error) {
+    console.error("Error in retrieving chat text:", error);
+    return res.status(500).json({
+      success: false,
+      message: error,
+    });
+  }
+})
+
+
+
+app.get('/api/concurrent-number', async (req, res) => {
+  try {
+
+    await client.connect();
+    db = client.db("salesautomationdb");
+    const con = db.collection("con");
+
+    // Retrieve the concurrent number (assuming you have only one)
+    const concurrentNumber = await con.findOne();
+
+
+    return res.status(200).json({
+      success: true,
+      concurrentNumber,
+    });
+  } catch (error) {
+    console.error("Error in retrieving concurrent number:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve concurrent number.",
+    });
+  }
+});

@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react"
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useParams } from "react-router-dom";
 import axios from 'axios'
-const APIURL = process.env.REACT_APP_BASE_URL_LIVE;
+const APIURL = process.env.REACT_APP_BASE_URL_LOCAL;
+const apiURL = process.env.REACT_APP_BASE_URL_LOCAL
 
 
 const ConcurrentForm = () => {
     const { id } = useParams();
     const [passwordVisible, setPasswordVisible] = useState(false)
-    const [formData, setFormData] = useState( {
+    const [concur, setConcur] = useState()
+    const [formData, setFormData] = useState({
         sip_ip: "",
         port: "",
         username: "",
@@ -20,16 +22,24 @@ const ConcurrentForm = () => {
         console.log("update handler called ::", formData)
         //update current setting api call
         axios.post(`${APIURL}/api/updateSetting`, formData).then((res) => {
-            console.log("response :::", res)
-        setFormData({
-            sip_ip: res.data.SIP_IP,
-            port: res.data.PORT,
-            username: res.data.UserName,
-            password: res.data.Password,
-        });
+            setFormData({
+                sip_ip: res.data.SIP_IP,
+                port: res.data.PORT,
+                username: res.data.UserName,
+                password: res.data.Password,
+            });
         }).catch((err) => {
             console.log("error ::", err)
         });
+
+
+        axios.post(`${APIURL}/api/concurrent-number`, concur).then((res) => {
+            console.log("response :::", res)
+        }).catch((err) => {
+            console.log("error ::", err)
+        });
+
+
         alert('Updated Concurrent Number in FreePbx')
     }
 
@@ -43,9 +53,11 @@ const ConcurrentForm = () => {
     }
 
     useEffect(() => {
+
+
         axios.get(`${APIURL}/api/getSipSetting`).then((res) => {
             console.log('res', res.data.data)
-            setFormData( {
+            setFormData({
                 sip_ip: res.data.data.SIP_IP,
                 port: res.data.data.Port,
                 username: res.data.data.UserName,
@@ -56,9 +68,20 @@ const ConcurrentForm = () => {
             console.log("error ::", err)
         });
 
+        axios.get(`${apiURL}/api/concurrent-number`)
+            .then((res) => {
+                setConcur(res?.data?.concurrentNumber)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }, []);
 
-  
+
+
+
+
+
     return <>
 
         <div class="w-full max-w-xs" style={{ margin: 'auto', marginTop: '10rem' }}>
@@ -110,13 +133,13 @@ const ConcurrentForm = () => {
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="username"
                         placeholder="password" />
-                        <span className="password-toggle" style={{
-                            position: "absolute",
-                            top: "2.5rem",
-                            right: " 1rem",
-                        }} onClick={() => setPasswordVisible(!passwordVisible)}>
-                            {passwordVisible ? <FaEye /> : <FaEyeSlash />}
-                        </span>
+                    <span className="password-toggle" style={{
+                        position: "absolute",
+                        top: "2.5rem",
+                        right: " 1rem",
+                    }} onClick={() => setPasswordVisible(!passwordVisible)}>
+                        {passwordVisible ? <FaEye /> : <FaEyeSlash />}
+                    </span>
                 </div>
 
                 <div class="mb-4">
@@ -124,6 +147,8 @@ const ConcurrentForm = () => {
                         Concurrent Calls
                     </label>
                     <input
+                        value={concur}
+                        onChange={(e) => { setConcur(e.target.value) }}
                         name="concurrent Calls"
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Concurrent Calls" />
                 </div>
