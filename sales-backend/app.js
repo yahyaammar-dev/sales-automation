@@ -910,14 +910,12 @@ app.get('/api/getSipSetting', async (req, res) => {
 
   axios.get('http://16.163.178.109/aivoip/sip/fetch-sip.php')
     .then((response) => {
-      console.log(res, "res")
       return res.status(200).json({
         status: 'success',
         data: response.data
       });
     })
     .catch((err) => {
-      console.log('http://16.163.178.109/aivoip/sip/fetch-sip.php', 'setting_api_link')
       return res.status(400).json({
         status: 'Failed',
         data: err.message
