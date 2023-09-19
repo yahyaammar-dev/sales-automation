@@ -104,6 +104,8 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       })
       .catch((err) => {
       })
+
+      console.log(active);
   }, []);
 
   // Function to extract the number inside the angle brackets from the clid property
@@ -125,6 +127,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   useEffect(() => {
     setChatWithPhone(updatedChats);
   }, [chats]);
+  
 
 
   function divideArrayIntoSubarrays(array, subarraySize) {
@@ -139,51 +142,108 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   }
 
 
+  // const handleCalling = () => {
+  //   if(active){
+  //     console.log('calls has been ended');
+  //     setActive(false)
+  //   }
+  //   setActive(true)
+  //   let phoneNumbers = [];
+  //   allGroups?.filter((itm) => {
+  //     if (selectedGroupId) {
+  //       return itm?._id === selectedGroupId
+  //     } else {
+  //       return true;
+  //     }
+  //   }).forEach((group, index) => {
+  //     group.phoneNumbers?.forEach((item, subIndex) => {
+  //       if (item?.number) {
+  //         phoneNumbers.push("96" + item?.number);
+  //       } else {
+  //         phoneNumbers.push("96" + item);
+  //       }
+  //     });
+  //   });
+
+  //   // there should be a loop here
+
+  //   // console.log('---------------------------------------', phoneNumbers)
+  //   // const subarraySize = 5; // Specify the size of each subarray
+  //   // const dividedArrays = divideArrayIntoSubarrays(phoneNumbers, subarraySize);
+  //   // console.log('***********', dividedArrays)
+
+  //   let tempPhone = [
+  //     {
+  //       calls: "2",
+  //       trunk: "1001",
+  //       forward: forwardNumber,
+  //     },
+  //     phoneNumbers,
+  //   ];
+
+  //   axios
+  //     .post(
+  //       `${apiURL}/api/call-numbers`,
+  //       tempPhone
+  //     )
+  //     .then((response) => alert('Calling Status Changed!'))
+  //     .catch((err) => {
+  //       setActive(false)
+  //       alert('Something failed! Try again Later')
+  //     })
+
+  //     console.log(active);
+
+  // };
+
+
   const handleCalling = () => {
-    setActive(!active)
-    let phoneNumbers = [];
-    allGroups?.filter((itm) => {
-      if (selectedGroupId) {
-        return itm?._id === selectedGroupId
-      } else {
-        return true;
-      }
-    }).forEach((group, index) => {
-      group.phoneNumbers?.forEach((item, subIndex) => {
-        if (item?.number) {
-          phoneNumbers.push("96" + item?.number);
+    if (active) {
+      axios
+      .get(`${apiURL}/api/stop-calling`)
+      .then((response) => alert('Calls have been ended'))
+      .catch((err) => alert('Something failed! Try again Later'));
+      setActive(false);
+    } else {
+      setActive(true);
+      let phoneNumbers = [];
+      allGroups?.filter((itm) => {
+        if (selectedGroupId) {
+          return itm?._id === selectedGroupId;
         } else {
-          phoneNumbers.push("96" + item);
+          return true;
         }
+      }).forEach((group, index) => {
+        group.phoneNumbers?.forEach((item, subIndex) => {
+          if (item?.number) {
+            phoneNumbers.push("96" + item?.number);
+          } else {
+            phoneNumbers.push("96" + item);
+          }
+        });
       });
-    });
-
-    // there should be a loop here
-
-    // console.log('---------------------------------------', phoneNumbers)
-    // const subarraySize = 5; // Specify the size of each subarray
-    // const dividedArrays = divideArrayIntoSubarrays(phoneNumbers, subarraySize);
-    // console.log('***********', dividedArrays)
-
-    let tempPhone = [
-      {
-        calls: "2",
-        trunk: "1001",
-        forward: forwardNumber,
-      },
-      phoneNumbers,
-    ];
-
-    axios
-      .post(
-        `${apiURL}/api/call-numbers`,
-        tempPhone
-      )
-      .then((response) => alert('Calling Status Changed!'))
-      .catch((err) => alert('Something failed! Try again Later'))
-
+  
+      let tempPhone = [
+        {
+          calls: "2",
+          trunk: "1001",
+          forward: forwardNumber,
+        },
+        phoneNumbers,
+      ];
+  
+      axios
+        .post(`${apiURL}/api/call-numbers`, tempPhone)
+        .then((response) => alert('Calling Status Changed!'))
+        .catch((err) => {
+          setActive(false);
+          alert('Something failed! Try again Later');
+        });
+    }
+  
+    console.log(active);
   };
-
+  
   const handleAddPhoneNumber = () => {
 
     setSelectedGroupId(id)
@@ -292,7 +352,14 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
           <Button text="Add Phone" onClick={handleAddPhoneNumber} active />
         </div>
         <div className="w-3/12">
-          <button className="btn btn-primary flex gap-1 p-2 rounded items-center   w-full white-color " style={{ background: active ? '#256d85' : 'black' }} onClick={handleCalling}>Start / Stop Calling</button>
+        <button
+      className={`btn btn-primary flex gap-1 p-2 rounded items-center w-full white-color`}
+      onClick={handleCalling}
+      style={{ background: active ?  'black' : '#256d85' }}
+    >
+      {active ? 'Stop Calling' : 'Start Calling'}
+    </button>
+          {/* <button className="btn btn-primary flex gap-1 p-2 rounded items-center   w-full white-color " style={{ background: active ? '#256d85' : 'black' }} onClick={handleCalling}>Start / Stop Calling</button> */}
         </div>
       </div>
 

@@ -966,6 +966,19 @@ app.post('/api/call-numbers', async (req, res) => {
 
 })
 
+app.get('/api/stop-calling', async (req, res) => {
+
+
+  axios.get('http://16.163.178.109/aivoip/autodial/stop_dials.php')
+  
+  return res.status(200).json({
+    status: 'success',
+    data: "Calls has been Ended"
+  });
+
+
+})
+
 app.post('/api/concurrent-number', async (req, res) => {
   try {
     const data = req.body.con
