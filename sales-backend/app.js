@@ -88,6 +88,9 @@ app.post("/api/forwarding", async (req, res) => {
       success: false,
       message: "Failed to add/update forwarding number",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 ``
@@ -113,6 +116,9 @@ app.get("/api/forwarding", async (req, res) => {
       success: false,
       message: "Failed to fetch forwarding numbers.",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 
@@ -148,6 +154,9 @@ app.post("/api/create-group", async (req, res) => {
       success: false,
       message: "Failed to create new group",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 
@@ -177,6 +186,9 @@ app.get("/api/group/:id", async (req, res) => {
       success: false,
       message: "Failed to find group",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 
@@ -228,6 +240,9 @@ app.put("/api/groups/:id", async (req, res) => {
       success: false,
       message: "Failed to update group.",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 
@@ -294,6 +309,9 @@ app.get("/api/groups", async (req, res) => {
       success: false,
       message: "Failed to fetch groups.",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 
@@ -361,6 +379,9 @@ app.post(
         success: false,
         message: "Failed to upload audio file.",
       });
+    } finally {
+      // Close the MongoDB connection
+      await closeTheDB();
     }
   }
 );
@@ -397,6 +418,9 @@ app.post("/api/messages",
         success: false,
         message: "Failed to insert messages.",
       });
+    } finally {
+      // Close the MongoDB connection
+      await closeTheDB();
     }
   });
 
@@ -418,6 +442,9 @@ app.get("/api/messages", async (req, res) => {
       success: false,
       message: "Failed to fetch messages.",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 
@@ -473,6 +500,9 @@ app.put("/api/messages/:id", async (req, res) => {
       success: false,
       message: "Failed to update message.",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 
@@ -539,6 +569,9 @@ app.post("/api/add-phone-number", async (req, res) => {
       success: false,
       message: "Failed to add phone number to group",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 
@@ -591,6 +624,9 @@ app.put("/api/update-phone-number", async (req, res) => {
       success: false,
       message: "Failed to update phone number.",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 
@@ -630,6 +666,9 @@ app.post("/api/edit-text-message", async (req, res) => {
       success: false,
       message: "Failed to update phone number.",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 
@@ -712,6 +751,9 @@ app.post(
         success: false,
         message: "Failed to upload audio file.",
       });
+    } finally {
+      // Close the MongoDB connection
+      await closeTheDB();
     }
   }
 );
@@ -743,6 +785,9 @@ app.post(
         success: false,
         message: "Failed to upload audio file.",
       });
+    } finally {
+      // Close the MongoDB connection
+      await closeTheDB();
     }
   }
 );
@@ -825,6 +870,9 @@ app.post("/api/create-logs", async (req, res) => {
       success: false,
       message: "Failed to create logs.",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 
@@ -850,6 +898,9 @@ app.post("/api/get-chat-text", async (req, res) => {
       success: false,
       message: "Failed to retrieve chat text.",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
 
@@ -859,12 +910,14 @@ app.get('/api/getSipSetting', async (req, res) => {
 
   axios.get('http://16.163.178.109/aivoip/sip/fetch-sip.php')
     .then((response) => {
+      console.log(res, "res")
       return res.status(200).json({
         status: 'success',
         data: response.data
       });
     })
     .catch((err) => {
+      console.log('http://16.163.178.109/aivoip/sip/fetch-sip.php', 'setting_api_link')
       return res.status(400).json({
         status: 'Failed',
         data: err.message
@@ -937,6 +990,9 @@ app.post('/api/concurrent-number', async (req, res) => {
       success: false,
       message: error,
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 })
 
@@ -963,5 +1019,8 @@ app.get('/api/concurrent-number', async (req, res) => {
       success: false,
       message: "Failed to retrieve concurrent number.",
     });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
   }
 });
