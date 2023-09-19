@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const APIURL = process.env.REACT_APP_BASE_URL_LIVE;
+const apiURL = process.env.REACT_APP_BASE_URL_LIVE;
 
 
 const Card = ({ message, para, lineBottom, marginLeft, background, color, index, id, disabled }) => {
@@ -61,7 +61,7 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
     formData.append('index', index)
 
 
-    fetch(`${APIURL}/api/upload-audio`, {
+    fetch(`${apiURL}/api/upload-audio`, {
       method: 'POST',
       body: formData,
     })

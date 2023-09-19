@@ -7,8 +7,6 @@ import Button from "./Button";
 import axios from "axios";
 
 const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
-const apiURL = process.env.REACT_APP_BASE_URL_LIVE;
-const APIURL = process.env.REACT_APP_BASE_URL_LIVE;
 
 
 const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, toDate, setToDate, filterData, setFilterData, allGroups, setAllGroups }) => {
@@ -100,7 +98,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   useEffect(() => {
     firstData()
 
-    axios.get(`${APIURL}/api/concurrent-number`)
+    axios.get(`${apiURL}/api/concurrent-number`)
       .then((res) => {
         setConcur(res?.data?.concurrentNumber)
       })
@@ -178,7 +176,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
     axios
       .post(
-        `${APIURL}/api/call-numbers`,
+        `${apiURL}/api/call-numbers`,
         tempPhone
       )
       .then((response) => alert('Calling Status Changed!'))

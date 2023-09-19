@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react"
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useParams } from "react-router-dom";
-import axios from 'axios'
-const APIURL = process.env.REACT_APP_BASE_URL_LOCAL;
-const apiURL = process.env.REACT_APP_BASE_URL_LOCAL
+import axios from 'axios';
+const apiURL = process.env.REACT_APP_BASE_URL_LIVE;
 
 
 const ConcurrentForm = () => {
@@ -21,7 +20,7 @@ const ConcurrentForm = () => {
     const updateHandler = () => {
         console.log("update handler called ::", formData)
         //update current setting api call
-        axios.post(`${APIURL}/api/updateSetting`, formData).then((res) => {
+        axios.post(`${apiURL}/api/updateSetting`, formData).then((res) => {
             setFormData({
                 sip_ip: res.data.SIP_IP,
                 port: res.data.PORT,
@@ -33,7 +32,7 @@ const ConcurrentForm = () => {
         });
 
 
-        axios.post(`${APIURL}/api/concurrent-number`, concur).then((res) => {
+        axios.post(`${apiURL}/api/concurrent-number`, concur).then((res) => {
             console.log("response :::", res)
         }).catch((err) => {
             console.log("error ::", err)
@@ -55,7 +54,7 @@ const ConcurrentForm = () => {
     useEffect(() => {
 
 
-        axios.get(`${APIURL}/api/getSipSetting`).then((res) => {
+        axios.get(`${apiURL}/api/getSipSetting`).then((res) => {
             console.log('res', res.data.data)
             setFormData({
                 sip_ip: res.data.data.SIP_IP,
