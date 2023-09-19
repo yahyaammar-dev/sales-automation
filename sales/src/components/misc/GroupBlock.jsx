@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import Button from "./Button";
 import axios from "axios";
 
-const apiUrl = process.env.REACT_APP_BASE_URL_LIVE;
+const apiURL = process.env.REACT_APP_BASE_URL_LIVE;
 
 
 const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, toDate, setToDate, filterData, setFilterData, allGroups, setAllGroups }) => {
