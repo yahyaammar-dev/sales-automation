@@ -163,8 +163,9 @@ app.post("/api/create-group", async (req, res) => {
 app.get("/api/group/:id", async (req, res) => {
   try {
     const groupId = req.params.id; // Get the group ID from the URL parameters
-    await client.connect();
-    db = client.db("salesautomationdb");
+    // await client.connect();
+    const db = await connectToDatabase();
+    // db = client.db("salesautomationdb");
     const collection = db.collection("group");
     // Find the group by its ID
     const group = await collection.findOne({ _id: new ObjectId(groupId) });
@@ -248,8 +249,9 @@ app.put("/api/groups/:id", async (req, res) => {
 
 app.get("/api/groups", async (req, res) => {
   try {
-    await client.connect();
-    db = client.db("salesautomationdb");
+    // await client.connect();
+    // db = client.db("salesautomationdb");
+    const db = await connectToDatabase();
     const collection = db.collection("group");
 
    
@@ -748,7 +750,8 @@ app.post(
         // Find the group document by its ID and update it
         const result = await collection.updateOne(
           { _id: new ObjectId(groupId) }, // Create a new instance of ObjectId
-          { $set: updatedGroup }
+          // { $set: updatedGroup }
+          { $push: { phoneNumbers: { $each: updatedPhoneNumbers } } }
         );
 
         return res.status(200).json({
@@ -757,17 +760,17 @@ app.post(
         });
 
       } else {
-        console.error("Error uploading audio file:", error);
+        console.error("Error uploading excel file:", error);
         return res.status(500).json({
           success: false,
-          message: "Failed to upload audio file.",
+          message: "Failed to upload excel file.",
         });
       }
     } catch (error) {
       console.error("Error uploading file:", error);
       return res.status(500).json({
         success: false,
-        message: "Failed to upload audio file.",
+        message: "Failed to upload excel file.",
       });
     } finally {
       // Close the MongoDB connection
@@ -1029,8 +1032,8 @@ app.post('/api/concurrent-number', async (req, res) => {
 app.get('/api/concurrent-number', async (req, res) => {
   try {
 
-    await client.connect();
-    db = client.db("salesautomationdb");
+    const db = await connectToDatabase();
+    // db = client.db("salesautomationdb");
     const con = db.collection("con");
 
     // Retrieve the concurrent number (assuming you have only one)
