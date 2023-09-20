@@ -80,11 +80,11 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       });
   };
 
-  // useEffect(() => {
-  //   axios.get(`${apiUrl}/api/groups`).then((response) => {
-  //     setAllGroups(response.data.groups);
-  //   });
-  // }, []);
+  useEffect(() => {
+    axios.get(`${apiURL}/api/groups`).then((response) => {
+      setAllGroups(response.data.groups);
+    });
+  }, []);
 
 
   const firstData = () => {
@@ -212,6 +212,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       .catch((err) => alert('Something failed! Try again Later'));
       setActive(false);
     } else {
+      // console.log("all group", allGroups)
       setActive(true);
       let phoneNumbers = [];
       allGroups?.filter((itm) => {
@@ -222,6 +223,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         }
       }).forEach((group, index) => {
         group.phoneNumbers?.forEach((item, subIndex) => {
+          console.log("IN FOREACH",item.number)
           if (item?.number) {
             phoneNumbers.push("96" + item?.number);
           } else {
