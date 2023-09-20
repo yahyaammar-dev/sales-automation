@@ -280,7 +280,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       });
 
     // Clear the input fields after adding the phone number
-    setSelectedGroupId("");
+    // setSelectedGroupId("");
     setPhoneNumber("");
   };
 
