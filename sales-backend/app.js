@@ -836,7 +836,7 @@ app.post("/api/create-logs", async (req, res) => {
     console.log("Searching for number:", number);
 
     const groupWithNumber = await groupsCollection.findOne({
-      phoneNumbers: number,
+      "phoneNumbers.number": number,
     });
     console.log("Group with Number:", groupWithNumber);
 
