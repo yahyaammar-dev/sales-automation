@@ -20,7 +20,8 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   const [file, setFile] = useState(null)
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [concur, setConcur] = useState()
+  const [concur, setConcur] = useState();
+  const [trunkId, setTrunkId] = useState();
 
   let { id } = useParams();
 
@@ -29,11 +30,17 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
     setSelectedGroupId(id)
     axios.get(`${apiURL}/api/concurrent-number`)
       .then((res) => {
-        setConcur(res?.data?.concurrentNumber)
+        setConcur(res?.data?.concurrentNumber.con)
       })
       .catch((err) => {
         console.log(err)
       })
+
+      axios.get(`${apiURL}/api/getSipSetting`).then((res) => {
+        setTrunkId(res.data.data.UserName)
+    }).catch((err) => {
+        console.log("error ::", err)
+    });
   }, [])
 
   // upload excel file
@@ -98,12 +105,12 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   useEffect(() => {
     firstData()
 
-    axios.get(`${apiURL}/api/concurrent-number`)
-      .then((res) => {
-        setConcur(res?.data?.concurrentNumber)
-      })
-      .catch((err) => {
-      })
+    // axios.get(`${apiURL}/api/concurrent-number`)
+    //   .then((res) => {
+    //     setConcur(res?.data?.concurrentNumber)
+    //   })
+    //   .catch((err) => {
+    //   })
 
       console.log(active);
   }, []);
@@ -225,8 +232,8 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   
       let tempPhone = [
         {
-          calls: "2",
-          trunk: "1001",
+          calls: concur,
+          trunk: "trk-"+trunkId,
           forward: forwardNumber,
         },
         phoneNumbers,

@@ -720,11 +720,27 @@ app.post(
           return item[Object.keys(jsonData[0])[0]]
         })
 
+        const currentTimestamp = new Date();
+
+        const updatedPhoneNumbers = numbers.map(phoneNumber => {
+          return {
+            number: phoneNumber,
+            status: 'idle', // Assuming you have status defined somewhere
+            createdAt: currentTimestamp,
+            duration: 0, // Assuming you have duration defined somewhere
+            keyword: '', // Assuming you have keyword defined somewhere
+            answered: '', // Assuming you have answered defined somewhere
+          };
+        });
+
+        const updatedGroup = {
+          phoneNumbers: updatedPhoneNumbers,
+        };
 
         // Update the group document based on the provided data
-        const updatedGroup = {
-          phoneNumbers: numbers,
-        };
+        // const updatedGroup = {
+        //   phoneNumbers: numbers,
+        // };
         const collection = db.collection("group");
 
         // Find the group document by its ID and update it
@@ -981,15 +997,14 @@ app.get('/api/stop-calling', async (req, res) => {
 
 app.post('/api/concurrent-number', async (req, res) => {
   try {
-    const data = req.body.con
-    const { number, groupId } = req.body;
+    const data = req.body
     const db = await connectToDatabase();
     const con = db.collection("con");
-
+    console.log(data)
     // delete pervious concurrent number
     const result = await con.deleteMany({});
 
-    const result2 = await con.insertOne({con: data});
+    const result2 = await con.insertOne(data);
 
     return res.status(200).json({
       success: true,

@@ -31,8 +31,11 @@ const ConcurrentForm = () => {
             console.log("error ::", err)
         });
 
+        const conData = {
+            con: concur
+          };
 
-        axios.post(`${apiURL}/api/concurrent-number`, concur).then((res) => {
+        axios.post(`${apiURL}/api/concurrent-number`, conData).then((res) => {
             console.log("response :::", res)
         }).catch((err) => {
             console.log("error ::", err)
@@ -69,7 +72,7 @@ const ConcurrentForm = () => {
 
         axios.get(`${apiURL}/api/concurrent-number`)
             .then((res) => {
-                setConcur(res?.data?.concurrentNumber)
+                setConcur(res?.data?.concurrentNumber?.con)
             })
             .catch((err) => {
                 console.log(err)
