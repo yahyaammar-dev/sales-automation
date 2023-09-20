@@ -212,7 +212,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       .catch((err) => alert('Something failed! Try again Later'));
       setActive(false);
     } else {
-      // console.log("all group", allGroups)
+      console.log("all group", allGroups)
       setActive(true);
       let phoneNumbers = [];
       allGroups?.filter((itm) => {
