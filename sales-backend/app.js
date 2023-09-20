@@ -321,7 +321,7 @@ app.post(
   async (req, res) => {
     try {
       const uploadedFile = req.file;
-
+      const index = req.body.index
       console.log("hello world");
 
       if (!uploadedFile) {
@@ -367,6 +367,7 @@ app.post(
       )}&message=${filename}&message_text=${filename}`
 
       const response =  axios.get(url);
+
 
 
       return res.status(200).json({
@@ -723,8 +724,9 @@ app.post(
         const currentTimestamp = new Date();
 
         const updatedPhoneNumbers = numbers.map(phoneNumber => {
+          const strNum = phoneNumber.toString();
           return {
-            number: phoneNumber,
+            number: strNum,
             status: 'idle', // Assuming you have status defined somewhere
             createdAt: currentTimestamp,
             duration: 0, // Assuming you have duration defined somewhere
