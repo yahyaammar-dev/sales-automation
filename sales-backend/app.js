@@ -345,21 +345,21 @@ app.post(
       const audioLink = `http://16.163.178.109:9000/uploads/${uploadedFile.filename}`;
 
 
-      var filename
+      var filename='hello'
 
-      if(index == '0'){
-        filename= 'welcome'
-      }else if(index == '1'){
-        filename= 'sales-pitch'
-      }else if(index == '2'){
-        filename= 'yes'
-      }else if(index == '5'){
-        filename= 'yes'
-      }else if(index == '7'){
-        filename= 'hearme'
-      }else{
-        fliename = 'message'
-      }
+      // if(index == '0'){
+      //   filename= 'welcome'
+      // }else if(index == '1'){
+      //   filename= 'sales-pitch'
+      // }else if(index == '2'){
+      //   filename= 'yes'
+      // }else if(index == '5'){
+      //   filename= 'yes'
+      // }else if(index == '7'){
+      //   filename= 'hearme'
+      // }else{
+      //   fliename = 'message'
+      // }
 
 
 
@@ -369,6 +369,9 @@ app.post(
       )}&message=${filename}&message_text=${filename}`
 
       const response =  axios.get(url);
+
+      console.log("url", url);
+      console.log("response", response);
 
 
 
@@ -977,7 +980,7 @@ app.post('/api/call-numbers', async (req, res) => {
 
   const data = req.body
 
-  axios.post('http://16.163.178.109/aivoip/autodial/dial_numbers_1.php', data)
+  axios.post('http://16.163.178.109/aivoip/autodial/dial_numbers.php', data)
   
   return res.status(200).json({
     status: 'success',

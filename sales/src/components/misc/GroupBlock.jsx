@@ -235,7 +235,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       let tempPhone = [
         {
           calls: concur,
-          trunk: "trk-"+trunkId,
+          trunk: "trk-"+trunkId+"-t",
           forward: forwardNumber,
         },
         phoneNumbers,
