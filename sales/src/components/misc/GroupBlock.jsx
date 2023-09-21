@@ -94,16 +94,22 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       setAllGroups(response.data.groups);
     })
       .catch((err) => console.log(err.message));
+    // axios.get(`${apiURL}/api/forwarding`).then((response) => {
+    //   // setForwardNumber(response.data.groups);
+    //   setForwardNumber(response.data.forwardingNumbers[0].number);
+    // })
+    //   .catch((err) => console.log(err));
+  }
+
+
+  useEffect(() => {
+    firstData();
     axios.get(`${apiURL}/api/forwarding`).then((response) => {
       // setForwardNumber(response.data.groups);
       setForwardNumber(response.data.forwardingNumbers[0].number);
     })
       .catch((err) => console.log(err));
-  }
-
-
-  useEffect(() => {
-    firstData()
+    
 
     // axios.get(`${apiURL}/api/concurrent-number`)
     //   .then((res) => {
