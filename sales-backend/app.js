@@ -977,7 +977,7 @@ app.post('/api/call-numbers', async (req, res) => {
 
   const data = req.body
 
-  axios.post('http://16.163.178.109/aivoip/autodial/dial_numbers.php', data)
+  axios.post('http://16.163.178.109/aivoip/autodial/dial_numbers_1.php', data)
   
   return res.status(200).json({
     status: 'success',
