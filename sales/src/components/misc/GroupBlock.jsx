@@ -239,7 +239,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         {
           calls: "1",
           trunk: "PJSIP/me-1003",          
-          forward: "00923066257058"
+          forward: "+923066257058"
         },
         phoneNumbers,
       ];
