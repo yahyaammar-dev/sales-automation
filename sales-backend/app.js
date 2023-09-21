@@ -51,6 +51,33 @@ async function closeTheDB() {
   }
 }
 
+app.get("/api/forwarding", async (req, res) => {
+  try {
+    // Assuming you have a "forwardingNumbers" collection in your MongoDB
+    const db = await connectToDatabase();
+    const collection = db.collection("forwardingNumber");
+
+    // Find all forwarding numbers in the collection
+    const forwardingNumbers = await collection.find({}).toArray();
+
+    console.log("Fetched all forwarding numbers:", forwardingNumbers);
+
+    return res.status(200).json({
+      success: true,
+      forwardingNumbers: forwardingNumbers,
+    });
+  } catch (error) {
+    console.error("Error fetching forwarding numbers:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch forwarding numbers.",
+    });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
+  }
+});
+
 app.post("/api/forwarding", async (req, res) => {
   try {
     const { number } = req.body;
@@ -93,34 +120,7 @@ app.post("/api/forwarding", async (req, res) => {
     await closeTheDB();
   }
 });
-``
 
-app.get("/api/forwarding", async (req, res) => {
-  try {
-    // Assuming you have a "forwardingNumbers" collection in your MongoDB
-    const db = await connectToDatabase();
-    const collection = db.collection("forwardingNumber");
-
-    // Find all forwarding numbers in the collection
-    const forwardingNumbers = await collection.find({}).toArray();
-
-    console.log("Fetched all forwarding numbers:", forwardingNumbers);
-
-    return res.status(200).json({
-      success: true,
-      forwardingNumbers: forwardingNumbers,
-    });
-  } catch (error) {
-    console.error("Error fetching forwarding numbers:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch forwarding numbers.",
-    });
-  } finally {
-    // Close the MongoDB connection
-    await closeTheDB();
-  }
-});
 
 app.post("/api/create-group", async (req, res) => {
   try {
@@ -1000,35 +1000,6 @@ app.get('/api/stop-calling', async (req, res) => {
 
 })
 
-app.post('/api/concurrent-number', async (req, res) => {
-  try {
-    const data = req.body
-    const db = await connectToDatabase();
-    const con = db.collection("con");
-    console.log(data)
-    // delete pervious concurrent number
-    const result = await con.deleteMany({});
-
-    const result2 = await con.insertOne(data);
-
-    return res.status(200).json({
-      success: true,
-      result2,
-    });
-  } catch (error) {
-    console.error("Error in retrieving chat text:", error);
-    return res.status(500).json({
-      success: false,
-      message: error,
-    });
-  } finally {
-    // Close the MongoDB connection
-    await closeTheDB();
-  }
-})
-
-
-
 app.get('/api/concurrent-number', async (req, res) => {
   try {
 
@@ -1055,3 +1026,31 @@ app.get('/api/concurrent-number', async (req, res) => {
     await closeTheDB();
   }
 });
+
+app.post('/api/concurrent-number', async (req, res) => {
+  try {
+    const data = req.body
+    const db = await connectToDatabase();
+    const con = db.collection("con");
+    console.log(data)
+    // delete pervious concurrent number
+    const result = await con.deleteMany({});
+
+    const result2 = await con.insertOne(data);
+
+    return res.status(200).json({
+      success: true,
+      result2,
+    });
+  } catch (error) {
+    console.error("Error in retrieving chat text:", error);
+    return res.status(500).json({
+      success: false,
+      message: error,
+    });
+  } finally {
+    // Close the MongoDB connection
+    await closeTheDB();
+  }
+});
+
