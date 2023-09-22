@@ -957,10 +957,21 @@ app.get('/api/getSipSetting', async (req, res) => {
 
 app.post('/api/updateSetting', async (req, res) => {
 
-  const data = req.body
+  const data = req.body;
+
+// Convert key-value pairs into strings with quotes
+const newArray = data.map(item => {
+  return `"${item.key}": "${item.value}"`;
+});
+
+// Join the strings with commas to create a valid JSON-like string
+const jsonString = `{${newArray.join(', ')}}`;
+
+
+  
 
   // axios.post('http://16.163.178.109:9001/api/update-setting', data)
-  axios.get('http://16.163.178.109/aivoip/sip/update-sip.php', data)
+  axios.get('http://16.163.178.109/aivoip/sip/update-sip.php', jsonString)
     .then((response) => {
       return res.status(200).json({
         status: 'success',
