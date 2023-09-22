@@ -22,10 +22,10 @@ const ConcurrentForm = () => {
         //update current setting api call
         axios.post(`${apiURL}/api/updateSetting`, formData).then((res) => {
             setFormData({
-                sip_ip: res.data.SIP_IP,
-                port: res.data.PORT,
-                username: res.data.UserName,
-                password: res.data.Password,
+                SIP_IP: res.data.SIP_IP,
+                PORT: res.data.PORT,
+                Username: res.data.UserName,
+                Password: res.data.Password,
             });
         }).catch((err) => {
             console.log("error ::", err)
