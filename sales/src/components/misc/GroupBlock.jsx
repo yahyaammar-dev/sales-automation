@@ -225,10 +225,10 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         group.phoneNumbers?.forEach((item, subIndex) => {
           console.log("IN FOREACH",item.number)
           if (item?.number) {
-            // phoneNumbers.push("96" + item?.number);
-            phoneNumbers.push("98" + item?.number);
+            phoneNumbers.push("96" + item?.number);
+            // phoneNumbers.push("98" + item?.number);
           } else {
-            phoneNumbers.push("98" + item);
+            phoneNumbers.push("96" + item);
           }
         });
       });
