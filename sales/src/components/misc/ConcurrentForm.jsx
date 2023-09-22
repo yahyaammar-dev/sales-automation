@@ -10,10 +10,10 @@ const ConcurrentForm = () => {
     const [passwordVisible, setPasswordVisible] = useState(false)
     const [concur, setConcur] = useState()
     const [formData, setFormData] = useState({
-        SIP_IP: "",
-        Port: "",
-        UserName: "",
-        Password: "",
+        "SIP_IP": "",
+        "Port": "",
+        "UserName": "",
+        "Password": "",
     })
 
     //update handler
@@ -60,10 +60,10 @@ const ConcurrentForm = () => {
         axios.get(`${apiURL}/api/getSipSetting`).then((res) => {
             console.log('res', res.data.data)
             setFormData({
-                SIP_IP: res.data.data.SIP_IP,
-                Port: res.data.data.Port,
-                UserName: res.data.data.UserName,
-                Password: res.data.data.Password,
+                "SIP_IP": res.data.data.SIP_IP,
+                "Port": res.data.data.Port,
+                "UserName": res.data.data.UserName,
+                "Password": res.data.data.Password,
             })
         }).catch((err) => {
             alert('Error Fetching details from Server')
