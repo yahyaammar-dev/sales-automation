@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParser = require('body-parser');
 const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const app = express();
@@ -16,6 +17,7 @@ const uploadsPath = path.join(__dirname, "uploads");
 app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
 const server = http.createServer(app);
 server.listen(port, () => {
   const hostname = os.hostname();
@@ -905,16 +907,16 @@ app.post("/api/get-chat-text", async (req, res) => {
     const logsCollection = db.collection("logs");
     const groupIdObjectId = new ObjectId(groupId);
     // Find all logs with the provided number and group ID
-    // const chatLogs = await logsCollection.find({ number, groupId: groupIdObjectId }).toArray();
-    const chatLogs = await logsCollection.findOne({
-      "number": number.number,
-    });
+    const chatLogs = await logsCollection.find({ number, groupId: groupIdObjectId }).toArray();
+    // const chatLogs = await logsCollection.findOne({
+    //   "number": number.number,
+    // });
 
     console.log("chatLogs", chatLogs);
 
     // Extract the text from each chat log
-    // const chatText = chatLogs.map((log) => log);
-    const chatText = chatLogs;
+    const chatText = chatLogs.map((log) => log);
+    // const chatText = chatLogs;
     return res.status(200).json({
       success: true,
       chatText,
