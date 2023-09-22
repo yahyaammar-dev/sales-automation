@@ -11,7 +11,7 @@ const ConcurrentForm = () => {
     const [concur, setConcur] = useState()
     const [formData, setFormData] = useState({
         SIP_IP: "",
-        PORT: "",
+        Port: "",
         UserName: "",
         Password: "",
     })
@@ -23,7 +23,7 @@ const ConcurrentForm = () => {
         axios.post(`${apiURL}/api/updateSetting`, formData).then((res) => {
             setFormData({
                 SIP_IP: res.data.SIP_IP,
-                PORT: res.data.PORT,
+                Port: res.data.Port,
                 UserName: res.data.UserName,
                 Password: res.data.Password,
             });
@@ -61,7 +61,7 @@ const ConcurrentForm = () => {
             console.log('res', res.data.data)
             setFormData({
                 SIP_IP: res.data.data.SIP_IP,
-                PORT: res.data.data.PORT,
+                Port: res.data.data.Port,
                 UserName: res.data.data.UserName,
                 Password: res.data.data.Password,
             })
@@ -106,8 +106,8 @@ const ConcurrentForm = () => {
                         Port
                     </label>
                     <input
-                        name="PORT"
-                        value={formData?.PORT}
+                        name="Port"
+                        value={formData?.Port}
                         onChange={handleChange}
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Port" />
                 </div>
