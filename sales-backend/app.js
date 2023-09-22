@@ -959,19 +959,14 @@ app.post('/api/updateSetting', async (req, res) => {
 
   const data = req.body;
 
-  const requestBody = req.body;
+  // Convert to a JSON string
+const jsonString = JSON.stringify(data);
 
-  // if (requestBody) {
-    const keysWithQuotes = Object.keys(requestBody).map(key => `"${key}"`);
-    
-    res.json(keysWithQuotes);
-  // } else {
-  //   res.status(400).json({ error: 'Invalid JSON data' });
-  // }
-  
+// Parse the JSON string back to an object
+const dataKeysObject = JSON.parse(jsonString);
 
   // axios.post('http://16.163.178.109:9001/api/update-setting', data)
-  axios.get('http://16.163.178.109/aivoip/sip/update-sip.php', keysWithQuotes)
+  axios.get('http://16.163.178.109/aivoip/sip/update-sip.php', dataKeysObject)
     .then((response) => {
       return res.status(200).json({
         status: 'success',
