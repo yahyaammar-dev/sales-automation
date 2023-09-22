@@ -905,10 +905,16 @@ app.post("/api/get-chat-text", async (req, res) => {
     const logsCollection = db.collection("logs");
     const groupIdObjectId = new ObjectId(groupId);
     // Find all logs with the provided number and group ID
-    const chatLogs = await logsCollection.find({ number, groupId: groupIdObjectId }).toArray();
+    // const chatLogs = await logsCollection.find({ number, groupId: groupIdObjectId }).toArray();
+    const chatLogs = await logsCollection.findOne({
+      "number": number.number,
+    });
+
+    console.log("chatLogs", chatLogs);
 
     // Extract the text from each chat log
-    const chatText = chatLogs.map((log) => log);
+    // const chatText = chatLogs.map((log) => log);
+    const chatText = chatLogs;
     return res.status(200).json({
       success: true,
       chatText,
@@ -951,7 +957,8 @@ app.post('/api/updateSetting', async (req, res) => {
 
   const data = req.body
 
-  axios.post('http://16.163.178.109:9001/api/update-setting', data)
+  // axios.post('http://16.163.178.109:9001/api/update-setting', data)
+  axios.get('http://16.163.178.109/aivoip/sip/update-sip.php', data)
     .then((response) => {
       return res.status(200).json({
         status: 'success',
