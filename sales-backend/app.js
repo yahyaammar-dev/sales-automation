@@ -959,19 +959,19 @@ app.post('/api/updateSetting', async (req, res) => {
 
   const data = req.body;
 
-// Convert key-value pairs into strings with quotes
-const newArray = data.map(item => {
-  return `"${item.key}": "${item.value}"`;
-});
+  const requestBody = req.body;
 
-// Join the strings with commas to create a valid JSON-like string
-const jsonString = `{${newArray.join(', ')}}`;
-
-
+  // if (requestBody) {
+    const keysWithQuotes = Object.keys(requestBody).map(key => `"${key}"`);
+    
+    res.json(keysWithQuotes);
+  // } else {
+  //   res.status(400).json({ error: 'Invalid JSON data' });
+  // }
   
 
   // axios.post('http://16.163.178.109:9001/api/update-setting', data)
-  axios.get('http://16.163.178.109/aivoip/sip/update-sip.php', jsonString)
+  axios.get('http://16.163.178.109/aivoip/sip/update-sip.php', keysWithQuotes)
     .then((response) => {
       return res.status(200).json({
         status: 'success',
