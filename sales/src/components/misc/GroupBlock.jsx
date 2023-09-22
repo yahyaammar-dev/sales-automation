@@ -232,14 +232,17 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
           }
         });
       });
-  //concur
-          // trunk: "SIP/trk-"+trunkId+"-t",
-      //forwardNumber
+
+
+      // calls: "1",
+      //     trunk: "PJSIP/me-1003",          
+      //     forward: "600923066257058"
+        
       let tempPhone = [
         {
-          calls: "1",
-          trunk: "PJSIP/me-1003",          
-          forward: "600923066257058"
+          calls: concur
+          trunk: "SIP/trk-"+trunkId+"-t",
+          forward: forwardNumber,
         },
         phoneNumbers,
       ];
