@@ -959,14 +959,23 @@ app.post('/api/updateSetting', async (req, res) => {
 
   const data = req.body;
 
+  let reqdata = "{";
+Object.entries(data).forEach(([key, value]) => {
+  reqdata += `"${key}":"${value}"`;
+});
+reqdata += "}";
+
+console.log("reqdata",reqdata);
   // Convert to a JSON string
 const jsonString = JSON.stringify(data);
 
+console.log("jsonString",jsonString);
 // Parse the JSON string back to an object
 const dataKeysObject = JSON.parse(jsonString);
 
+console.log("dataKeysObject",dataKeysObject);
   // axios.post('http://16.163.178.109:9001/api/update-setting', data)
-  axios.get('http://16.163.178.109/aivoip/sip/update-sip.php', jsonString)
+  axios.get('http://16.163.178.109/aivoip/sip/update-sip.php', reqdata)
     .then((response) => {
       return res.status(200).json({
         status: 'success',
