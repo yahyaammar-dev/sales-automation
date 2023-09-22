@@ -966,7 +966,7 @@ const jsonString = JSON.stringify(data);
 const dataKeysObject = JSON.parse(jsonString);
 
   // axios.post('http://16.163.178.109:9001/api/update-setting', data)
-  axios.get('http://16.163.178.109/aivoip/sip/update-sip.php', dataKeysObject)
+  axios.get('http://16.163.178.109/aivoip/sip/update-sip.php', jsonString)
     .then((response) => {
       return res.status(200).json({
         status: 'success',
