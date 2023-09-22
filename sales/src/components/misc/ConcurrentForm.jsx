@@ -10,10 +10,10 @@ const ConcurrentForm = () => {
     const [passwordVisible, setPasswordVisible] = useState(false)
     const [concur, setConcur] = useState()
     const [formData, setFormData] = useState({
-        sip_ip: "",
-        port: "",
-        username: "",
-        password: "",
+        SIP_IP: "",
+        PORT: "",
+        UserName: "",
+        Password: "",
     })
 
     //update handler
@@ -24,7 +24,7 @@ const ConcurrentForm = () => {
             setFormData({
                 SIP_IP: res.data.SIP_IP,
                 PORT: res.data.PORT,
-                Username: res.data.UserName,
+                UserName: res.data.UserName,
                 Password: res.data.Password,
             });
         }).catch((err) => {
@@ -60,10 +60,10 @@ const ConcurrentForm = () => {
         axios.get(`${apiURL}/api/getSipSetting`).then((res) => {
             console.log('res', res.data.data)
             setFormData({
-                sip_ip: res.data.data.SIP_IP,
-                port: res.data.data.Port,
-                username: res.data.data.UserName,
-                password: res.data.data.Password,
+                SIP_IP: res.data.data.SIP_IP,
+                PORT: res.data.data.PORT,
+                UserName: res.data.data.UserName,
+                Password: res.data.data.Password,
             })
         }).catch((err) => {
             alert('Error Fetching details from Server')
@@ -95,8 +95,8 @@ const ConcurrentForm = () => {
                         SIP IP
                     </label>
                     <input
-                        name="sip_ip"
-                        value={formData?.sip_ip}
+                        name="SIP_IP"
+                        value={formData?.SIP_IP}
                         onChange={handleChange}
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="SIP IP" />
                 </div>
@@ -106,8 +106,8 @@ const ConcurrentForm = () => {
                         Port
                     </label>
                     <input
-                        name="port"
-                        value={formData?.port}
+                        name="PORT"
+                        value={formData?.PORT}
                         onChange={handleChange}
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Port" />
                 </div>
@@ -117,8 +117,8 @@ const ConcurrentForm = () => {
                         UserName
                     </label>
                     <input
-                        name="username"
-                        value={formData?.username}
+                        name="UserName"
+                        value={formData?.UserName}
                         onChange={handleChange}
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username" />
                 </div>
@@ -129,8 +129,8 @@ const ConcurrentForm = () => {
                     </label>
                     <input
                         type={passwordVisible ? 'text' : 'password'}
-                        name="password"
-                        value={formData?.password}
+                        name="Password"
+                        value={formData?.Password}
                         onChange={handleChange}
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="username"
