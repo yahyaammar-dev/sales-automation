@@ -961,7 +961,7 @@ app.post('/api/updateSetting', async (req, res) => {
 
   let reqdata = "{";
 Object.entries(data).forEach(([key, value]) => {
-  reqdata += `"${key}":"${value}"`;
+  reqdata += `"${key}":"${value}",`;
 });
 reqdata += "}";
 
