@@ -54,30 +54,45 @@ async function closeTheDB() {
 }
 
 app.get("/api/forwarding", async (req, res) => {
-  try {
-    // Assuming you have a "forwardingNumbers" collection in your MongoDB
-    const db = await connectToDatabase();
-    const collection = db.collection("forwardingNumber");
+  async function getData() {
+    let result = [];
+    try {
+      // Assuming you have a "forwardingNumbers" collection in your MongoDB
+      const db = await connectToDatabase();
+      const collection = db.collection("forwardingNumber");
 
-    // Find all forwarding numbers in the collection
-    const forwardingNumbers = await collection.find({}).toArray();
+      // Find all forwarding numbers in the collection
+      const forwardingNumbers = await collection.find({}).toArray();
 
-    console.log("Fetched all forwarding numbers:", forwardingNumbers);
+      console.log("Fetched all forwarding numbers:", forwardingNumbers);
 
-    return res.status(200).json({
-      success: true,
-      forwardingNumbers: forwardingNumbers,
-    });
-  } catch (error) {
-    console.error("Error fetching forwarding numbers:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch forwarding numbers.",
-    });
-  } finally {
-    // Close the MongoDB connection
-    await closeTheDB();
-  }
+      result.push({
+        success: true,
+        forwardingNumbers: forwardingNumbers,
+      });
+
+    } catch (error) {
+      console.error("Error fetching forwarding numbers:", error);
+
+      result.push({
+        success: false,
+        message: "Failed to fetch forwarding numbers.",
+      });
+
+    } finally {
+      // Close the MongoDB connection
+      await client.close();
+    }
+    return result;
+  };
+  const data = await getData(); //add this
+  if(data[0].success){
+    res.status(200).json(data[0]);
+  }else{
+    res.status(500).json(data[0]);
+  }  
+
+  // response.send(data);
 });
 
 app.post("/api/forwarding", async (req, res) => {
@@ -119,7 +134,7 @@ app.post("/api/forwarding", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await closeTheDB();
+    await client.close();
   }
 });
 
@@ -158,41 +173,66 @@ app.post("/api/create-group", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await closeTheDB();
+    await client.close();
   }
 });
 
 app.get("/api/group/:id", async (req, res) => {
-  try {
-    const groupId = req.params.id; // Get the group ID from the URL parameters
-    // await client.connect();
-    const db = await connectToDatabase();
-    // db = client.db("salesautomationdb");
-    const collection = db.collection("group");
-    // Find the group by its ID
-    const group = await collection.findOne({ _id: new ObjectId(groupId) });
-    if (!group) {
-      // If no group found with the given ID, return a 404 response
-      return res.status(404).json({
+  async function getData() {
+    let result = [];
+    try {
+      const groupId = req.params.id; // Get the group ID from the URL parameters
+      // await client.connect();
+      const db = await connectToDatabase();
+      // db = client.db("salesautomationdb");
+      const collection = db.collection("group");
+      // Find the group by its ID
+      const group = await collection.findOne({ _id: new ObjectId(groupId) });
+      if (!group) {
+        // If no group found with the given ID, return a 404 response
+        result.push({
+          success: false,
+          message: "Group not found",
+        });
+        // return res.status(404).json({
+        //   success: false,
+        //   message: "Group not found",
+        // });
+      }else{
+        // If the group is found, return it as a response
+        result.push({
+          success: true,
+          group: group,
+        });
+      }
+      
+      // return res.status(200).json({
+      //   success: true,
+      //   group: group,
+      // });
+    } catch (error) {
+      console.error("Error finding group:", error);
+      result.push({
         success: false,
-        message: "Group not found",
+        message: "Failed to find group",
       });
+      // return res.status(500).json({
+      //   success: false,
+      //   message: "Failed to find group",
+      // });
+    } finally {
+      // Close the MongoDB connection
+      await client.close();
     }
-    // If the group is found, return it as a response
-    return res.status(200).json({
-      success: true,
-      group: group,
-    });
-  } catch (error) {
-    console.error("Error finding group:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to find group",
-    });
-  } finally {
-    // Close the MongoDB connection
-    await closeTheDB();
-  }
+    return result;
+  };
+  const data = await getData(); //add this
+  if(data[0].success){
+    res.status(200).json(data[0]);
+  }else{
+    res.status(500).json(data[0]);
+  }  
+  // response.send(data);
 });
 
 app.put("/api/groups/:id", async (req, res) => {
@@ -245,79 +285,89 @@ app.put("/api/groups/:id", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await closeTheDB();
+    await client.close();
   }
 });
 
-app.get("/api/groups", async (req, res) => {
-  try {
-    // await client.connect();
-    // db = client.db("salesautomationdb");
-    const db = await connectToDatabase();
-    const collection = db.collection("group");
+app.get("/api/groups", async (req, res) => { //add async
+    async function getData() {
+        let result = [];
+        let groups_data = [];
 
-   
-    // Find all group documents in the collection
-    const groups = await collection.find({}).toArray();
+        try {
+            const db = await connectToDatabase();
+            const collection = db.collection("group");
 
-    console.log("Fetched all groups:", groups);
+            // Find all group documents in the collection
+            const groups = await collection.find({}).toArray();
 
-    // Calculate total phone numbers, total answered, and total duration for each group
-    const groupsWithTotals = groups.map((group) => {
-      let totalPhoneNumbers = 0;
-      let totalAnswered = 0;
-      let totalDuration = 0;
-      let formattedDuration;
+            console.log("Fetched all groups:", groups);
 
-      group.phoneNumbers.forEach((phoneNumber) => {
-        totalPhoneNumbers++;
-        if (phoneNumber.answered === "yes") {
-          totalAnswered++;
-          if (phoneNumber.duration) {
-            // Assuming duration is in seconds, you can convert it to minutes or hours if needed
-            totalDuration += parseInt(phoneNumber.duration);
-          
-          }
+            // Calculate total phone numbers, total answered, and total duration for each group
+            const groupsWithTotals = groups.map((group) => {
+              let totalPhoneNumbers = 0;
+              let totalAnswered = 0;
+              let totalDuration = 0;
+              let formattedDuration;
+
+                group.phoneNumbers.forEach((phoneNumber) => {
+                  totalPhoneNumbers++;
+                  if (phoneNumber.answered === "yes") {
+                    totalAnswered++;
+                    if (phoneNumber.duration) {
+                      // Assuming duration is in seconds, you can convert it to minutes or hours if needed
+                      totalDuration += parseInt(phoneNumber.duration);
+                    
+                    }
+                  }
+                });
+
+                if (totalDuration < 60) {
+                  // If the duration is less than 60 seconds, display it as seconds
+                  formattedDuration = `${totalDuration} sec`;
+                } else {
+                  // If the duration is 60 seconds or more, convert it to minutes
+                  const durationInMinutes = durationInSeconds / 60;
+                  formattedDuration = `${durationInMinutes} min`;
+                }
+
+                groups_data.push({
+                  ...group,
+                  totalPhoneNumbers: totalPhoneNumbers,
+                  totalAnswered: totalAnswered,
+                  totalDuration: formattedDuration,
+                  createdAt: group.createdAt,
+                });
+                result.push({
+                  success: true,
+                  groups: groups_data,
+                });
+
+              });           
         }
-      });
-      
+        catch (e) {
+            console.log(e);
+            result.push({
+              success: false,
+              message: "Failed to fetch groups.",
+            });
+        }
+        finally {
+            await client.close();
+        }
+        return result;
+    };
+    const data = await getData(); //add this
 
-      if (totalDuration < 60) {
-        // If the duration is less than 60 seconds, display it as seconds
-        formattedDuration = `${totalDuration} sec`;
-      } else {
-        // If the duration is 60 seconds or more, convert it to minutes
-        const durationInMinutes = durationInSeconds / 60;
-        formattedDuration = `${durationInMinutes} min`;
-      }
+    if(data[0].success){
+      res.status(200).json(data[0]);
+    }else{
+      res.status(500).json(data[0]);
+    }
 
-
-      return {
-        ...group,
-        totalPhoneNumbers: totalPhoneNumbers,
-        totalAnswered: totalAnswered,
-        totalDuration: formattedDuration,
-        createdAt: group.createdAt,
-      };
-    });
-
-
-
-    return res.status(200).json({
-      success: true,
-      groups: groupsWithTotals,
-    });
-  } catch (error) {
-    console.error("Error fetching groups:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch groups.",
-    });
-  } finally {
-    // Close the MongoDB connection
-    await closeTheDB();
-  }
+    // response.send(data);
 });
+
 
 app.post(
   "/api/upload-audio",
@@ -386,7 +436,7 @@ app.post(
       });
     } finally {
       // Close the MongoDB connection
-      await closeTheDB();
+      await client.close();
     }
   }
 );
@@ -425,32 +475,52 @@ app.post("/api/messages",
       });
     } finally {
       // Close the MongoDB connection
-      await closeTheDB();
+      await client.close();
     }
   });
 
 app.get("/api/messages", async (req, res) => {
-  try {
-    const db = await connectToDatabase();
-    const collection = db.collection("messages");
+  async function getData() {
+    let result = [];
+    try {
+      const db = await connectToDatabase();
+      const collection = db.collection("messages");
 
-    // Find all documents in the "sales_automation_messages" collection
-    const messages = await collection.find({}).toArray();
+      // Find all documents in the "sales_automation_messages" collection
+      const messages = await collection.find({}).toArray();
 
-    return res.status(200).json({
-      success: true,
-      messages: messages,
-    });
-  } catch (error) {
-    console.error("Error fetching messages:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch messages.",
-    });
-  } finally {
-    // Close the MongoDB connection
-    await closeTheDB();
+      result.push({
+        success: true,
+        messages: messages,
+      });
+
+      // return res.status(200).json({
+      //   success: true,
+      //   messages: messages,
+      // });
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      result.push({
+        success: false,
+        messages: "Failed to fetch messages.",
+      });
+      // return res.status(500).json({
+      //   success: false,
+      //   message: "Failed to fetch messages.",
+      // });
+    } finally {
+      // Close the MongoDB connection
+      await client.close();
+    }
+    return result;
   }
+  const data = await getData(); //add this
+  if(data[0].success){
+    res.status(200).json(data[0]);
+  }else{
+    res.status(500).json(data[0]);
+  }
+  // response.send(data);
 });
 
 app.put("/api/messages/:id", async (req, res) => {
@@ -507,7 +577,7 @@ app.put("/api/messages/:id", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await closeTheDB();
+    await client.close();
   }
 });
 
@@ -576,7 +646,7 @@ app.post("/api/add-phone-number", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await closeTheDB();
+    await client.close();
   }
 });
 
@@ -631,7 +701,7 @@ app.put("/api/update-phone-number", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await closeTheDB();
+    await client.close();
   }
 });
 
@@ -673,7 +743,7 @@ app.post("/api/edit-text-message", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await closeTheDB();
+    await client.close();
   }
 });
 
@@ -776,7 +846,7 @@ app.post(
       });
     } finally {
       // Close the MongoDB connection
-      await closeTheDB();
+      await client.close();
     }
   }
 );
@@ -810,7 +880,7 @@ app.post(
       });
     } finally {
       // Close the MongoDB connection
-      await closeTheDB();
+      await client.close();
     }
   }
 );
@@ -895,7 +965,7 @@ app.post("/api/create-logs", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await closeTheDB();
+    await client.close();
   }
 });
 
@@ -929,7 +999,7 @@ app.post("/api/get-chat-text", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await closeTheDB();
+    await client.close();
   }
 });
 
@@ -1025,31 +1095,49 @@ app.get('/api/stop-calling', async (req, res) => {
 })
 
 app.get('/api/concurrent-number', async (req, res) => {
-  try {
+    async function getData() {
+      let result = [];
+      try {
 
-    const db = await connectToDatabase();
-    // db = client.db("salesautomationdb");
-    const con = db.collection("con");
+        const db = await connectToDatabase();
+        // db = client.db("salesautomationdb");
+        const con = db.collection("con");
 
-    // Retrieve the concurrent number (assuming you have only one)
-    const concurrentNumber = await con.findOne();
+        // Retrieve the concurrent number (assuming you have only one)
+        const concurrentNumber = await con.findOne();
+
+        result.push({
+          success: true,
+          concurrentNumber: concurrentNumber,
+        });
 
 
-    return res.status(200).json({
-      success: true,
-      concurrentNumber,
-    });
-  } catch (error) {
-    console.error("Error in retrieving concurrent number:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to retrieve concurrent number.",
-    });
-  } finally {
-    // Close the MongoDB connection
-    await closeTheDB();
-  }
+      } catch (error) {
+        console.error("Error in retrieving concurrent number:", error);
+
+
+        result.push({
+          success: false,
+          message: "Failed to retrieve concurrent number.",
+        });
+
+      } finally {
+        // Close the MongoDB connection
+        await client.close();
+      }
+      return result;
+    };
+    const data = await getData(); //add this
+// console.log("result", data[0]);
+    if(data[0].success){
+      res.status(200).json(data[0]);
+    }else{
+      res.status(500).json(data[0]);
+    }
+
 });
+
+
 
 app.post('/api/concurrent-number', async (req, res) => {
   try {
@@ -1074,7 +1162,36 @@ app.post('/api/concurrent-number', async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await closeTheDB();
+    await client.close();
   }
 });
 
+
+/*
+
+app.get("/api", async (request, response) => { //add async
+    async function getData() {
+        let result = [];
+        try {
+            await client.connect();
+    
+            const db = client.db("myDatabase");
+            const collection = db.collection("myCollection");
+            const cursor = collection.find({});
+            for await (const item of cursor) {
+                result.push(item);
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+        finally {
+            await client.close();
+        }
+        return result;
+    };
+    const data = await getData(); //add this
+    response.send(data);
+});
+
+*/
