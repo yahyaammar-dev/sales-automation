@@ -16,20 +16,52 @@ const ConcurrentForm = () => {
         "Password": "",
     })
 
+
+    console.log(formData)
+
     //update handler
-    const updateHandler = () => {
+    const updateHandler = async () => {
         console.log("update handler called ::", formData)
-        //update current setting api call
-        axios.post(`${apiURL}/api/updateSetting`, formData).then((res) => {
-            setFormData({
-                "SIP_IP": res.data.SIP_IP,
-                "Port": res.data.Port,
-                "UserName": res.data.UserName,
-                "Password": res.data.Password,
-            });
-        }).catch((err) => {
-            console.log("error ::", err)
-        });
+
+
+        axios.post(`${apiURL}/api/updateSetting`, formData)
+
+
+        // let res = {}
+
+        // if(formData?.SIP_IP === undefined){
+        //     res =  getSipSettingAPI()
+        //     .then((res)=>{
+        //           axios.post(`${apiURL}/api/updateSetting`, res).then((res) => {
+        //     setFormData({
+        //         "SIP_IP": res.data.SIP_IP,
+        //         "Port": res.data.Port,
+        //         "UserName": res.data.UserName,
+        //         "Password": res.data.Password,
+        //     });
+        //     }).catch((err) => {
+        //         console.log("error ::", err)
+        //     });
+        //         })
+
+        //     console.log('response should work', res)
+        // }else{
+        //       axios.post(`${apiURL}/api/updateSetting`, formData).then((res) => {
+        //     setFormData({
+        //         "SIP_IP": res.data.SIP_IP,
+        //         "Port": res.data.Port,
+        //         "UserName": res.data.UserName,
+        //         "Password": res.data.Password,
+        //     });
+        // }).catch((err) => {
+        //     console.log("error ::", err)
+        // });
+        // }
+
+              //update current setting api call
+      
+      
+      
 
         const conData = {
             con: concur
@@ -54,21 +86,30 @@ const ConcurrentForm = () => {
         }))
     }
 
+   const getSipSettingAPI = () => {
+  return new Promise((resolve, reject) => {
+    axios.get(`${apiURL}/api/getSipSetting`).then((res) => {
+      const sipSettings = {
+        "SIP_IP": res.data.data.SIP_IP,
+        "Port": res.data.data.Port,
+        "UserName": res.data.data.UserName,
+        "Password": res.data.data.Password,
+      };
+
+      setFormData(sipSettings);
+
+      resolve(sipSettings); // Resolve the promise with the data
+    }).catch((err) => {
+      alert('Error Fetching details from Server');
+      console.log("error ::", err);
+      reject(err); // Reject the promise if there's an error
+    });
+  });
+};
+
     useEffect(() => {
 
-
-        axios.get(`${apiURL}/api/getSipSetting`).then((res) => {
-            console.log('res', res.data.data)
-            setFormData({
-                "SIP_IP": res.data.data.SIP_IP,
-                "Port": res.data.data.Port,
-                "UserName": res.data.data.UserName,
-                "Password": res.data.data.Password,
-            })
-        }).catch((err) => {
-            alert('Error Fetching details from Server')
-            console.log("error ::", err)
-        });
+       getSipSettingAPI()
 
         axios.get(`${apiURL}/api/concurrent-number`)
             .then((res) => {

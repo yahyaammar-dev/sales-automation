@@ -36,11 +36,17 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         console.log(err)
       })
 
-      axios.get(`${apiURL}/api/getSipSetting`).then((res) => {
+    axios.get(`${apiURL}/api/getSipSetting`).then((res) => {
         setTrunkId(res.data.data.UserName)
     }).catch((err) => {
         console.log("error ::", err)
     });
+
+    axios.get(`${apiURL}/api/forwarding`).then((response) => {
+      // setForwardNumber(response.data.groups);
+      setForwardNumber(response.data.forwardingNumbers[0].number);
+    })
+      .catch((err) => console.log(err));
   }, [])
 
   // upload excel file
@@ -89,16 +95,12 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
   const firstData = () => {
     setAllGroups(null)
-    setForwardNumber(null)
+    // setForwardNumber(null)
     axios.get(`${apiURL}/api/groups`).then((response) => {
       setAllGroups(response.data.groups);
     })
       .catch((err) => console.log(err.message));
-    axios.get(`${apiURL}/api/forwarding`).then((response) => {
-      // setForwardNumber(response.data.groups);
-      setForwardNumber(response.data.forwardingNumbers[0].number);
-    })
-      .catch((err) => console.log(err));
+
   }
 
 

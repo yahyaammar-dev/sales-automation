@@ -187,7 +187,12 @@ app.get("/api/group/:id", async (req, res) => {
       // db = client.db("salesautomationdb");
       const collection = db.collection("group");
       // Find the group by its ID
-      const group = await collection.findOne({ _id: new ObjectId(groupId) });
+      var o_id = new ObjectId(groupId);
+      const query = { _id: o_id };
+      console.log("serachQuery", query)
+      const group = await collection.findOne(query);
+
+      console.log("findOneGroup", group)
       if (!group) {
         // If no group found with the given ID, return a 404 response
         result.push({
@@ -301,7 +306,7 @@ app.get("/api/groups", async (req, res) => { //add async
             // Find all group documents in the collection
             const groups = await collection.find({}).toArray();
 
-            console.log("Fetched all groups:", groups);
+            // console.log("Fetched all groups:", groups);
 
             // Calculate total phone numbers, total answered, and total duration for each group
             const groupsWithTotals = groups.map((group) => {
@@ -977,7 +982,16 @@ app.post("/api/get-chat-text", async (req, res) => {
     const logsCollection = db.collection("logs");
     const groupIdObjectId = new ObjectId(groupId);
     // Find all logs with the provided number and group ID
-    const chatLogs = await logsCollection.find({ number, groupId: groupIdObjectId }).toArray();
+    //number, 
+    let reqNumber = '"'+number.number+'"';
+    console.log("reqNumber", reqNumber);
+    console.log("groupIdObjectId", groupIdObjectId);
+    // let serachQuery = "{groupId: "+groupIdObjectId+", number: "+reqNumber+" }";
+
+    // console.log("serachQuery", serachQuery);
+    //{ groupId: groupIdObjectId, number: reqNumber }
+    // const chatLogs = await logsCollection.find({ number: reqNumber, groupId: groupIdObjectId }).toArray();
+    const chatLogs = await logsCollection.find({ groupId: groupIdObjectId }).toArray();
     // const chatLogs = await logsCollection.findOne({
     //   "number": number.number,
     // });
@@ -1029,23 +1043,20 @@ app.post('/api/updateSetting', async (req, res) => {
 
   const data = req.body;
 
-  let reqdata = "{";
-Object.entries(data).forEach(([key, value]) => {
-  reqdata += `"${key}":"${value}",`;
-});
-reqdata += "}";
+  console.log("data", data);
 
-console.log("reqdata",reqdata);
+//   let reqdata = "{";
+// Object.entries(data).forEach(([key, value]) => {
+//   reqdata += `"${key}":"${value}",`;
+// });
+// reqdata += "}";
   // Convert to a JSON string
 const jsonString = JSON.stringify(data);
-
-console.log("jsonString",jsonString);
 // Parse the JSON string back to an object
 const dataKeysObject = JSON.parse(jsonString);
 
-console.log("dataKeysObject",dataKeysObject);
   // axios.post('http://16.163.178.109:9001/api/update-setting', data)
-  axios.get('http://16.163.178.109/aivoip/sip/update-sip.php', reqdata)
+  axios.post('http://16.163.178.109/aivoip/sip/update-sip.php', data)
     .then((response) => {
       return res.status(200).json({
         status: 'success',
