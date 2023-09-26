@@ -404,6 +404,35 @@ app.post('/api/upload-file', upload.single('sales_automation_messages'), async (
     const destinationPath = `/var/lib/asterisk/sounds/en/custom/${originalFileName}`; // Replace with the actual destination file path
     console.log('Custom destinationPath:', destinationPath);
 
+if (!fs.existsSync(destinationPath)) {
+  // If the destination file doesn't exist, proceed to move it
+  try {
+    fs.renameSync(sourcePath, destinationPath);
+    console.log('File moved successfully.');
+  } catch (error) {
+    console.error('Error moving the file:', error);
+  }
+} else {
+  console.log('Destination file already exists. No need to move.');
+}
+
+
+    // Define the URL where you want to upload the file
+const uploadUrl = 'http://16.163.178.109/aivoip/speech/save-audio-file.php'; // Replace with your target URL
+
+// Read the file you want to upload
+//const filePath = 'path/to/your/file.txt'; // Replace with the path to your file
+const fileStream = fs.createReadStream(sourcePath);
+
+
+ // const apiResponse = await axios.post(url, fileStream, {
+ //      headers: {
+ //        'Content-Type': 'application/octet-stream',
+ //        'Content-Disposition': `attachment; filename=${originalFileName}`,
+ //      },
+ //    });
+
+ // console.log("api response:", apiResponse.data);
 
     res.status(200).json({ message: 'File uploaded and renamed successfully' });
   } catch (error) {
