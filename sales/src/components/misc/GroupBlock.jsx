@@ -215,8 +215,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   const handleCalling = () => {
     console.log(active)
     if (active) {
-      axios
-      .get(`${apiURL}/api/stop-calling`)
+      axios.get(`${apiURL}/api/stop-calling`)
       .then((response) => alert('Calls have been ended'))
       .catch((err) => alert('Something failed! Try again Later'));
       setActive(false);
@@ -249,15 +248,19 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         
       let tempPhone = [
         {
+          groupId: id,
           calls: concur,
           trunk: trunkId,
           forward: '6'+forwardNumber,
         },
         phoneNumbers,
       ];
+
+      console.log("tempPhone",tempPhone)
+      console.log("grpid",id)
   
       axios
-        .post(`${apiURL}/api/call-numbers/${id}`, tempPhone)
+        .post(`${apiURL}/api/call-numbers`, tempPhone)
         .then((response) => alert('Calling Status Changed!'))
         .catch((err) => {
           setActive(false);

@@ -1295,20 +1295,25 @@ const dataKeysObject = JSON.parse(jsonString);
 
 
 
-app.post('/api/call-numbers/:groupId', async (req, res) => {
+app.post('/api/call-numbers', async (req, res) => {
   
-// console.log(groupId)
-  const data = req.body
 
+  const data = req.body
+  console.log("body",req.body[0]);
+  const groupData = req.body[0];
+const groupId = groupData.groupId;
+console.log("groupId",groupId);
    // Save the current groupId in the MongoDB collection
   //  await db.collection('Active Group').updateOne({}, { $set: { groupId } }, { upsert: true });
    try {
-    const groupId = req.params.groupId;
+    // const groupId = req.params.groupId;
 
     const db = await connectToDatabase();
     const collection = db.collection("activeGroup");
 
     const existingActiveGroup = await collection.findOne();
+
+console.log("existingActiveGroup", existingActiveGroup);
 
     if (existingActiveGroup) {
       await collection.updateOne(
@@ -1323,6 +1328,15 @@ app.post('/api/call-numbers/:groupId', async (req, res) => {
       await collection.insertOne(group);
       console.log("group added:", group);
     }
+
+
+    axios.post('http://16.163.178.109/aivoip/autodial/dial_numbers_1.php', data)
+    
+    return res.status(200).json({
+      status: 'success',
+      data: "Calls has been Started"
+    });
+
   }catch (error) {
     console.error("Error adding/updating Active Group:", error);
     return res.status(500).json({
@@ -1330,13 +1344,6 @@ app.post('/api/call-numbers/:groupId', async (req, res) => {
       message: "Failed to add/update Active Group",
     });
   }
-
-  axios.post('http://16.163.178.109/aivoip/autodial/dial_numbers_1.php', data)
-  
-  return res.status(200).json({
-    status: 'success',
-    data: "Calls has been Started"
-  });
 
 
 })
