@@ -17,6 +17,7 @@ const Main = ({ group }) => {
   const [transformedData, setTransfromedData] = useState();
   const [filterData, setFilterData] = useState([]);
   const [allGroups, setAllGroups] = useState();
+  const [active, setActive] = useState(false)
 
   // Extract the string after the last slash (/)
   const pathSegments = currentPath.split("/");
@@ -42,6 +43,8 @@ const Main = ({ group }) => {
         filterData={filterData} setFilterData={setFilterData}
         setAllGroups={setAllGroups}
         allGroups={allGroups}
+        active={active}
+        setActive={setActive}
 
       /> : <Block isGroupAdded={isGroupAdded} setIsGroupAdded={setIsGroupAdded} />}
       {lastSegment == "group-details" ? (

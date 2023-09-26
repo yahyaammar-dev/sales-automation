@@ -10,6 +10,7 @@
     const [chat, setChat] = useState()
     const [userChat, setUserChat] = useState();
     const [chatData, setChatData] = useState([]);
+    const [loading, setLoading] = useState(true);
     const handleHomeNav = () => {
         navigate("/");
     };
@@ -48,15 +49,15 @@
         const fetchChatData = () => {
           const data = {
             groupId: id,
-            number: groupNumber, // Make sure you provide the actual number here
+            number: groupNumber.number, // Make sure you provide the actual number here
           };
           axios
             .post(`${apiUrl}/api/get-chat-text`, data)
             .then((response) => {
-              const chatText = response.data.chatText;
-              console.log(chatText);
+              const chatText = response.data.chatLogs;
               // Update the chat data in your component state
               setChatData(chatText);
+              setLoading(false);
             })
             .catch((error) => {
               console.error("Error fetching chat text:", error);
@@ -64,12 +65,14 @@
         };
     
         if (open) {
+            setLoading(true);
           // Fetch chat data when the modal is opened
           fetchChatData();
-    
+            console.log(chatData)
+            console.dir(chatData);
           // Set up an interval to fetch chat data every 10 seconds
           const intervalId = setInterval(fetchChatData, 10000);
-    
+          console.log(chatData)
           // Clean up the interval when the component unmounts or the modal is closed
           return () => clearInterval(intervalId);
         }
@@ -138,6 +141,7 @@
                             <button
                             onClick={() => {
                                 setOpen(false);
+                                setChatData(null)
                             }}
                             >
                             <svg
@@ -242,9 +246,14 @@
                     <div className="border border-gray-200"></div>
                     </header>
                     <div>
-                    {
+                    { loading ? ( <div className="custom__modal relative p-10 text-center w-full max-w-2xl h-full md:h-auto">Loading...</div> ) : (
+                    chatData?.length === 0 ? (
+                        <div className="custom__modal relative p-10 text-center w-full max-w-2xl h-full md:h-auto">
+                        <p>No chat data available.</p>
+                        </div>
+                        ) : (
                         chatData?.map((item, index)=>{
-                            console.log('hello world')
+                            console.log(item.text)
                             return <>
                               <div className="px-10 py-2 z-0" key={index}>
                             {item?.user  == 'bot' ? (
@@ -302,7 +311,7 @@
                                     <h4 className="text-bold font-serif text-lg">
                                         User
                                     </h4>
-                                    <p>{item?.chat ? item?.chat : 'No Messgae Found'}</p>
+                                    <p>{item?.start_time ? item?.start_time : 'No Messgae Found'}</p>
                                     <button>
                                         {/* User Icon */}
                                         <svg
@@ -337,16 +346,17 @@
                                         className="self-end px-4 border rounded-lg py-3 w-4/5 text-left text-white"
                                         style={{ backgroundColor: "#377D8D" }}
                                     >
-                                       {item?.chat ? item?.chat : 'No Messgae Found'}
+                                       {item?.text ? item.text : 'No Messgae Found'}
                                     </p>
                                     </div>
                                 </div>
                                 </div>
-                            )}
+                            )
+                            }
                             </div>
                             </>
                           
-                        })
+                        })))
                     }
 
                     {/* {selectedMessage && (

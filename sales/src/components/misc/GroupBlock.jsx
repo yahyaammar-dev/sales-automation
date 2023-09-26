@@ -9,9 +9,8 @@ import axios from "axios";
 const apiURL = process.env.REACT_APP_BASE_URL_LIVE;
 
 
-const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, toDate, setToDate, filterData, setFilterData, allGroups, setAllGroups }) => {
+const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, toDate, setToDate, filterData, setFilterData, allGroups, setAllGroups, active, setActive }) => {
   const [groupName, setGroupName] = useState();
-  const [active, setActive] = useState(false)
   const [forwardNumber, setForwardNumber] = useState();
   const [chats, setAllChats] = useState(null);
   const [chatWithPhone, setChatWithPhone] = useState(null);
@@ -26,28 +25,35 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   let { id } = useParams();
 
 
+  
+
   useEffect(() => {
     setSelectedGroupId(id)
     axios.get(`${apiURL}/api/concurrent-number`)
       .then((res) => {
         setConcur(res?.data?.concurrentNumber.con)
-      })
-      .catch((err) => {
+      }).catch((err) => {
         console.log(err)
-      })
+      });
 
-    axios.get(`${apiURL}/api/getSipSetting`).then((res) => {
-        setTrunkId(res.data.data.UserName)
-    }).catch((err) => {
-        console.log("error ::", err)
-    });
+    // axios.get(`${apiURL}/api/getSipSetting`).then((res) => {
+    //     setTrunkId(res.data.data.UserName)
+    // }).catch((err) => {
+    //     console.log("error ::", err)
+    // });
 
     axios.get(`${apiURL}/api/forwarding`).then((response) => {
       // setForwardNumber(response.data.groups);
       setForwardNumber(response.data.forwardingNumbers[0].number);
-    })
-      .catch((err) => console.log(err));
+    }).catch((err) => console.log(err));
+
+    axios.get(`${apiURL}/api/get-trunk`)
+        .then((res) => {
+            console.log('HELLO::::',res.data.response.trunkId)
+            setTrunkId(res.data.response.trunkId)
+        }) .catch((err) => {console.log(err) })
   }, [])
+
 
   // upload excel file
 
@@ -207,6 +213,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
 
   const handleCalling = () => {
+    console.log(active)
     if (active) {
       axios
       .get(`${apiURL}/api/stop-calling`)
@@ -214,7 +221,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       .catch((err) => alert('Something failed! Try again Later'));
       setActive(false);
     } else {
-      console.log("all group", allGroups)
+      // console.log("all group", allGroups)
       setActive(true);
       let phoneNumbers = [];
       allGroups?.filter((itm) => {
@@ -225,7 +232,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         }
       }).forEach((group, index) => {
         group.phoneNumbers?.forEach((item, subIndex) => {
-          console.log("IN FOREACH",item.number)
+          // console.log("IN FOREACH",item.number)
           if (item?.number) {
             phoneNumbers.push("96" + item?.number);
             // phoneNumbers.push("98" + item?.number);
@@ -243,14 +250,14 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       let tempPhone = [
         {
           calls: concur,
-          trunk: "SIP/trk-"+trunkId+"-t",
-          forward: forwardNumber,
+          trunk: trunkId,
+          forward: '6'+forwardNumber,
         },
         phoneNumbers,
       ];
   
       axios
-        .post(`${apiURL}/api/call-numbers`, tempPhone)
+        .post(`${apiURL}/api/call-numbers/${id}`, tempPhone)
         .then((response) => alert('Calling Status Changed!'))
         .catch((err) => {
           setActive(false);

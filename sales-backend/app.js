@@ -13,6 +13,7 @@ var ip = require('ip');
 const os = require('os');
 const fs = require("fs");
 const xlsx = require('xlsx');
+const { group } = require("console");
 const uploadsPath = path.join(__dirname, "uploads");
 app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
@@ -25,12 +26,12 @@ server.listen(port, () => {
   console.log(`Server is running on https://localhost:${port}`);
 });
 const uri = "mongodb+srv://yahyaammar:wkBM0FIbJDZSb9Hl@cluster0.skkmm1v.mongodb.net/?retryWrites=true&w=majority"
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: "1",
-    strict: true,
-  },
-});
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true, 
+  maxPoolSize: 1,
+};
+const client = new MongoClient(uri, options);
 async function connectToDatabase() {
   try {
     await client.connect();
@@ -81,7 +82,7 @@ app.get("/api/forwarding", async (req, res) => {
 
     } finally {
       // Close the MongoDB connection
-      await client.close();
+      // await client.close();
     }
     return result;
   };
@@ -134,9 +135,10 @@ app.post("/api/forwarding", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await client.close();
+    // await client.close();
   }
 });
+
 
 
 app.post("/api/create-group", async (req, res) => {
@@ -173,7 +175,7 @@ app.post("/api/create-group", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -227,7 +229,7 @@ app.get("/api/group/:id", async (req, res) => {
       // });
     } finally {
       // Close the MongoDB connection
-      await client.close();
+      // await client.close();
     }
     return result;
   };
@@ -290,7 +292,7 @@ app.put("/api/groups/:id", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -358,7 +360,7 @@ app.get("/api/groups", async (req, res) => { //add async
             });
         }
         finally {
-            await client.close();
+            // await client.close();
         }
         return result;
     };
@@ -441,7 +443,7 @@ app.post(
       });
     } finally {
       // Close the MongoDB connection
-      await client.close();
+      // await client.close();
     }
   }
 );
@@ -480,7 +482,7 @@ app.post("/api/messages",
       });
     } finally {
       // Close the MongoDB connection
-      await client.close();
+      // await client.close();
     }
   });
 
@@ -515,7 +517,7 @@ app.get("/api/messages", async (req, res) => {
       // });
     } finally {
       // Close the MongoDB connection
-      await client.close();
+      // await client.close();
     }
     return result;
   }
@@ -582,7 +584,7 @@ app.put("/api/messages/:id", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -651,7 +653,7 @@ app.post("/api/add-phone-number", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -706,7 +708,7 @@ app.put("/api/update-phone-number", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -748,7 +750,7 @@ app.post("/api/edit-text-message", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -851,7 +853,7 @@ app.post(
       });
     } finally {
       // Close the MongoDB connection
-      await client.close();
+      // await client.close();
     }
   }
 );
@@ -885,7 +887,7 @@ app.post(
       });
     } finally {
       // Close the MongoDB connection
-      await client.close();
+      // await client.close();
     }
   }
 );
@@ -929,16 +931,48 @@ app.post("/api/create-logs", async (req, res) => {
     const db = await connectToDatabase();
     const logsCollection = db.collection("logs");
     const groupsCollection = db.collection("group");
+    const activeGroupCollection = db.collection('activeGroup');
+  
+      // Find the active group
+    const activeGroup = await activeGroupCollection.findOne();
+    const groupId   = activeGroup.group;
+    console.log('active group id',activeGroup.group)
+  
 
     // Check if the provided number exists in any group
     console.log("Searching for number:", number);
 
-    const groupWithNumber = await groupsCollection.findOne({
-      "phoneNumbers.number": number,
-    });
-    console.log("Group with Number:", groupWithNumber);
+  if(groupId){
+      console.log('group id exist', groupId)
+      // const groupWithNumber = await groupsCollection.findOne({
+      // _id: groupId,
+      // "phoneNumbers.number": number,
+      // });
+      const groupObjectId = new ObjectId(groupId);
+      const group = await groupsCollection.findOne({ _id: groupObjectId });
 
-    if (groupWithNumber) {
+      if (!group) {
+        return res.status(404).json({
+          success: false,
+          message: "Group not found with the provided groupId.",
+        });
+      }
+    
+      // Check if the provided number exists in the found group
+      const numberExistsInGroup = group.phoneNumbers.some((phoneNumber) => phoneNumber.number === number);
+    
+      if (numberExistsInGroup) {
+        // Number exists in the group, proceed with your logic
+        console.log("Number found in the group:", number);
+      } else {
+        return res.status(404).json({
+          success: false,
+          message: "Number not found in the specified group.",
+        });
+      }
+    // console.log("Group with Number:", groupWithNumber);
+
+    if (numberExistsInGroup) {
       // If the number is found in a group, save the log along with the group information
       const result = await logsCollection.insertOne({
         number,
@@ -949,7 +983,7 @@ app.post("/api/create-logs", async (req, res) => {
         seq,
         date,
         call_status,
-        groupId: groupWithNumber._id, // Store the group ID with the log
+        groupId: groupObjectId, // Store the group ID with the log
       });
 
       return res.status(200).json({
@@ -962,6 +996,13 @@ app.post("/api/create-logs", async (req, res) => {
         message: "Number not found in any group.",
       });
     }
+  }else{
+    console.log('There is no Active group')
+    return res.status(500).json({
+      success: false,
+      message: "Failed to create logs, There is no Active group",
+    });
+  }
   } catch (error) {
     console.error("Error in creating logs:", error);
     return res.status(500).json({
@@ -970,7 +1011,7 @@ app.post("/api/create-logs", async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -981,29 +1022,17 @@ app.post("/api/get-chat-text", async (req, res) => {
     const db = await connectToDatabase();
     const logsCollection = db.collection("logs");
     const groupIdObjectId = new ObjectId(groupId);
-    // Find all logs with the provided number and group ID
-    //number, 
-    let reqNumber = '"'+number.number+'"';
-    console.log("reqNumber", reqNumber);
-    console.log("groupIdObjectId", groupIdObjectId);
-    // let serachQuery = "{groupId: "+groupIdObjectId+", number: "+reqNumber+" }";
 
-    // console.log("serachQuery", serachQuery);
-    //{ groupId: groupIdObjectId, number: reqNumber }
-    // const chatLogs = await logsCollection.find({ number: reqNumber, groupId: groupIdObjectId }).toArray();
-    const chatLogs = await logsCollection.find({ groupId: groupIdObjectId }).toArray();
-    // const chatLogs = await logsCollection.findOne({
-    //   "number": number.number,
-    // });
+    const chatLogs = await logsCollection.find({
+      groupId: groupIdObjectId,
+      number: number
+    }).toArray();
 
-    console.log("chatLogs", chatLogs);
+    console.log("Fetching chat logs");
 
-    // Extract the text from each chat log
-    const chatText = chatLogs.map((log) => log);
-    // const chatText = chatLogs;
     return res.status(200).json({
       success: true,
-      chatText,
+      chatLogs,
     });
   } catch (error) {
     console.error("Error in retrieving chat text:", error);
@@ -1012,8 +1041,7 @@ app.post("/api/get-chat-text", async (req, res) => {
       message: "Failed to retrieve chat text.",
     });
   } finally {
-    // Close the MongoDB connection
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -1078,9 +1106,41 @@ const dataKeysObject = JSON.parse(jsonString);
 
 
 
-app.post('/api/call-numbers', async (req, res) => {
-
+app.post('/api/call-numbers/:groupId', async (req, res) => {
+  
+// console.log(groupId)
   const data = req.body
+
+   // Save the current groupId in the MongoDB collection
+  //  await db.collection('Active Group').updateOne({}, { $set: { groupId } }, { upsert: true });
+   try {
+    const groupId = req.params.groupId;
+
+    const db = await connectToDatabase();
+    const collection = db.collection("activeGroup");
+
+    const existingActiveGroup = await collection.findOne();
+
+    if (existingActiveGroup) {
+      await collection.updateOne(
+        { _id: existingActiveGroup._id }, 
+        { $set: { group: groupId } }
+      );
+      console.log("group updated:", groupId);
+    } else {
+      const group = {
+        group: groupId,
+      };
+      await collection.insertOne(group);
+      console.log("group added:", group);
+    }
+  }catch (error) {
+    console.error("Error adding/updating Active Group:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to add/update Active Group",
+    });
+  }
 
   axios.post('http://16.163.178.109/aivoip/autodial/dial_numbers_1.php', data)
   
@@ -1094,6 +1154,30 @@ app.post('/api/call-numbers', async (req, res) => {
 
 app.get('/api/stop-calling', async (req, res) => {
 
+
+  try {
+
+    const db = await connectToDatabase();
+    const collection = db.collection("activeGroup");
+
+    const existingActiveGroup = await collection.findOne();
+
+    if (existingActiveGroup) {
+      await collection.updateOne(
+        { _id: existingActiveGroup._id }, 
+        { $set: { group: '' } }
+      );
+      console.log("Active group updated successfuly");
+    } else {
+      console.log("Active group calling dosent exist");
+    }
+  }catch (error) {
+    console.error("Error deleting Active Group:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete Active Group",
+    });
+  }
 
   axios.get('http://16.163.178.109/aivoip/autodial/stop_dials.php')
   
@@ -1134,7 +1218,7 @@ app.get('/api/concurrent-number', async (req, res) => {
 
       } finally {
         // Close the MongoDB connection
-        await client.close();
+        // await client.close();
       }
       return result;
     };
@@ -1173,8 +1257,78 @@ app.post('/api/concurrent-number', async (req, res) => {
     });
   } finally {
     // Close the MongoDB connection
-    await client.close();
+    // await client.close();
   }
+});
+
+app.post('/api/trunk', async (req, res) => {
+  try {
+    const data = req.body
+    const db = await connectToDatabase();
+    const trunkCollection = db.collection("trunk");
+    console.log(data)
+    // delete pervious concurrent number
+    const result = await trunkCollection.deleteMany({});
+
+    const InsertResponse = await trunkCollection.insertOne(data);
+
+    return res.status(200).json({
+      success: true,
+      InsertResponse,
+    });
+  } catch (error) {
+    console.error("Error in retrieving chat text:", error);
+    return res.status(500).json({
+      success: false,
+      message: error,
+    });
+  } finally {
+    // Close the MongoDB connection
+    // await client.close();
+  }
+});
+
+app.get('/api/get-trunk', async (req, res) => {
+  async function getData() {
+    let result = [];
+    try {
+
+      const db = await connectToDatabase();
+      // db = client.db("salesautomationdb");
+      const trunkCollection = db.collection("trunk");
+
+      // Retrieve the concurrent number (assuming you have only one)
+      const trunkId = await trunkCollection.findOne();
+
+      result.push({
+        success: true,
+        response: trunkId,
+      });
+
+
+    } catch (error) {
+      console.error("Error in retrieving trunk id:", error);
+
+
+      result.push({
+        success: false,
+        message: "Failed to retrieve trunk id.",
+      });
+
+    } finally {
+      // Close the MongoDB connection
+      // await client.close();
+    }
+    return result;
+  };
+  const data = await getData(); //add this
+// console.log("result", data[0]);
+  if(data[0].success){
+    res.status(200).json(data[0]);
+  }else{
+    res.status(500).json(data[0]);
+  }
+
 });
 
 

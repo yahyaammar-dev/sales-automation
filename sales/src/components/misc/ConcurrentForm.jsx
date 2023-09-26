@@ -9,6 +9,9 @@ const ConcurrentForm = () => {
     const { id } = useParams();
     const [passwordVisible, setPasswordVisible] = useState(false)
     const [concur, setConcur] = useState()
+    const [forwardingNumber, setForwardingNumber] = useState()
+    const [trunkId, setTrunkId] = useState()
+    const [update, setUpdate] = useState(false);
     const [formData, setFormData] = useState({
         "SIP_IP": "",
         "Port": "",
@@ -17,7 +20,7 @@ const ConcurrentForm = () => {
     })
 
 
-    console.log(formData)
+    // console.log(formData)
 
     //update handler
     const updateHandler = async () => {
@@ -66,10 +69,32 @@ const ConcurrentForm = () => {
         const conData = {
             con: concur
           };
+        const trunk = {
+            trunkId: trunkId
+          };
 
         axios.post(`${apiURL}/api/concurrent-number`, conData).then((res) => {
             console.log("response :::", res)
         }).catch((err) => {
+            console.log("error ::", err)
+        });
+
+        axios.post(`${apiURL}/api/trunk`, trunk).then((res) => {
+            console.log("response :::", res)
+        }).catch((err) => {
+            console.log("error ::", err)
+        });
+
+
+        const ForwardData = {
+            number:forwardingNumber.toString()
+          };
+
+        axios.post(`${apiURL}/api/forwarding`, ForwardData).then((res) => {
+            setUpdate('true')
+            console.log("response :::", res)
+        }).catch((err) => {
+            setUpdate('false')
             console.log("error ::", err)
         });
 
@@ -118,7 +143,30 @@ const ConcurrentForm = () => {
             .catch((err) => {
                 console.log(err)
             })
+
+        
     }, []);
+
+    useEffect(() => {
+        axios.get(`${apiURL}/api/forwarding`)
+        .then((res) => {
+            // console.log(res.data.forwardingNumbers[0].number)
+            setForwardingNumber(res.data.forwardingNumbers[0].number)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+
+
+        axios.get(`${apiURL}/api/get-trunk`)
+        .then((res) => {
+            console.log('HELLO::::',res.data.response.trunkId)
+            setTrunkId(res.data.response.trunkId)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }, [update]);
 
 
 
@@ -193,6 +241,28 @@ const ConcurrentForm = () => {
                         value={concur}
                         onChange={(e) => { setConcur(e.target.value) }}
                         name="concurrent Calls"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Concurrent Calls" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                        Forwarding Number
+                    </label>
+                    <input
+                        value={forwardingNumber}
+                        onChange={(e) => { setForwardingNumber(e.target.value) }}
+                        name="Forwarding Number"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Concurrent Calls" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                        Trunk ID
+                    </label>
+                    <input
+                        value={trunkId}
+                        onChange={(e) => { setTrunkId(e.target.value) }}
+                        name="Forwarding Number"
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Concurrent Calls" />
                 </div>
 
