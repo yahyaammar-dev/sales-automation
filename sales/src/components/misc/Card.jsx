@@ -58,10 +58,17 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
 
     const formData = new FormData();
     formData.append('sales_automation_messages', file);
-    formData.append('index', index)
+    formData.append('index', index);
+
+    // console.log("file", file);
+    // console.log("formData", formData);
 
 
-    fetch(`${apiURL}/api/upload-audio`, {
+    // fetch(`${apiURL}/api/upload-audio`, {
+    //   method: 'POST',
+    //   body: formData,
+    // })
+    fetch(`${apiURL}/api/upload-file`, {
       method: 'POST',
       body: formData,
     })
@@ -189,6 +196,7 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
               Upload Your Audio File
             </h3>
+            <span className="text-xs text-red-500">Only audio files with the .sln extension are allowed to be submitted.</span>
 
             <input
               class="my-5 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
