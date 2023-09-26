@@ -407,7 +407,7 @@ app.post('/api/upload-file', uploadMediaFile.single('sales_automation_messages')
 
     // const sourcePath = `uploads/${originalFileName}`; // Replace with the actual source file path
     // console.log('Custom sourcePath:', sourcePath);
-    // const destinationPath = `/var/lib/asterisk/sounds/en/custom/${originalFileName}`; // Replace with the actual destination file path
+    const destinationPath = `/var/lib/asterisk/sounds/en/custom/${originalFileName}`; // Replace with the actual destination file path
     // console.log('Custom destinationPath:', destinationPath);
 // if (fspromises.existsSync(sourcePath)) {
 
@@ -456,7 +456,10 @@ const uploadUrl = 'http://16.163.178.109/aivoip/speech/save-audio-file.php'; // 
 //   contentType: "application/octet-stream",
 // });
 
-const baseFileName = path.basename(originalFileName);
+//const baseFileName = path.basename(originalFileName);
+
+const baseFileName = path.basename(destinationPath, path.extname(originalFileName));
+
     console.log(' Base filename:', baseFileName);
 
 const jsonDataArray = [
@@ -464,13 +467,13 @@ const jsonDataArray = [
 ];
 
     console.log(' jsonDataArray:', jsonDataArray);
- const apiResponse =axios.post(uploadUrl, jsonDataArray, {
-  headers: {
-    "Accept": "application/json",
-    "Cache-Control": "no-cache",
-  },
-});
- console.log("api response:", apiResponse.data);
+//  const apiResponse =axios.post(uploadUrl, jsonDataArray, {
+//   headers: {
+//     "Accept": "application/json",
+//     "Cache-Control": "no-cache",
+//   },
+// });
+//  console.log("api response:", apiResponse.data);
 
     res.status(200).json({ message: 'File uploaded and renamed successfully' });
   } catch (error) {
