@@ -464,13 +464,13 @@ const jsonDataArray = [
 ];
 
     console.log(' jsonDataArray:', jsonDataArray);
-//  const apiResponse =axios.post(uploadUrl, jsonDataArray, {
-//   headers: {
-//     Accept: "application/json",
-//     "Cache-Control": "no-cache",
-//   },
-// });
- // console.log("api response:", apiResponse.data);
+ const apiResponse =axios.post(uploadUrl, jsonDataArray, {
+  headers: {
+    "Accept": "application/json",
+    "Cache-Control": "no-cache",
+  },
+});
+ console.log("api response:", apiResponse.data);
 
     res.status(200).json({ message: 'File uploaded and renamed successfully' });
   } catch (error) {
