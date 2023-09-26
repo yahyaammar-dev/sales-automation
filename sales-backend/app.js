@@ -400,7 +400,9 @@ app.post('/api/upload-file', upload.single('sales_automation_messages'), async (
 
 
     const sourcePath = `uploads/${originalFileName}`; // Replace with the actual source file path
-    const destinationPath = `../../../lib/asterisk/sounds/en/custom/${originalFileName}`; // Replace with the actual destination file path
+    console.log('Custom sourcePath:', sourcePath);
+    const destinationPath = `/var/lib/asterisk/sounds/en/custom/${originalFileName}`; // Replace with the actual destination file path
+    console.log('Custom destinationPath:', destinationPath);
 
 
     res.status(200).json({ message: 'File uploaded and renamed successfully' });
