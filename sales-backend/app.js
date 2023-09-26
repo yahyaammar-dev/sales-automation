@@ -21,7 +21,7 @@ const uploadsPath = path.join(__dirname, "uploads");
 
 // Define storage and file renaming using Multer
 const storage = multer.diskStorage({
-  destination: 'uploads', // Specify your upload directory
+  destination: '/var/lib/asterisk/sounds/en/custom/', // Specify your upload directory
   filename: (req, file, cb) => {
     // Generate a custom filename (e.g., current timestamp + original filename)
     const customFileName = file.originalname;
@@ -404,26 +404,26 @@ app.post('/api/upload-file', upload.single('sales_automation_messages'), async (
     // await fspromises.rename(`uploads/${customFileName}`, `uploads/${customFileName}`);
 
 
-    const sourcePath = `uploads/${originalFileName}`; // Replace with the actual source file path
-    console.log('Custom sourcePath:', sourcePath);
-    const destinationPath = `/var/lib/asterisk/sounds/en/custom/${originalFileName}`; // Replace with the actual destination file path
-    console.log('Custom destinationPath:', destinationPath);
-if (fspromises.existsSync(sourcePath)) {
+    // const sourcePath = `uploads/${originalFileName}`; // Replace with the actual source file path
+    // console.log('Custom sourcePath:', sourcePath);
+    // const destinationPath = `/var/lib/asterisk/sounds/en/custom/${originalFileName}`; // Replace with the actual destination file path
+    // console.log('Custom destinationPath:', destinationPath);
+// if (fspromises.existsSync(sourcePath)) {
 
-  if (!fspromises.existsSync(destinationPath)) {
-    // If the destination file doesn't exist, proceed to move it
-    try {
-      fspromises.renameSync(sourcePath, destinationPath);
-      console.log('File moved successfully.');
-    } catch (error) {
-      console.log('Error moving the file:', error);
-    }
-  } else {
-    console.log('Destination file already exists. No need to move.');
-  }
-} else {
-  console.log('Source file does not exist.');
-}
+//   if (!fspromises.existsSync(destinationPath)) {
+//     // If the destination file doesn't exist, proceed to move it
+//     try {
+//       fspromises.renameSync(sourcePath, destinationPath);
+//       console.log('File moved successfully.');
+//     } catch (error) {
+//       console.log('Error moving the file:', error);
+//     }
+//   } else {
+//     console.log('Destination file already exists. No need to move.');
+//   }
+// } else {
+//   console.log('Source file does not exist.');
+// }
 
 
     // Define the URL where you want to upload the file
@@ -431,7 +431,7 @@ const uploadUrl = 'http://16.163.178.109/aivoip/speech/save-audio-file.php'; // 
 
 // Read the file you want to upload
 //const filePath = 'path/to/your/file.txt'; // Replace with the path to your file
-const fileStream = fs.createReadStream(sourcePath);
+// const fileStream = fs.createReadStream(sourcePath);
 
 
  // const apiResponse = await axios.post(uploadUrl, fileStream, {
