@@ -457,19 +457,20 @@ const uploadUrl = 'http://16.163.178.109/aivoip/speech/save-audio-file.php'; // 
 // });
 
 const baseFileName = path.basename(originalFileName);
-    console.log('Base filename:', baseFileName);
+    console.log(' Base filename:', baseFileName);
 
 const jsonDataArray = [
   { "message": baseFileName, "message_text": baseFileName }
 ];
 
- const apiResponse =axios.post(uploadUrl, jsonDataArray, {
-  headers: {
-    Accept: "application/json",
-    "Cache-Control": "no-cache",
-  },
-});
- console.log("api response:", apiResponse.data);
+    console.log(' jsonDataArray:', jsonDataArray);
+//  const apiResponse =axios.post(uploadUrl, jsonDataArray, {
+//   headers: {
+//     Accept: "application/json",
+//     "Cache-Control": "no-cache",
+//   },
+// });
+ // console.log("api response:", apiResponse.data);
 
     res.status(200).json({ message: 'File uploaded and renamed successfully' });
   } catch (error) {
