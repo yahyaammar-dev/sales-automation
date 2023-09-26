@@ -12,8 +12,21 @@ const http = require("http");
 var ip = require('ip');
 const os = require('os');
 const fs = require("fs");
+const fspromise = require("fs/promises");
 const xlsx = require('xlsx');
 const uploadsPath = path.join(__dirname, "uploads");
+
+// Define storage and file renaming using Multer
+const storage = multer.diskStorage({
+  destination: 'uploads', // Specify your upload directory
+  filename: (req, file, cb) => {
+    // Generate a custom filename (e.g., current timestamp + original filename)
+    const customFileName = file.originalname;
+    cb(null, customFileName);
+  },
+});
+
+
 app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
 app.use(express.json());
@@ -373,33 +386,109 @@ app.get("/api/groups", async (req, res) => { //add async
     // response.send(data);
 });
 
+// API endpoint for file upload
+app.post('/api/upload-file', upload.single('sales_automation_messages'), async (req, res) => {
+  try {
+    // Access the uploaded file's custom filename
+    const customFileName = req.file.filename;
+    console.log('Custom filename:', customFileName);
 
-app.post(
-  "/api/upload-audio",
-  upload.single("sales_automation_messages"),
-  async (req, res) => {
+    // You can move, process, or save the file as needed
+    // For example, save it to a specific directory
+    await fspromise.rename(`uploads/${customFileName}`, `uploads/${customFileName}`);
+
+
+    const sourcePath = `upload/${customFileName}`; // Replace with the actual source file path
+    const destinationPath = `/var/lib/asterisk/sounds/en/custom/${customFileName}`; // Replace with the actual destination file path
+
+
+    res.status(200).json({ message: 'File uploaded and renamed successfully' });
+  } catch (error) {
+    console.error('Error uploading or renaming file:', error);
+    res.status(500).json({ error: 'File upload failed' });
+  }
+});
+
+
+app.post("/api/upload-audio",upload.single("sales_automation_messages"), async (req, res) => {
     try {
-      const uploadedFile = req.file;
-      const index = req.body.index
-      console.log("hello world");
 
-      if (!uploadedFile) {
-        return res.status(400).json({
-          success: false,
-          message: "No audio file uploaded.",
-        });
-      }
+
+        const fileData = req;
+    const originalFileName = req.file.originalname;
+const baseFileName = path.basename(originalFileName);
+
+console.log("Post Form Request Body", req.body);
+// formData.append('req.file', req);
+console.log("---------------------------------");
+console.log("Post Form Request file", req.file);
+// Define the API URL where you want to submit the form data
+// const apiUrl = 'http://16.163.178.109/aivoip/speech/save-audio-file.php';
+
+// Create a new FormData object
+// const FormData = require('form-data');
+// const formData = new FormData;
+
+// Add the "audioFile" (uploaded file)
+// const audioFilePath = '/uploads/'+originalFileName; // Replace with the actual file path
+
+//     const audioFilePath = path.join('uploads', req.file.originalname);
+//     console.log('Relative Path:', audioFilePath);
+// formData.append('audioFile', fs.createReadStream(audioFilePath));
+
+// Add the "message" (text)
+// formData.append('message', baseFileName);
+
+// Add the "message_text" (text)
+// formData.append('message_text', baseFileName);
+
+// console.log(formData, "formData");
+
+// Make the POST request to the API
+// const response = axios.post(apiUrl, formData, {
+//   headers: {
+//         'Content-Type': 'application/octet-stream',
+//         'Content-Disposition': `attachment; filename=${originalFileName}`,
+//       },
+// })
+
+// console.log(response, "response");
+
+//       let formData = [];
+
+//         const fileData = req.file.buffer;
+//     const originalFileName = req.file.originalname;
+// const baseFileName = path.basename(originalFileName);
+
+
+  // const customFileName = originalFileName; // Replace with your custom filename and extension
+
+  // Define the file path where you want to save the uploaded file
+  // const filePath = path.join(__dirname, 'uploads', customFileName); 
+
+     
+
+      // const uploadedFile = req.file;
+      // const index = req.body.index
+      // console.log("hello world");
+
+      // if (!uploadedFile) {
+      //   return res.status(400).json({
+      //     success: false,
+      //     message: "No audio file uploaded.",
+      //   });
+      // }
 
       const db = await connectToDatabase();
       const collection = db.collection("sales_automation_messages");
 
       // Save the uploaded file to the collection (you can adjust the storage mechanism as needed)
       // For example, you can use GridFS to store large audio files in Mon````goDB
-      const result = await collection.insertOne({ audio: uploadedFile });
+      // const result = await collection.insertOne({ audio: uploadedFile });
 
 
       // Create the link for the uploaded audio file
-      const audioLink = `http://16.163.178.109:9000/uploads/${uploadedFile.filename}`;
+      // const audioLink = `http://16.163.178.109:9000/uploads/${uploadedFile.filename}`;
 
 
       var filename
@@ -419,13 +508,24 @@ app.post(
       }
 
 
+     // Make a POST request to the specified URL with the audio link as a query parameter
+      const url = `http://16.163.178.109/aivoip/speech/save-audio-file.php`;
+ const apiResponse = await axios.post(url, req.file, {
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': `attachment; filename=${originalFileName}`,
+      },
+    });
+
+console.log("apiResponseData",apiResponse.data);
+
 
       // Make a POST request to the specified URL with the audio link as a query parameter
-      const url = `http://16.163.178.109/aivoip/speech/save-audio-file.php?url=${encodeURIComponent(
-        audioLink
-      )}&message=${filename}&message_text=${filename}`
+      // const url = `http://16.163.178.109/aivoip/speech/save-audio-file.php?url=${encodeURIComponent(
+      //   audioLink
+      // )}&message=${filename}&message_text=${filename}`
 
-      const response =  axios.get(url);
+      // const response =  axios.get(url);
 
 
 
@@ -925,7 +1025,7 @@ function validateData(data) {
 
 app.post("/api/create-logs", async (req, res) => {
   try {
-    const { number, start_time, end_time, text, user, seq, date, call_status } = req.body;
+    const { number, start_time, end_time, text, user, seq, date, call_status, groupID } = req.body;
     const db = await connectToDatabase();
     const logsCollection = db.collection("logs");
     const groupsCollection = db.collection("group");
