@@ -457,6 +457,8 @@ const uploadUrl = 'http://16.163.178.109/aivoip/speech/save-audio-file.php'; // 
 // });
 
 const baseFileName = path.basename(originalFileName);
+    console.log('Base filename:', baseFileName);
+
 const jsonDataArray = [
   { "message": baseFileName, "message_text": baseFileName }
 ];
