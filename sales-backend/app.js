@@ -6,7 +6,8 @@ const app = express();
 const port = 9001;
 const axios = require("axios");
 const multer = require("multer");
-// const upload = multer({ dest: "uploads/" });
+const multer_file = require("multer");
+const upload = multer({ dest: "uploads/" });
 const path = require("path");
 const http = require("http");
 var ip = require('ip');
@@ -20,7 +21,7 @@ const uploadsPath = path.join(__dirname, "uploads");
 
 
 // Define storage and file renaming using Multer
-const storage = multer.diskStorage({
+const storage = multer_file.diskStorage({
   destination: '/var/lib/asterisk/sounds/en/custom/', // Specify your upload directory
   filename: (req, file, cb) => {
     // Generate a custom filename (e.g., current timestamp + original filename)
@@ -29,7 +30,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const uploadMediaFile = multer({ storage });
 
 app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
@@ -392,7 +393,7 @@ app.get("/api/groups", async (req, res) => { //add async
 });
 
 // API endpoint for file upload
-app.post('/api/upload-file', upload.single('sales_automation_messages'), async (req, res) => {
+app.post('/api/upload-file', uploadMediaFile.single('sales_automation_messages'), async (req, res) => {
   try {
     // Access the uploaded file's custom filename
     const customFileName = req.file.filename;
