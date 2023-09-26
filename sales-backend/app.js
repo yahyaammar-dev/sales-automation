@@ -6,16 +6,18 @@ const app = express();
 const port = 9001;
 const axios = require("axios");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+// const upload = multer({ dest: "uploads/" });
 const path = require("path");
 const http = require("http");
 var ip = require('ip');
 const os = require('os');
 const fs = require("fs");
-const fspromise = require("fs/promises");
+// const FormData = require("FormData");
+const fspromises = require("fs/promises");
 const xlsx = require('xlsx');
 const { group } = require("console");
 const uploadsPath = path.join(__dirname, "uploads");
+
 
 // Define storage and file renaming using Multer
 const storage = multer.diskStorage({
@@ -27,6 +29,7 @@ const storage = multer.diskStorage({
   },
 });
 
+const upload = multer({ storage });
 
 app.use("/uploads", express.static(uploadsPath));
 app.use(cors());
@@ -398,37 +401,37 @@ app.post('/api/upload-file', upload.single('sales_automation_messages'), async (
 
     // You can move, process, or save the file as needed
     // For example, save it to a specific directory
-    await fspromise.rename(`uploads/${customFileName}`, `uploads/${customFileName}`);
+    // await fspromises.rename(`uploads/${customFileName}`, `uploads/${customFileName}`);
 
 
     const sourcePath = `uploads/${originalFileName}`; // Replace with the actual source file path
     console.log('Custom sourcePath:', sourcePath);
     const destinationPath = `/var/lib/asterisk/sounds/en/custom/${originalFileName}`; // Replace with the actual destination file path
     console.log('Custom destinationPath:', destinationPath);
-// if (fs.existsSync(sourcePath)) {
+if (fspromises.existsSync(sourcePath)) {
 
-//   if (!fs.existsSync(destinationPath)) {
-//     // If the destination file doesn't exist, proceed to move it
-//     try {
-//       fs.renameSync(sourcePath, destinationPath);
-//       console.log('File moved successfully.');
-//     } catch (error) {
-//       console.log('Error moving the file:', error);
-//     }
-//   } else {
-//     console.log('Destination file already exists. No need to move.');
-//   }
-// } else {
-//   console.log('Source file does not exist.');
-// }
+  if (!fspromises.existsSync(destinationPath)) {
+    // If the destination file doesn't exist, proceed to move it
+    try {
+      fspromises.renameSync(sourcePath, destinationPath);
+      console.log('File moved successfully.');
+    } catch (error) {
+      console.log('Error moving the file:', error);
+    }
+  } else {
+    console.log('Destination file already exists. No need to move.');
+  }
+} else {
+  console.log('Source file does not exist.');
+}
 
 
     // Define the URL where you want to upload the file
-// const uploadUrl = 'http://16.163.178.109/aivoip/speech/save-audio-file.php'; // Replace with your target URL
+const uploadUrl = 'http://16.163.178.109/aivoip/speech/save-audio-file.php'; // Replace with your target URL
 
 // Read the file you want to upload
 //const filePath = 'path/to/your/file.txt'; // Replace with the path to your file
-// const fileStream = fs.createReadStream(sourcePath);
+const fileStream = fs.createReadStream(sourcePath);
 
 
  // const apiResponse = await axios.post(uploadUrl, fileStream, {
@@ -437,8 +440,25 @@ app.post('/api/upload-file', upload.single('sales_automation_messages'), async (
  //        'Content-Disposition': `attachment; filename=${originalFileName}`,
  //      },
  //    });
+// const bodyFormData = new FormData();
 
- // console.log("api response:", apiResponse.data);
+// Pass filename as a string
+// bodyFormData.append("file", fileStream, originalFileName);
+
+// or to specify more meta-data, pass an object
+// bodyFormData.append("file", req.file, {
+//   filename: originalFileName,
+//   contentType: "application/octet-stream",
+// });
+
+//  const apiResponse =axios.post(uploadUrl, bodyFormData, {
+//   headers: {
+//     Accept: "application/json",
+//     "Cache-Control": "no-cache",
+//     ...bodyFormData.getHeaders(),
+//   },
+// });
+//  console.log("api response:", apiResponse.data);
 
     res.status(200).json({ message: 'File uploaded and renamed successfully' });
   } catch (error) {
