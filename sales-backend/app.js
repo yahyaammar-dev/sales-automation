@@ -427,6 +427,10 @@ app.post('/api/upload-file', uploadMediaFile.single('sales_automation_messages')
 // }
 
 
+      const db = await connectToDatabase();
+      const collection = db.collection("sales_automation_messages");
+      const result = await collection.insertOne({ audio: req.file });
+
     // Define the URL where you want to upload the file
 const uploadUrl = 'http://16.163.178.109/aivoip/speech/save-audio-file.php'; // Replace with your target URL
 
@@ -452,14 +456,18 @@ const uploadUrl = 'http://16.163.178.109/aivoip/speech/save-audio-file.php'; // 
 //   contentType: "application/octet-stream",
 // });
 
-//  const apiResponse =axios.post(uploadUrl, bodyFormData, {
-//   headers: {
-//     Accept: "application/json",
-//     "Cache-Control": "no-cache",
-//     ...bodyFormData.getHeaders(),
-//   },
-// });
-//  console.log("api response:", apiResponse.data);
+const baseFileName = path.basename(originalFileName);
+const jsonDataArray = [
+  { "message": baseFileName, "message_text": baseFileName }
+];
+
+ const apiResponse =axios.post(uploadUrl, jsonDataArray, {
+  headers: {
+    Accept: "application/json",
+    "Cache-Control": "no-cache",
+  },
+});
+ console.log("api response:", apiResponse.data);
 
     res.status(200).json({ message: 'File uploaded and renamed successfully' });
   } catch (error) {
