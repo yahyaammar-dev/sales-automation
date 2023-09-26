@@ -398,8 +398,8 @@ app.post('/api/upload-file', upload.single('sales_automation_messages'), async (
     await fspromise.rename(`uploads/${customFileName}`, `uploads/${customFileName}`);
 
 
-    const sourcePath = `upload/${customFileName}`; // Replace with the actual source file path
-    const destinationPath = `/var/lib/asterisk/sounds/en/custom/${customFileName}`; // Replace with the actual destination file path
+    const sourcePath = `uploads/${customFileName}`; // Replace with the actual source file path
+    const destinationPath = `../../../lib/asterisk/sounds/en/custom/${customFileName}`; // Replace with the actual destination file path
 
 
     res.status(200).json({ message: 'File uploaded and renamed successfully' });
