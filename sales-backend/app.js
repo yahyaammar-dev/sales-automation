@@ -467,13 +467,31 @@ const jsonDataArray = [
 ];
 
     console.log(' jsonDataArray:', jsonDataArray);
+
+  const apiResponse = axios.post(uploadUrl, jsonDataArray)
+    .then((response) => {
+      console.log("success");
+      // return res.status(200).json({
+      //   status: 'success',
+      //   data: response.data
+      // });
+    })
+    .catch((err) => {
+      console.log("failed");
+
+      // return res.status(400).json({
+      //   status: 'Failed',
+      //   data: err.message
+      // })
+    })
+
 //  const apiResponse =axios.post(uploadUrl, jsonDataArray, {
 //   headers: {
 //     "Accept": "application/json",
 //     "Cache-Control": "no-cache",
 //   },
 // });
-//  console.log("api response:", apiResponse.data);
+ console.log("api response:", apiResponse.data);
 
     res.status(200).json({ message: 'File uploaded and renamed successfully' });
   } catch (error) {
