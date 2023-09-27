@@ -400,6 +400,46 @@ app.post('/api/upload-file', uploadMediaFile.single('sales_automation_messages')
     const originalFileName = req.file.originalname;
     console.log('Custom filename:', customFileName);
 
+    const index = req.body.index
+
+
+      var filename
+
+      if(index == '0'){
+        filename= 'welcome'
+      }else if(index == '1'){
+        filename= 'sales-pitch'
+      }else if(index == '2'){
+        filename= 'yes'
+      }else if(index == '5'){
+        filename= 'yes'
+      }else if(index == '7'){
+        filename= 'hearme'
+      }else{
+        filename = 'message'
+      }
+
+      filename_text = filename+".sln";
+
+      req.file.originalname = filename_text;
+
+
+
+fs.rename(`/var/lib/asterisk/sounds/en/custom/${originalFileName}`, `/var/lib/asterisk/sounds/en/custom/${filename_text}`, (err) => {
+  if (err) {
+    console.error('Error renaming the file:', err);
+  } else {
+    console.log('File renamed successfully.');
+  }
+});
+
+// await fspromises.rename(`uploads/${originalFileName}`, `uploads/${filename_text}`);
+
+// Rename the file
+// await fspromises.rename('hello.txt', 'world.txt', () => {
+//   console.log("\nFile Renamed!\n");
+// });
+
     // You can move, process, or save the file as needed
     // For example, save it to a specific directory
     // await fspromises.rename(`uploads/${customFileName}`, `uploads/${customFileName}`);
@@ -407,7 +447,7 @@ app.post('/api/upload-file', uploadMediaFile.single('sales_automation_messages')
 
     // const sourcePath = `uploads/${originalFileName}`; // Replace with the actual source file path
     // console.log('Custom sourcePath:', sourcePath);
-    const destinationPath = `/var/lib/asterisk/sounds/en/custom/${originalFileName}`; // Replace with the actual destination file path
+    // const destinationPath = `/var/lib/asterisk/sounds/en/custom/${originalFileName}`; // Replace with the actual destination file path
     // console.log('Custom destinationPath:', destinationPath);
 // if (fspromises.existsSync(sourcePath)) {
 
@@ -458,13 +498,11 @@ const uploadUrl = 'http://16.163.178.109/aivoip/speech/save-audio-file.php'; // 
 
 //const baseFileName = path.basename(originalFileName);
 
-const baseFileName = path.basename(destinationPath, path.extname(originalFileName));
+// const baseFileName = path.basename(destinationPath, path.extname(originalFileName));
 
-    console.log(' Base filename:', baseFileName);
+//     console.log(' Base filename:',  );
 
-const jsonDataArray = [
-  { "message": baseFileName, "message_text": baseFileName }
-];
+const jsonDataArray = '[{ "message": '+filename+', "message_text": '+filename+' }]';
 
     console.log(' jsonDataArray:', jsonDataArray);
 
@@ -600,15 +638,15 @@ console.log("Post Form Request file", req.file);
 
 
      // Make a POST request to the specified URL with the audio link as a query parameter
-      const url = `http://16.163.178.109/aivoip/speech/save-audio-file.php`;
- const apiResponse = await axios.post(url, req.file, {
-      headers: {
-        'Content-Type': 'application/octet-stream',
-        'Content-Disposition': `attachment; filename=${originalFileName}`,
-      },
-    });
+ //      const url = `http://16.163.178.109/aivoip/speech/save-audio-file.php`;
+ // const apiResponse = await axios.post(url, req.file, {
+ //      headers: {
+ //        'Content-Type': 'application/octet-stream',
+ //        'Content-Disposition': `attachment; filename=${originalFileName}`,
+ //      },
+ //    });
 
-console.log("apiResponseData",apiResponse.data);
+// console.log("apiResponseData",apiResponse.data);
 
 
       // Make a POST request to the specified URL with the audio link as a query parameter
