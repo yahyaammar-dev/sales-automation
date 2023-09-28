@@ -1247,13 +1247,15 @@ app.post("/api/get-chat-text", async (req, res) => {
   try {
     const { number, groupId } = req.body;
     const db = await connectToDatabase();
+    // const logsCollection = db.collection("logs").sort('_id':'desc');
     const logsCollection = db.collection("logs");
     const groupIdObjectId = new ObjectId(groupId);
 
     const chatLogs = await logsCollection.find({
       groupId: groupIdObjectId,
       number: number
-    }).toArray();
+    }).sort({ date: -1 }).toArray();
+
 
     console.log("Fetching chat logs");
 
