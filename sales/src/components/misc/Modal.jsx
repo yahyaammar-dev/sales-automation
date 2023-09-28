@@ -297,7 +297,7 @@
                                     </div>
                                     <div className="w-4/5 border rounded-lg">
                                     <p className="bg-gray-100 px-4 py-3">
-                                        {item?.text ? item?.text : 'No Messgae Found'}
+                                        {item?.text ? item?.text : 'No Proper Response Found'}
                                     </p>
                                     </div>
                                 </div>
@@ -311,7 +311,7 @@
                                     <h4 className="text-bold font-serif text-lg">
                                         User
                                     </h4>
-                                    <p>{item?.start_time ? item?.start_time : 'No Messgae Found'}</p>
+                                    <p>{item?.start_time ? item?.start_time : 'No Proper Response Found'}</p>
                                     <button>
                                         {/* User Icon */}
                                         <svg
@@ -346,7 +346,7 @@
                                         className="self-end px-4 border rounded-lg py-3 w-4/5 text-left text-white"
                                         style={{ backgroundColor: "#377D8D" }}
                                     >
-                                       {item?.text ? item.text : 'No Messgae Found'}
+                                       {item?.text ? item.text : 'No Proper Response Found'}
                                     </p>
                                     </div>
                                 </div>
