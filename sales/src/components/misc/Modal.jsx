@@ -15,6 +15,10 @@
         navigate("/");
     };
     const myref = useRef(null);
+    const modalStyles = {
+        maxHeight: '80vh', // Set your maximum height as a percentage of the viewport height
+        overflowY: 'auto', // Add a scrollbar when content overflows
+    };
 
     const handlePlayMessage = (message) => {
         let newAudioUrl = `http://16.163.178.109/aivoip/speech/${message}`
@@ -101,7 +105,7 @@
                 className="open overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full"
             >
                 <div className="custom__modal relative p-4 w-full max-w-2xl h-full md:h-auto">
-                <div className="chatroom bg-white font-sans">
+                <div className="chatroom bg-white font-sans" >
                     <header className=" bg-white h-2xl px-10 py-2 z-10">
                     <div className="flex gap-5 justify-between">
                         <h1
@@ -110,7 +114,7 @@
                         >
                         Call details
                         </h1>
-                        <div className="flex gap-6">
+                        <div className="flex gap-6" >
                         {/* <div className="flex gap-2">
                             <button className="bg-gray-300 text-sm px-1 py-1 border border-black font-medium rounded-sm">
                             Last Pass
@@ -245,7 +249,7 @@
                     </div>
                     <div className="border border-gray-200"></div>
                     </header>
-                    <div>
+                    <div style={modalStyles}>
                     { loading ? ( <div className="custom__modal relative p-10 text-center w-full max-w-2xl h-full md:h-auto">Loading...</div> ) : (
                     chatData?.length === 0 ? (
                         <div className="custom__modal relative p-10 text-center w-full max-w-2xl h-full md:h-auto">

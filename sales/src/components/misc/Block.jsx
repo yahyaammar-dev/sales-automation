@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import axios from "axios"
-import Button from './Button'
+import React, { useEffect, useState } from 'react';
+import axios from "axios";
+import Button from './Button';
 const apiURL = process.env.REACT_APP_BASE_URL_LIVE;
 
-const Block = ({ isGroupAdded, setIsGroupAdded }) => {
+const Block = ({ isGroupAdded, setIsGroupAdded, showToastMessage }) => {
   const [groupName, setGroupName] = useState();
 
   const handleGroup = () => {
@@ -14,8 +14,8 @@ const Block = ({ isGroupAdded, setIsGroupAdded }) => {
       })
       .then((response) => {
         setIsGroupAdded(!isGroupAdded)
-        setGroupName()
-        alert("Success: Group Created Successfully");
+        setGroupName('')
+        showToastMessage("Success: Group Created Successfully","success");
       });
   };
 

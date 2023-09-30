@@ -10,6 +10,26 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [file, setFile] = useState(null);
 
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState('');
+
+
+  const showToastMessage = (message, type) => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+
+    // Automatically hide the toast after a certain duration (e.g., 3 seconds)
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
+
+  const closeToast = () => {
+    setShowToast(false);
+  };
+  
 
   const handleOpenEdit = () => {
     setIsEditModalOpen(true);
@@ -36,14 +56,14 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
         console.log('Response ::::', res.status)
         if (res.status == 200) {
           console.log(res.data)
-          alert('Your data has been saved')
+          showToastMessage('Your data has been saved', 'success')
           window.location.reload();
         } else {
-          alert("Failed to update your message")
+          showToastMessage("Failed to update your message", "warning")
           console.log('Response ::::', res.status)
         }
       }).catch((err) => {
-        alert("Failed to update your message")
+        showToastMessage("Failed to update your message", "danger")
 
         console.log(err)
       })
@@ -72,7 +92,7 @@ const Card = ({ message, para, lineBottom, marginLeft, background, color, index,
       method: 'POST',
       body: formData,
     })
-      .then((response) => alert('Audio File Uploaded Successfully'))
+      .then((response) => showToastMessage('Audio File Uploaded Successfully','success'))
       .then((data) => {
         console.log('Upload response:', data);
       })

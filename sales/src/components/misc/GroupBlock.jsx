@@ -9,7 +9,7 @@ import axios from "axios";
 const apiURL = process.env.REACT_APP_BASE_URL_LIVE;
 
 
-const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, toDate, setToDate, filterData, setFilterData, allGroups, setAllGroups, active, setActive }) => {
+const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, toDate, setToDate, filterData, setFilterData, allGroups, setAllGroups, active, setActive, showToastMessage }) => {
   const [groupName, setGroupName] = useState();
   const [forwardNumber, setForwardNumber] = useState();
   const [chats, setAllChats] = useState(null);
@@ -23,9 +23,6 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   const [trunkId, setTrunkId] = useState();
 
   let { id } = useParams();
-
-
-  
 
   useEffect(() => {
     setSelectedGroupId(id)
@@ -75,8 +72,11 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       })
       .catch((error) => {
       });
-
-    alert('Uploaded Successfully');
+      showToastMessage('Uploaded Successfully', 'success');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    // alert('Uploaded Successfully');
   };
 
 
@@ -88,7 +88,10 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
         phoneNumbers: [],
       })
       .then((response) => {
-        alert("Success: Group Created Successfully");
+        showToastMessage("Success: Group Created Successfully", "success");
+        setTimeout(() => {
+            window.location.replace(window.location.origin);
+        }, 1000);
       });
   };
 
@@ -216,8 +219,8 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
     console.log(active)
     if (active) {
       axios.get(`${apiURL}/api/stop-calling`)
-      .then((response) => alert('Calls have been ended'))
-      .catch((err) => alert('Something failed! Try again Later'));
+      .then((response) => showToastMessage('Calls have been ended', 'info'))
+      .catch((err) => showToastMessage('Something failed! Try again Later', 'danger'));
       setActive(false);
     } else {
       // console.log("all group", allGroups)
@@ -261,10 +264,10 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
   
       axios
         .post(`${apiURL}/api/call-numbers`, tempPhone)
-        .then((response) => alert('Calling Status Changed!'))
+        .then((response) => showToastMessage('Calling Status Changed!','success'))
         .catch((err) => {
           setActive(false);
-          alert('Something failed! Try again Later');
+          showToastMessage('Something failed! Try again Later', 'danger');
         });
     }
   
@@ -275,7 +278,8 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
 
     setSelectedGroupId(id)
     if (!id || !phoneNumber) {
-      alert("Please select a group and provide a phone number.", id, phoneNumber);
+      // alert("Please select a group and provide a phone number.", id, phoneNumber);
+      showToastMessage('Please provide a phone number.', 'warning');
       return;
     }
 
@@ -296,7 +300,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
       .then((response) => {
         console.log(response)
         firstData()
-        alert("Successfully added a new phone number");
+        showToastMessage("Successfully added a new phone number","success");
       });
 
     // Clear the input fields after adding the phone number
@@ -344,7 +348,7 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
           />
         </div>
         <div className="w-2/12">
-          <Button text="Add Group" onClick={handleGroup} active />
+          <Button disabled={!groupName} icon={'/imgs/plus.png'} onClick={handleGroup} text='Add Group' active />
         </div>
       </div>
 
@@ -401,46 +405,48 @@ const Block = ({ group, setGroup, setToggler, toggler, fromDate, setFromDate, to
           />
         </div>
 
-        <div className="w-2/12">
+        <div className="w-1/12">
           <button onClick={() => { handleUploadFile() }} className="btn btn-primary flex gap-1 p-2 rounded items-center bg--active white-color button--main--color">Upload</button>
         </div>
-        <div className="w-2/12">
-          <input
-            type="text"
-            name="fromDate"
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-            className="group--block--input rounded"
-            placeholder="YYYY/MM/DD"
-          />
+        <div className="w-6/12 flex items-center">
+          <div className="w-4/12">
+            <input
+              type="text"
+              name="fromDate"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+              className="group--block--input rounded"
+              placeholder="YYYY/MM/DD"
+            />
+          </div>
+          <div className="w-2/12 ml-2">
+            <DatePicker
+              customInput={<img src="/imgs/calendar.svg" style={{ width: "2rem", height: "2rem" }} />}
+              maxDate={new Date()}
+              onChange={(date) => setFromDate(moment(date).format('YYYY/MM/DD'))}
+            />
+          </div>
+          <div className="w-4/12">
+            <input
+              type="text"
+              name="toDate"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              className="group--block--input rounded"
+              placeholder="YYYY/MM/DD"
+            />
+          </div>
+          <div className="w-2/12 ml-2" >
+            <DatePicker
+              customInput={<img src="/imgs/calendar.svg" style={{ width: "2rem", height: "2rem" }} />}
+              maxDate={new Date()}
+              onChange={(date) => {
+                setToDate(moment(date).format('YYYY/MM/DD'))
+              }}
+            />
+          </div>
         </div>
-        <div className="w-2/12">
-          <DatePicker
-            customInput={<img src="/imgs/calendar.svg" style={{ width: "2rem", height: "2rem" }} />}
-            maxDate={new Date()}
-            onChange={(date) => setFromDate(moment(date).format('YYYY/MM/DD'))}
-          />
-        </div>
-        <div className="w-2/12">
-          <input
-            type="text"
-            name="toDate"
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-            className="group--block--input rounded"
-            placeholder="YYYY/MM/DD"
-          />
-        </div>
-        <div className="w-2/12" >
-          <DatePicker
-            customInput={<img src="/imgs/calendar.svg" style={{ width: "2rem", height: "2rem" }} />}
-            maxDate={new Date()}
-            onChange={(date) => {
-              setToDate(moment(date).format('YYYY/MM/DD'))
-            }}
-          />
-        </div>
-        <div className="w-2/12">
+        <div className="w-1/12">
           <Button text="Filter" onClick={filterHandler} active />
         </div>
       </div>

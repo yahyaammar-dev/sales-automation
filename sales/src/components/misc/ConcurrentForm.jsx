@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useParams } from "react-router-dom";
 import axios from 'axios';
+import Toast from './Toast';
 const apiURL = process.env.REACT_APP_BASE_URL_LIVE;
 
 
@@ -19,8 +20,27 @@ const ConcurrentForm = () => {
         "Password": "",
     })
 
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastType, setToastType] = useState('');
 
     // console.log(formData)
+
+    const showToastMessage = (message, type) => {
+        setToastMessage(message);
+        setToastType(type);
+        setShowToast(true);
+
+        // Automatically hide the toast after a certain duration (e.g., 3 seconds)
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
+    };
+
+    const closeToast = () => {
+        setShowToast(false);
+    };
+
 
     //update handler
     const updateHandler = async () => {
@@ -99,7 +119,7 @@ const ConcurrentForm = () => {
         });
 
 
-        alert('Updated Concurrent Number in FreePbx')
+        showToastMessage('FreePBX concurrent settings have been modified.', 'success')
     }
 
     //handle change
@@ -125,7 +145,7 @@ const ConcurrentForm = () => {
 
       resolve(sipSettings); // Resolve the promise with the data
     }).catch((err) => {
-      alert('Error Fetching details from Server');
+      showToastMessage('Error Fetching details from Server', 'danger');
       console.log("error ::", err);
       reject(err); // Reject the promise if there's an error
     });
@@ -174,8 +194,8 @@ const ConcurrentForm = () => {
 
 
     return <>
-
-        <div class="w-full max-w-xs" style={{ margin: 'auto', marginTop: '10rem' }}>
+        <Toast message={toastMessage} type={toastType} showToast={showToast} closeToast={closeToast} />
+        <div class="w-full max-w-xs" style={{ margin: 'auto', marginTop: '2rem' }}>
             <form class="bg-white shadow-lg border-2 rounded px-8 pt-6 pb-8 mb-4">
 
 
